@@ -46,11 +46,13 @@ import { SteeringCommittee } from './Models/SteeringCommittee';
 export class DashboardServiceService {
   // Baseurl = 'http://localhost:50421/';
   // Baseurl = 'http://10.180.27.32/';
-  Baseurl = 'http://www.cwtdashboard.com/';
+  // Baseurl = 'http://10.180.27.32:8005/';
+  // Baseurl = 'http://www.cwtdashboard.com/';
+  Baseurl = 'https://cwtimplementationteam.mycwt.com/';
   // ImeetURl = 'https://edge.imeetcentral.com/v1/reports/WzM1LDE1MzYxXQ?contextId=647';
   httpOptions = {
     headers: new HttpHeaders({
-      'Content-Type':  'application/json'
+      'Content-Type':  'application/json',
     })
   };
   // body = {
@@ -158,45 +160,9 @@ export class DashboardServiceService {
   //   params = params.append('Implementation_Type',Implementation_Type);
   //   return this.http.post<Responce>(`${this.Baseurl+"MonthlyGrandTotalRevenue"}`,params);
   // }
-  public MonthlyTotalRevenue(){
+  public MonthlyTotalRevenueWithDelta(){
     let params = new HttpParams();
-    // params = params.append('GoLiveYear',GoLiveYear+"");
-    // params = params.append('GoLiveMonth',GoLiveMonth);
-    // params = params.append('Quarter',Quarter);
-    // params = params.append('ProjectLevel',ProjectLevel);
-    // params = params.append('BacklogStarted',BacklogStarted);
-    // params = params.append('Region',Region);
-    // params = params.append('Country',Country);
-    // params = params.append('ProjectStatus',ProjectStatus);
-    // params = params.append('ImplementationType',ImplementationType);
-    return this.http.post<Responce>(`${this.Baseurl+"MonthlyTotalRevenue"}`,params);
-  }
-  public MonthWiseClrData(GoLiveMonth : string){
-    let params = new HttpParams();
-    params = params.append('GoLiveMonth',GoLiveMonth+"");
-    return this.http.post<ClrResponse>(`${this.Baseurl+"MonthWiseClrData"}`,params);
-  }
-  public MonthWiseOldClrData(GoLiveMonth : string){
-    let params = new HttpParams();
-    params = params.append('GoLiveMonth',GoLiveMonth+"");
-    return this.http.post<ClrResponse>(`${this.Baseurl+"MonthWiseOldClrData"}`,params);
-  }
-  public UpdateMWDeltaComments(DeltaID : number,Jan_Comments : string,Feb_Comments : string,Mar_Comments : string,Apr_Comments : string,May_Comments : string,Jun_Comments : string,Jul_Comments : string,Aug_Comments : string,Sep_Comments : string,Oct_Comments : string,Nov_Comments : string,Dec_Comments : string){
-    let params = new HttpParams();
-    params = params.append('DeltaID',DeltaID+"");
-    params = params.append('Jan_Comments',Jan_Comments);
-    params = params.append('Feb_Comments',Feb_Comments);
-    params = params.append('Mar_Comments',Mar_Comments);
-    params = params.append('Apr_Comments',Apr_Comments);
-    params = params.append('May_Comments',May_Comments);
-    params = params.append('Jun_Comments',Jun_Comments);
-    params = params.append('Jul_Comments',Jul_Comments);
-    params = params.append('Aug_Comments',Aug_Comments);
-    params = params.append('Sep_Comments',Sep_Comments);
-    params = params.append('Oct_Comments',Oct_Comments);
-    params = params.append('Nov_Comments',Nov_Comments);
-    params = params.append('Dec_Comments',Dec_Comments);
-    return this.http.post<Responce>(`${this.Baseurl+"UpdateMWDeltaComments"}`,params);
+    return this.http.post<Responce>(`${this.Baseurl+"MonthlyTotalRevenueWithDelta"}`,params);
   }
   public RegionWiseRevenue(GoLiveYear: number,GoLiveMonth : string,ProjectLevel : string,Region : string,ProjectStatus : string,ImplementationType : string,Country : string,OwnerShip : string){
     let params = new HttpParams();
@@ -336,6 +302,19 @@ export class DashboardServiceService {
     params = params.append('Group_Name',Group_Name);
     return this.http.post<IMPSResponce>(`${this.Baseurl+"GroupNameCountIMPS"}`,params);
   }
+  public RegionWiseCountIMPS(Task_Start_Date : string,Milestone__Project_Start_Date : string,Milestone__Project_Status : string,Workspace__Project_Level : string,Milestone__Region : string,Milestone__Assignee__Reports_to__Full_Name : string,Group_Name: string){
+    let params = new HttpParams();
+    params = params.append('Task_Start_Date',Task_Start_Date);
+    params = params.append('Milestone__Project_Start_Date',Milestone__Project_Start_Date);
+    params = params.append('Milestone__Project_Status',Milestone__Project_Status);
+    params = params.append('Workspace__Project_Level',Workspace__Project_Level);
+    params = params.append('Milestone__Region',Milestone__Region);
+    // params = params.append('Milestone__Assignee__Full_Name',Milestone__Assignee__Full_Name);
+    params = params.append('Milestone__Assignee__Reports_to__Full_Name',Milestone__Assignee__Reports_to__Full_Name);
+    params = params.append('Group_Name',Group_Name);
+    return this.http.post<IMPSResponce>(`${this.Baseurl+"RegionWiseCountIMPS"}`,params);
+  }
+  
   public ImeetPSFilters(){
     let params = new HttpParams();
     return this.http.post<IMPSFilters>(`${this.Baseurl+"ImeetPSFilters"}`,params);
@@ -790,6 +769,9 @@ export class DashboardServiceService {
     let params = new HttpParams();
     params = params.append('GoLiveYear',GoLiveYear);
     params = params.append('Status',Status);
+    // let headers =  new HttpHeaders();
+    // console.log(params.has.length)
+    // headers = headers.set('Content-length', params.has.length+"").append('Content-length', params.has.length+"");
     // params = params.append('iMeet_Milestone___Project_Status', iMeet_Milestone___Project_Status+"");
     return this.http.post<ManualCLRDataResponse>(`${this.Baseurl+"GetCLRManualData"}`,params);
   }
@@ -886,9 +868,11 @@ export class DashboardServiceService {
   }
   public UpdateManualColumns(ManualID : number,
     Revenue_ID : number,
+    Priority : string,
     Implementation_Type : string,
     Pipeline_status : string,
     Pipeline_comments : string,
+    TXResourcing : string,
     // Service_configuration : string,
     ExpectedDecisionDate : string,
     Assignment_date : string,
@@ -901,9 +885,11 @@ export class DashboardServiceService {
     let params = new HttpParams();
     params = params.append('ManualID',ManualID+"");
     params = params.append('Revenue_ID',Revenue_ID+"");
+    params = params.append('Priority',Priority);
     params = params.append('Implementation_Type',Implementation_Type);
     params = params.append('Pipeline_status',Pipeline_status);
     params = params.append('Pipeline_comments',Pipeline_comments);
+    params = params.append('TXResourcing',TXResourcing);
     // params = params.append('Service_configuration',Service_configuration+"");
     params = params.append('ExpectedDecisionDate',ExpectedDecisionDate+"");
     params = params.append('Assignment_date',Assignment_date+"");
@@ -934,6 +920,7 @@ export class DashboardServiceService {
     return this.http.post<Responce>(`${this.Baseurl+"UpdateDigitalColumns"}`,params);
   }
   public UpdateManualPipelineColumns(ManualID : number,Revenue_ID : number,
+    Priority : string,
     //Client : string,
     //iMeet_Workspace_Title : string,
     //Date_added_to_the_CLR : string,
@@ -941,6 +928,7 @@ export class DashboardServiceService {
     //CLR_Country : string,
     Pipeline_status : string,
     Pipeline_comments : string,
+    TXResourcing : string,
     // Service_configuration : string,
     // OBT_Reseller___Direct : string,
     //Servicing_location : string,
@@ -980,9 +968,11 @@ export class DashboardServiceService {
     let params = new HttpParams();
     params = params.append('ManualID',ManualID+"");
     params = params.append('Revenue_ID',Revenue_ID+"");
+    params = params.append('Priority',Priority);
     params = params.append('Implementation_Type',Implementation_Type);
     params = params.append('Pipeline_status',Pipeline_status);
     params = params.append('Pipeline_comments',Pipeline_comments);
+    params = params.append('TXResourcing',TXResourcing);
     // params = params.append('Service_configuration',Service_configuration+"");
     params = params.append('ExpectedDecisionDate',ExpectedDecisionDate+"");
     params = params.append('Assignment_date',Assignment_date+"");
@@ -1010,9 +1000,11 @@ export class DashboardServiceService {
   }
   public ReplicatingManualData(Revenue_IDs : string,
     Revenue_ID : string,
+    Priority : string,
     Implementation_Type : string,
     Pipeline_status : string,
     Pipeline_comments : string,
+    TXResourcing : string,
     // Service_configuration : string,
     ExpectedDecisionDate : string,
     Assignment_date : string,
@@ -1025,9 +1017,11 @@ export class DashboardServiceService {
     GlobalProjectManager : string,
     RegionalProjectManager : string,
     AssigneeFullName : string,
+    Priority_check : boolean,
     Implementation_Type_check : boolean,
     Pipeline_status_check : boolean,
     Pipeline_comments_check : boolean,
+    TXResourcing_check : boolean,
     // Service_configuration_check : boolean,
     // OBT_Reseller___Direct_check : boolean,
     ExpectedDecision_date_check : boolean,
@@ -1063,9 +1057,11 @@ export class DashboardServiceService {
     let params = new HttpParams();
     params = params.append('Revenue_IDs',Revenue_IDs+"");
     params = params.append('Revenue_ID',Revenue_ID+"");
+    params = params.append('Priority',Priority);
     params = params.append('Implementation_Type',Implementation_Type);
     params = params.append('Pipeline_status',Pipeline_status);
     params = params.append('Pipeline_comments',Pipeline_comments);
+    params = params.append('TXResourcing',TXResourcing);
     // params = params.append('Service_configuration',Service_configuration+"");
     params = params.append('ExpectedDecisionDate',ExpectedDecisionDate+"");
     params = params.append('Assignment_date',Assignment_date+"");
@@ -1078,9 +1074,11 @@ export class DashboardServiceService {
     params = params.append('GlobalProjectManager',GlobalProjectManager+"");
     params = params.append('RegionalProjectManager',RegionalProjectManager+"");
     params = params.append('AssigneeFullName',AssigneeFullName+"");
+    params = params.append('Priority_check',Priority_check+"");
     params = params.append('Implementation_Type_check',Implementation_Type_check+"");
     params = params.append('Pipeline_status_check',Pipeline_status_check+"");
     params = params.append('Pipeline_comments_check',Pipeline_comments_check+"");
+    params = params.append('TXResourcing_check',TXResourcing_check+"");
     // params = params.append('Service_configuration_check',Service_configuration_check+"");
     params = params.append('ExpectedDecision_date_check',ExpectedDecision_date_check+"");
     params = params.append('Assignment_date_check',Assignment_date_check+"");
@@ -1201,7 +1199,7 @@ export class DashboardServiceService {
     return this.http.post<UserReportAccess>(`${this.Baseurl+"RequestAccessNotifications"}`,params);
   }
   public UpdatingAccessDetails(UID : string,IMPS:string,CTO : string,StageGate : string,LessonsLearnt : string,AutomatedCLR : string,CLREdits : string,MarketReport : string,MarketCommentsEdit: string,ELTReport : string,UserAccessStatus : string,UpdatedBy : string,CycleTime : string,CapacityTracker : string,ResourceUtilization : string,C_Hierarchy : string,C_HierarchyEdits : string,NPS : string,
-    NPSAdmin : string,NPSClientInfo : string,NPSEdit : string,SteeringCommittee : string,SteeringCommitteeEdits : string,DDO : string,DDOHome : string,DigitalReport : string,PerformanceAnalysis : string,){
+    NPSAdmin : string,NPSClientInfo : string,NPSEdit : string,SteeringCommittee : string,SteeringCommitteeEdits : string,DDO : string,DDOHome : string,PriorityReport : string,DigitalReport : string,PerformanceAnalysis : string,){
     let params = new HttpParams();
     params = params.append('UID',UID);
     params = params.append('IMPS',IMPS);
@@ -1226,6 +1224,7 @@ export class DashboardServiceService {
     params = params.append('SteeringCommitteeEdits',SteeringCommitteeEdits);
     params = params.append('DDO',DDO);
     params = params.append('DDOHome',DDOHome);
+    params = params.append('PriorityReport',PriorityReport);
     params = params.append('DigitalReport',DigitalReport);
     params = params.append('PerformanceAnalysis',PerformanceAnalysis);
     params = params.append('UserAccessStatus',UserAccessStatus);
@@ -1234,7 +1233,7 @@ export class DashboardServiceService {
   }
   // public
   // Start of Ad-hoc Api's
-  public AdhocInsert(RevenueID : string,Client : string,StartDate : string,GoLiveDate : string,Country : string,Region : string,Comments : string,ProjectStatus : string,GlobalDQSLead : string,GlobalCISOBTLead : string,RegionalCISOBTLead : string,LocalDigitalOBTLead : string,GlobalCISPortraitLead : string,RegionalCISPortraitLead : string,GlobalCISHRFeedSpecialist : string,GDS : string,ComplexityScore : string,ActivityType : string,Status : string,InsertedBy : string){
+  public AdhocInsert(RevenueID : string,Client : string,StartDate : string,GoLiveDate : string,Country : string,Region : string,Comments : string,ProjectStatus : string,GlobalDQSLead : string,GlobalCISOBTLead : string,RegionalCISOBTLead : string,LocalDigitalOBTLead : string,GlobalCISPortraitLead : string,RegionalCISPortraitLead : string,GlobalCISHRFeedSpecialist : string,GDS : string,ComplexityScore : string,ActivityType : string,Status : string,Priority : string,Pipeline_Comments : string,InsertedBy : string){
     let params = new HttpParams();
     params = params.append('RevenueID',RevenueID);
     params = params.append('Client',Client);
@@ -1255,10 +1254,12 @@ export class DashboardServiceService {
     params = params.append('ComplexityScore',ComplexityScore);
     params = params.append('ActivityType',ActivityType);
     params = params.append('Status',Status);
+    params = params.append('Priority',Priority);
+    params = params.append('Pipeline_Comments',Pipeline_Comments);
     params = params.append('InsertedBy',InsertedBy);
     return this.http.post<Responce>(`${this.Baseurl+"AdhocInsert"}`,params);
   }
-  public AdhocUpdate(RevenueID : string,Client : string,StartDate : string,GoLiveDate : string,Country : string,Region : string,Comments : string,ProjectStatus : string,GlobalDQSLead : string,GlobalCISOBTLead : string,RegionalCISOBTLead : string,LocalDigitalOBTLead : string,GlobalCISPortraitLead : string,RegionalCISPortraitLead : string,GlobalCISHRFeedSpecialist : string,GDS : string,ComplexityScore : string,ActivityType : string,Status : string,UpdatedBy : string){
+  public AdhocUpdate(RevenueID : string,Client : string,StartDate : string,GoLiveDate : string,Country : string,Region : string,Comments : string,ProjectStatus : string,GlobalDQSLead : string,GlobalCISOBTLead : string,RegionalCISOBTLead : string,LocalDigitalOBTLead : string,GlobalCISPortraitLead : string,RegionalCISPortraitLead : string,GlobalCISHRFeedSpecialist : string,GDS : string,ComplexityScore : string,ActivityType : string,Status : string,Priority : string,Pipeline_Comments : string,UpdatedBy : string){
     let params = new HttpParams();
     params = params.append('RevenueID',RevenueID);
     params = params.append('Client',Client);
@@ -1279,6 +1280,8 @@ export class DashboardServiceService {
     params = params.append('ComplexityScore',ComplexityScore);
     params = params.append('ActivityType',ActivityType);
     params = params.append('Status',Status);
+    params = params.append('Priority',Priority);
+    params = params.append('Pipeline_Comments',Pipeline_Comments);
     params = params.append('UpdatedBy',UpdatedBy);
     return this.http.post<Responce>(`${this.Baseurl+"AdhocUpdate"}`,params);
   }
@@ -1411,6 +1414,10 @@ export class DashboardServiceService {
     let params = new HttpParams();
     return this.http.post<Responce>(`${this.Baseurl+"TargetsCycleTimeData"}`,params);
   }
+  public GetReportsUpdatedON(){
+    let params = new HttpParams();
+    return this.http.post<Responce>(`${this.Baseurl+"GetReportsUpdatedON"}`,params);
+  }
   public TargetCycleTimeData(Year : string){
     let params = new HttpParams();
     params = params.append('Year',Year);
@@ -1448,7 +1455,7 @@ export class DashboardServiceService {
     params = params.append('UpdatedBy',UpdatedBy)
     return this.http.post<NPSData>(`${this.Baseurl+"NPSSendMail"}`,params);
   }
-  public NpsInsert(ClientName : string,Company : string,Email : string,Country : string,Region : string,RegionalProjectManager : string,GlobalProjectManager : string,LocalProjectManager : string,GoLiveDate : string,ClientType : string,CustomerContactNumber : string,Language : string,RecordStatus : string,InsertedBy : string){
+  public NpsInsert(ClientName : string,Company : string,Email : string,Country : string,Region : string,RegionalProjectManager : string,GlobalProjectManager : string,LocalProjectManager : string,GoLiveDate : string,ClientType : string,CustomerContactNumber : string,Language : string,RecordStatus : string,GlobalDigitalPM : string,RegionalDigitalPM : string,LocalDigitalPM : string,InsertedBy : string){
     let params = new HttpParams();
     params = params.append('ClientName',ClientName);
     params = params.append('ClientType',ClientType);
@@ -1464,10 +1471,13 @@ export class DashboardServiceService {
     params = params.append('Company',Company);
     params = params.append('GoLiveDate',GoLiveDate);
     params = params.append('RecordStatus',RecordStatus);
+    params = params.append('GlobalDigitalPM',GlobalDigitalPM);
+    params = params.append('RegionalDigitalPM',RegionalDigitalPM);
+    params = params.append('LocalDigitalPM',LocalDigitalPM);
     params = params.append('InsertedBy',InsertedBy);
     return this.http.post<NPSData>(`${this.Baseurl+"NpsInsert"}`,params);
   }
-  public NPSUpdate(NpsId : string,ClientName : string,Company : string,Email : string,Country : string,Region : string,RegionalProjectManager : string,GlobalProjectManager : string,LocalProjectManager : string,GoLiveDate : string,ClientType : string,CustomerContactNumber : string,Language : string,UpdatedBy : string){
+  public NPSUpdate(NpsId : string,ClientName : string,Company : string,Email : string,Country : string,Region : string,RegionalProjectManager : string,GlobalProjectManager : string,LocalProjectManager : string,GoLiveDate : string,ClientType : string,CustomerContactNumber : string,Language : string,GlobalDigitalPM : string,RegionalDigitalPM : string,LocalDigitalPM : string,UpdatedBy : string){
     let params = new HttpParams();
     params = params.append('NpsId',NpsId);
     params = params.append('ClientName',ClientName);
@@ -1483,6 +1493,9 @@ export class DashboardServiceService {
     params = params.append('CustomerContactNumber',CustomerContactNumber);
     params = params.append('Company',Company);
     params = params.append('GoLiveDate',GoLiveDate);
+    params = params.append('GlobalDigitalPM',GlobalDigitalPM);
+    params = params.append('RegionalDigitalPM',RegionalDigitalPM);
+    params = params.append('LocalDigitalPM',LocalDigitalPM);
     params = params.append('UpdatedBy',UpdatedBy);
     return this.http.post<NPSData>(`${this.Baseurl+"NPSUpdate"}`,params);
   }
@@ -1497,7 +1510,7 @@ export class DashboardServiceService {
     return this.http.post<Responce>(`${this.Baseurl+"NpsMaxRecipientId"}`,params);
   }
   public NPSViewUpdate(NpsId : string,ClientName : string,Company : string,Email : string,Country : string,Region : string,Language : string,RegionalProjectManager : string,GlobalProjectManager : string,LocalProjectManager : string,ClientType : string,CustomerContactNumber : string,DateServeySent : string,ClientScope : string,DateSurveyReceived : string,
-    Status : string,AssignLeaderForClosedLoop : string,OpprtunityId : string,NPSScore : string,NPSIndicator : string,NPSCommentsWhatwasPositive : string,NPSComments_Howcouldwehaveimproved : string,NPSComments_Whatistheonethingwecandotomakeyouhappier : string,ClientFeedback : string,Action : string,ReasonType : string,UpdatedBy : string,NPSCommentsOne : string,NPSCommentsTwo : string,NPSCommentsThree : string,RecordStatus : string){
+    Status : string,AssignLeaderForClosedLoop : string,OpprtunityId : string,NPSScore : string,NPSIndicator : string,NPSCommentsWhatwasPositive : string,NPSComments_Howcouldwehaveimproved : string,NPSComments_Whatistheonethingwecandotomakeyouhappier : string,ClientFeedback : string,Action : string,ReasonType : string,UpdatedBy : string,NPSCommentsOne : string,NPSCommentsTwo : string,NPSCommentsThree : string,RecordStatus : string,GlobalDigitalPM : string,RegionalDigitalPM : string,LocalDigitalPM : string){
     let params = new HttpParams();
     params = params.append('NpsId',NpsId);
     params = params.append('ClientName',ClientName);
@@ -1532,6 +1545,9 @@ export class DashboardServiceService {
     params = params.append('ClientFeedback',ClientFeedback);
     params = params.append('Action',Action);
     params = params.append('ReasonType',ReasonType);
+    params = params.append('GlobalDigitalPM',GlobalDigitalPM);
+    params = params.append('RegionalDigitalPM',RegionalDigitalPM);
+    params = params.append('LocalDigitalPM',LocalDigitalPM);
     params = params.append('UpdatedBy',UpdatedBy);
     params = params.append('RecordStatus',RecordStatus);
     return this.http.post<NPSData>(`${this.Baseurl+"NPSViewUpdate"}`,params);
@@ -1626,15 +1642,15 @@ export class DashboardServiceService {
     let params = new HttpParams();
     return this.http.post<SteeringCommitte>(`${this.Baseurl+"KnowledgeBase"}`,params);
   }
-  public SteeringCommitteeInsert(RecordStatus : string,ClientName : string,ClientType : string,ProjectLead : string,ProjectStatus : string,ProjectTrend : string,TotalBusineesVolume : Number,NewBusinessVolume : Number,
-    Region : string,Country : string,CurrentState : string,CompletedKeyDeliverables : string,ScheduledKeyDeliverables : string,AdditionalNotes : string,InsertedBy : string){
+  public SteeringCommitteeInsert(RecordStatus : string,ClientName : string,ClientType : string,ProjectLead : string,ProjectStatus : string,PreviousStatus : string,TotalBusineesVolume : Number,NewBusinessVolume : Number,
+    Region : string,Country : string,CurrentState : string,CompletedKeyDeliverables : string,ScheduledKeyDeliverables : string,AdditionalNotes : string,KeyAccomplishmentsSinceLastUpdateKeyDeliverables : string,KeyUpcomingActivitiesKeyDeliverables : string,CombinedKeyDeliverableOne : any,CombinedKeyDeliverableTwo : any,InsertedBy : string){
     let params = new HttpParams();
     params = params.append('RecordStatus',RecordStatus);
     params = params.append('ClientName',ClientName);
     params = params.append('ClientType',ClientType);
     params = params.append('ProjectLead',ProjectLead);
     params = params.append('ProjectStatus',ProjectStatus);
-    params = params.append('ProjectTrend',ProjectTrend);
+    params = params.append('PreviousStatus',PreviousStatus);
     params = params.append('TotalBusineesVolume',TotalBusineesVolume+"");
     params = params.append('NewBusinessVolume',NewBusinessVolume+"");
     params = params.append('Region',Region);
@@ -1643,6 +1659,10 @@ export class DashboardServiceService {
     params = params.append('CompletedKeyDeliverables',CompletedKeyDeliverables);
     params = params.append('ScheduledKeyDeliverables',ScheduledKeyDeliverables);
     params = params.append('AdditionalNotes',AdditionalNotes);
+    params = params.append('KeyAccomplishmentsSinceLastUpdateKeyDeliverables',KeyAccomplishmentsSinceLastUpdateKeyDeliverables);
+    params = params.append('KeyUpcomingActivitiesKeyDeliverables',KeyUpcomingActivitiesKeyDeliverables);
+    params = params.append('CombinedKeyDeliverableOne',CombinedKeyDeliverableOne);
+    params = params.append('CombinedKeyDeliverableTwo',CombinedKeyDeliverableTwo);
     params = params.append('InsertedBy',InsertedBy);
     return this.http.post<SteeringCommittee>(`${this.Baseurl+"SteeringCommitteeInsert"}`,params);
   }
@@ -1658,26 +1678,54 @@ export class DashboardServiceService {
     params = params.append('InsertedBy',InsertedBy);
     return this.http.post<SteeringCommittee>(`${this.Baseurl+"WavesInsert"}`,params);
   }
-  public RiskGapInsert(SCID : Number,Risks : string,RisksGaps : string,MitigationPlan : string,SteeringCommitteeSupportNeed : string,
-    DueDate : string,Owner : string,Status : string,InsertedBy : string){
+  public RiskGapInsert(SCID : Number,RiskCategory : string,Region : string,Country : string,Risks : string,RisksGaps : string,MitigationPlan : string,SteeringCommitteeSupportNeed : string,
+    SupportNeededDetails : string,Impact : string,Likelihood : string,DueDate : string,Owner : string,Status : string,InsertedBy : string){
     let params = new HttpParams();
     params = params.append('SCID',SCID+"");
+    params = params.append('RiskCategory',RiskCategory);
+    params = params.append('Region',Region);
+    params = params.append('Country',Country);
     params = params.append('Risks',Risks+"");
     params = params.append('RisksGaps',RisksGaps);
     params = params.append('MitigationPlan',MitigationPlan);
     params = params.append('SteeringCommitteeSupportNeed',SteeringCommitteeSupportNeed);
+    params = params.append('SupportNeededDetails',SupportNeededDetails);
+    params = params.append('Impact',Impact);
+    params = params.append('Likelihood',Likelihood);
     params = params.append('DueDate',DueDate);
     params = params.append('Owner',Owner);
     params = params.append('Status',Status);
     params = params.append('InsertedBy',InsertedBy);
     return this.http.post<SteeringCommittee>(`${this.Baseurl+"RiskGapInsert"}`,params);
   }
+  
+  public RiskGapUpdate(RGID : number,SCID : Number,RiskCategory : string,Region : string,Country : string,Risks : string,RisksGaps : string,MitigationPlan : string,SteeringCommitteeSupportNeed : string,
+    SupportNeededDetails : string,Impact : string,Likelihood : string,DueDate : string,Owner : string,Status : string,LastUpdatedBy : string){
+    let params = new HttpParams();
+    params = params.append('RGID',RGID+"");
+    params = params.append('SCID',SCID+"");
+    params = params.append('RiskCategory',RiskCategory);
+    params = params.append('Region',Region);
+    params = params.append('Country',Country);
+    params = params.append('Risks',Risks+"");
+    params = params.append('RisksGaps',RisksGaps);
+    params = params.append('MitigationPlan',MitigationPlan);
+    params = params.append('SteeringCommitteeSupportNeed',SteeringCommitteeSupportNeed);
+    params = params.append('SupportNeededDetails',SupportNeededDetails);
+    params = params.append('Impact',Impact);
+    params = params.append('Likelihood',Likelihood);
+    params = params.append('DueDate',DueDate);
+    params = params.append('Owner',Owner);
+    params = params.append('Status',Status);
+    params = params.append('LastUpdatedBy',LastUpdatedBy);
+    return this.http.post<SteeringCommittee>(`${this.Baseurl+"RiskGapUpdate"}`,params);
+  }
   public SteeringCommitteeData(){
     let params = new HttpParams();
     return this.http.post<SteeringCommittee>(`${this.Baseurl+"SteeringCommitteeData"}`,params);
   }
-  public SteeringCommitteeUpdate(SCID : number,RecordStatus : string,ClientName : string,ClientType : string,ProjectLead : string,ProjectStatus : string,ProjectTrend : string,TotalBusineesVolume : Number,NewBusinessVolume : Number,
-    Region : string,Country : string,CurrentState : string,CompletedKeyDeliverables : string,ScheduledKeyDeliverables : string,AdditionalNotes : string,LastUpdatedBy : string){
+  public SteeringCommitteeUpdate(SCID : number,RecordStatus : string,ClientName : string,ClientType : string,ProjectLead : string,ProjectStatus : string,PreviousStatus : string,TotalBusineesVolume : Number,NewBusinessVolume : Number,
+    Region : string,Country : string,CurrentState : string,CompletedKeyDeliverables : string,ScheduledKeyDeliverables : string,AdditionalNotes : string,KeyAccomplishmentsSinceLastUpdateKeyDeliverables : string,KeyUpcomingActivitiesKeyDeliverables : string,CombinedKeyDeliverableOne : any,CombinedKeyDeliverableTwo : any,LastUpdatedBy : string){
     let params = new HttpParams();
     params = params.append('SCID',SCID+"");
     params = params.append('RecordStatus',RecordStatus);
@@ -1685,7 +1733,7 @@ export class DashboardServiceService {
     params = params.append('ClientType',ClientType);
     params = params.append('ProjectLead',ProjectLead);
     params = params.append('ProjectStatus',ProjectStatus);
-    params = params.append('ProjectTrend',ProjectTrend);
+    params = params.append('PreviousStatus',PreviousStatus);
     params = params.append('TotalBusineesVolume',TotalBusineesVolume+"");
     params = params.append('NewBusinessVolume',NewBusinessVolume+"");
     params = params.append('Region',Region);
@@ -1694,6 +1742,10 @@ export class DashboardServiceService {
     params = params.append('CompletedKeyDeliverables',CompletedKeyDeliverables);
     params = params.append('ScheduledKeyDeliverables',ScheduledKeyDeliverables);
     params = params.append('AdditionalNotes',AdditionalNotes);
+    params = params.append('KeyAccomplishmentsSinceLastUpdateKeyDeliverables',KeyAccomplishmentsSinceLastUpdateKeyDeliverables);
+    params = params.append('KeyUpcomingActivitiesKeyDeliverables',KeyUpcomingActivitiesKeyDeliverables);
+    params = params.append('CombinedKeyDeliverableOne',CombinedKeyDeliverableOne);
+    params = params.append('CombinedKeyDeliverableTwo',CombinedKeyDeliverableTwo);
     params = params.append('LastUpdatedBy',LastUpdatedBy);
     return this.http.post<SteeringCommittee>(`${this.Baseurl+"SteeringCommitteeUpdate"}`,params);
   }
@@ -1709,21 +1761,6 @@ export class DashboardServiceService {
     params = params.append('Status',Status);
     params = params.append('LastUpdatedBy',LastUpdatedBy);
     return this.http.post<SteeringCommittee>(`${this.Baseurl+"WavesUpdate"}`,params);
-  }
-  public RiskGapUpdate(RGID : number,SCID : Number,Risks : string,RisksGaps : string,MitigationPlan : string,SteeringCommitteeSupportNeed : string,
-    DueDate : string,Owner : string,Status : string,LastUpdatedBy : string){
-    let params = new HttpParams();
-    params = params.append('RGID',RGID+"");
-    params = params.append('SCID',SCID+"");
-    params = params.append('Risks',Risks+"");
-    params = params.append('RisksGaps',RisksGaps);
-    params = params.append('MitigationPlan',MitigationPlan);
-    params = params.append('SteeringCommitteeSupportNeed',SteeringCommitteeSupportNeed);
-    params = params.append('DueDate',DueDate);
-    params = params.append('Owner',Owner);
-    params = params.append('Status',Status);
-    params = params.append('LastUpdatedBy',LastUpdatedBy);
-    return this.http.post<SteeringCommittee>(`${this.Baseurl+"RiskGapUpdate"}`,params);
   }
   public GetSCDataUsingOppID(Opportunity_ID : number){
     let params = new HttpParams();
@@ -1761,5 +1798,184 @@ export class DashboardServiceService {
     let params = new HttpParams();
     params = params.append('Opportunity_ID',Opportunity_ID+"");
     return this.http.post<Responce>(`${this.Baseurl+"GetCRMDataByUsingRevenueID"}`,params);
+  }
+  public GetCLRSelectedColumns(UID : string){
+    let params = new HttpParams();
+    params = params.append('UID',UID+"");
+    return this.http.post<Responce>(`${this.Baseurl+"GetCLRSelectedColumns"}`,params);
+  }
+  public CLRColumnsUpdate(UID : string,
+    Priority : string,
+    Implementation_Type : string,
+    Pipeline_status : string,
+    Pipeline_comments : string,
+    TXResourcing : string,
+    Service_location : string,
+    Service_configuration : string,
+    OBT_Reseller___Direct : string,
+    OBTAdoptionRate : string,
+    ExpectedDecisionDate_c : string,
+    Assignment_date_c : string,
+    ResourseRequestedDate_c : string,
+    UpdateOn_c : string,
+    OppVolume : string,
+    RevenueVolumeUSD : string,
+    Region : string,
+    OwnerShip : string,
+    ProjectStart_ForCycleTime_c : string,
+    GoLiveDate_c : string,
+    PerCompleted : string,
+    CycleTime : string,
+    CycleTimeCategories : string,
+    CycleTimeDelayCode : string,
+    EltClientDelayDescription : string,
+    ProjectStatus : string,
+    Milestone__Reason_Code : string,
+    CountryStatus : string,
+    ProjectLevel : string,
+    CompletedDate_c : string,
+    GlobalProjectManager : string,
+    RegionalProjectManager : string,
+    AssigneeFullName : string,
+    GlobalCISDQSLead : string,
+    APAC_DQS : string,
+    DQS_Import : string,
+    DQS_Support : string,
+    LATAM_DQS : string,
+    NORAM_DQS : string,
+    DQS_Operations : string,
+    GlobalCISOBTLead : string,
+    RegionalCISOBTLead : string,
+    LocalDigitalOBTLead : string,
+    GlobalCISPortraitLead : string,
+    RegionalCISPortraitLead : string,
+    GlobalCISHRFeedSpecialist : string,
+    GDS : string,
+    ActivityType : string,
+    ComplexityScore : string,
+    MilestoneTitle : string,
+    Group_Name : string,
+    Milestone__Project_Notes : string,
+    Milestone__Closed_Loop_Owner : string,
+    Workspace__ELT_Overall_Status : string,
+    Workspace__ELT_Overall_Comments : string,
+    NpsScore : string,
+    Customer_Row_ID : string,
+    Opportunity_ID : string,
+    AccountOwner : string,
+    Opportunity_Type : string,
+    Revenue_Status : string,
+    Revenue_Opportunity_Type : string,
+    Opportunity_Owner : string,
+    Opportunity_Category : string,
+    Revenue_Total_Transactions : string,
+    Line_Win_Probability : string,
+    Implementation_Fee__PSD_ : string,
+    Next_Step : string,
+    AwardedDate_c : string,
+    DataDescription : string,
+    Date_added_to_the_CLR_c : string,
+    CreatedDate_c : string,
+    Project_Effort : string,
+    Sales_Stage_Name : string,
+    AccountCategory : string,
+    SOWStatus : string,
+    ImplementationReady : string,
+    RecordHistory_C : string,
+    DataSourceType : string,
+    DataQuality : string){
+    let params = new HttpParams();
+    params = params.append('UID',UID+"");
+    params = params.append('Priority',Priority+"");
+    params = params.append('Implementation_Type',Implementation_Type+"");
+    params = params.append('Pipeline_status',Pipeline_status+"");
+    params = params.append('Pipeline_comments',Pipeline_comments+"");
+    params = params.append('TXResourcing',TXResourcing+"");
+    params = params.append('Service_location',Service_location+"");
+    params = params.append('Service_configuration',Service_configuration+"");
+    params = params.append('OBT_Reseller___Direct',OBT_Reseller___Direct+"");
+    params = params.append('OBTAdoptionRate',OBTAdoptionRate+"");
+    params = params.append('ExpectedDecisionDate_c',ExpectedDecisionDate_c+"");
+    params = params.append('Assignment_date_c',Assignment_date_c+"");
+    params = params.append('ResourseRequestedDate_c',ResourseRequestedDate_c+"");
+    params = params.append('UpdateOn_c',UpdateOn_c+"");
+    params = params.append('OppVolume',OppVolume+"");
+    params = params.append('RevenueVolumeUSD',RevenueVolumeUSD+"");
+    params = params.append('Region',Region+"");
+    params = params.append('OwnerShip',OwnerShip+"");
+    params = params.append('ProjectStart_ForCycleTime_c',ProjectStart_ForCycleTime_c+"");
+    params = params.append('GoLiveDate_c',GoLiveDate_c+"");
+    params = params.append('PerCompleted',PerCompleted+"");
+    params = params.append('CycleTime',CycleTime+"");
+    params = params.append('CycleTimeCategories',CycleTimeCategories+"");
+    params = params.append('CycleTimeDelayCode',CycleTimeDelayCode+"");
+    params = params.append('EltClientDelayDescription',EltClientDelayDescription+"");
+    params = params.append('ProjectStatus',ProjectStatus+"");
+    params = params.append('Milestone__Reason_Code',Milestone__Reason_Code+"");
+    params = params.append('CountryStatus',CountryStatus+"");
+    params = params.append('ProjectLevel',ProjectLevel+"");
+    params = params.append('CompletedDate_c',CompletedDate_c+"");
+    params = params.append('GlobalProjectManager',GlobalProjectManager+"");
+    params = params.append('RegionalProjectManager',RegionalProjectManager+"");
+    params = params.append('AssigneeFullName',AssigneeFullName+"");
+    params = params.append('GlobalCISDQSLead',GlobalCISDQSLead+"");
+    params = params.append('APAC_DQS',APAC_DQS+"");
+    params = params.append('DQS_Import',DQS_Import+"");
+    params = params.append('DQS_Support',DQS_Support+"");
+    params = params.append('LATAM_DQS',LATAM_DQS+"");
+    params = params.append('NORAM_DQS',NORAM_DQS+"");
+    params = params.append('DQS_Operations',DQS_Operations+"");
+    params = params.append('GlobalCISOBTLead',GlobalCISOBTLead+"");
+    params = params.append('RegionalCISOBTLead',RegionalCISOBTLead+"");
+    params = params.append('LocalDigitalOBTLead',LocalDigitalOBTLead+"");
+    params = params.append('GlobalCISPortraitLead',GlobalCISPortraitLead+"");
+    params = params.append('RegionalCISPortraitLead',RegionalCISPortraitLead+"");
+    params = params.append('GlobalCISHRFeedSpecialist',GlobalCISHRFeedSpecialist+"");
+    params = params.append('GDS',GDS+"");
+    params = params.append('ActivityType',ActivityType+"");
+    params = params.append('ComplexityScore',ComplexityScore+"");
+    params = params.append('MilestoneTitle',MilestoneTitle+"");
+    params = params.append('Group_Name',Group_Name+"");
+    params = params.append('Milestone__Project_Notes',Milestone__Project_Notes+"");
+    params = params.append('Milestone__Closed_Loop_Owner',Milestone__Closed_Loop_Owner+"");
+    params = params.append('Workspace__ELT_Overall_Status',Workspace__ELT_Overall_Status+"");
+    params = params.append('Workspace__ELT_Overall_Comments',Workspace__ELT_Overall_Comments+"");
+    params = params.append('NpsScore',NpsScore+"");
+    params = params.append('Customer_Row_ID',Customer_Row_ID+"");
+    params = params.append('Opportunity_ID',Opportunity_ID+"");
+    params = params.append('AccountOwner',AccountOwner+"");
+    params = params.append('Opportunity_Type',Opportunity_Type+"");
+    params = params.append('Revenue_Status',Revenue_Status+"");
+    params = params.append('Revenue_Opportunity_Type',Revenue_Opportunity_Type+"");
+    params = params.append('Opportunity_Owner',Opportunity_Owner+"");
+    params = params.append('Opportunity_Category',Opportunity_Category+"");
+    params = params.append('Revenue_Total_Transactions',Revenue_Total_Transactions+"");
+    params = params.append('Line_Win_Probability',Line_Win_Probability+"");
+    params = params.append('Implementation_Fee__PSD_',Implementation_Fee__PSD_+"");
+    params = params.append('Next_Step',Next_Step+"");
+    params = params.append('AwardedDate_c',AwardedDate_c+"");
+    params = params.append('DataDescription',DataDescription+"");
+    params = params.append('Date_added_to_the_CLR_c',Date_added_to_the_CLR_c+"");
+    params = params.append('CreatedDate_c',CreatedDate_c+"");
+    params = params.append('Project_Effort',Project_Effort+"");
+    params = params.append('Sales_Stage_Name',Sales_Stage_Name+"");
+    params = params.append('AccountCategory',AccountCategory+"");
+    params = params.append('SOWStatus',SOWStatus+"");
+    params = params.append('ImplementationReady',ImplementationReady+"");
+    params = params.append('RecordHistory_C',RecordHistory_C+"");
+    params = params.append('DataSourceType',DataSourceType+"");
+    params = params.append('DataQuality',DataQuality+"");
+    return this.http.post<Responce>(`${this.Baseurl+"CLRColumnsUpdate"}`,params);
+  }
+
+  public PriorityReportFiltersList(){
+    let params = new HttpParams();
+    return this.http.post<Filters>(`${this.Baseurl+"PriorityReportFiltersList"}`,params);
+  }
+  public GetPriorityData(ProjectStatus : string,Opportunity_Type : string){
+    let params = new HttpParams();
+    params = params.append('ProjectStatus',ProjectStatus+"");
+    params = params.append('Opportunity_Type',Opportunity_Type);
+    return this.http.post<Responce>(`${this.Baseurl+"GetPriorityData"}`,params);
   }
 }

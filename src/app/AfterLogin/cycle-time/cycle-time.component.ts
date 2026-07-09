@@ -4,7 +4,7 @@ import { DashboardServiceService } from '../../dashboard-service.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Chart } from 'chart.js';
 import { DashboardComponent } from '../dashboard/dashboard.component';
-import { ExcelService } from '../../excel.service';
+import { ExcelSXService } from '../../excelsx.service';
 import { LivedashboardComponent } from '../livedashboard/livedashboard.component';
 import { Data } from 'src/app/Models/Responce';
 import { CLRCommentdailog } from '../automated-clr/automated-clr.component';
@@ -46,7 +46,7 @@ export class CycleTimeComponent implements OnInit {
   // 'TargetH1',
   displayedColumns_data: string[] = ['Client', 'RevenueID','Workspace_Title','MilestoneTitle','ImplementationType','Region','Country','ProjectStatus','ProjectLevel','GoLive','ProjectStart','CycleTime','CycleTimeCategories','CycleTimeDelayCode','EltClientDelayDescription','GoLiveYear','GoLiveMonth'];
   constructor(public datepipe : DatePipe,public service : DashboardServiceService,public dialog: MatDialog,
-    public dashboard : LivedashboardComponent,private excelService:ExcelService) {
+    public dashboard : LivedashboardComponent,private excelxsService : ExcelSXService) {
     //set screenWidth on page load
     this.screenWidth = window.innerWidth;
     this.screenHeight = window.innerHeight;
@@ -876,7 +876,21 @@ export class CycleTimeComponent implements OnInit {
             'CycleTimeDelayCode' : o.CycleTimeDelayCode
           };
         });
-        this.excelService.exportAsExcelFile(CustomizedData, 'CycleTime Data');
+        this.excelxsService.exportAsExcelFile(
+          [
+            {
+              sheetName: 'Cycle Time Data',
+              data: CustomizedData,
+              defaultBackgroundColor : 'FF34495E',
+              defaultTextColor : 'FFFFFFFF',
+              columnFormats: {
+                'dd/MMM/yyyy' : ['GoLiveDate','ProjectStart_ForCycleTime'], // Negative and Positive Numbers with 2 decimals with Dolor Symbol
+                '0' : ['RevenueID','CycleTime','GoLiveYear']
+              },
+            },
+          ],
+          'Cycle Time Data'
+        );
       }
       //this.dataSource = this.CLRData
       this.dashboard.ShowSpinnerHandler(false);

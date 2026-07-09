@@ -1,10 +1,11 @@
 <div style="max-height : 500px;overflow: auto;">
-  <p style="font-size: 14px;color: black;font-weight: bold;letter-spacing: 1px;">Total Calculated Effort :- {{TotalEffort}}</p>
+  <p style="font-size: 14px;color: black;font-weight: bold;letter-spacing: 1px;">Total Calculated Effort :- <span style="font-weight: normal;">{{TotalEffort}}</span>,   Manager :- <span style="font-weight: normal;">{{Manager}}</span>,   Selected Week :- <span style="font-weight: normal;">{{SelectedWeek}}</span></p>
   <table class="tooltip_table">
     <tr>
       <th class="tooltip_th">Client</th>
       <th class="tooltip_th">Revenue ID</th>
       <th class="tooltip_th">Project Level</th>
+      <th class="tooltip_th">Country</th>
       <th *ngIf="PM" class="tooltip_th">Global Project Manager</th>
       <th *ngIf="PM" class="tooltip_th">Regional Project Manager</th>
       <th *ngIf="PM" class="tooltip_th">Local Project Manager</th>
@@ -51,10 +52,11 @@
       </ng-template>
       <th *ngIf="PM && Digital" class="tooltip_th" [options]="tooltipOptions" [tooltip]="HtmlContentCE" content-type="template">Calculated Effort</th>
     </tr>
-    <tr *ngFor="let data of TrackerData">
+    <tr *ngFor="let data of Tracker_Data">
       <td class="tooltip_td">{{data.Client}}</td>
       <td class="tooltip_td">{{data.RevenueID}}</td>
       <td class="tooltip_td">{{data.Project_Level}}</td>
+      <td class="tooltip_td">{{data.Country}}</td>
       <td *ngIf="PM" class="tooltip_td">{{data.GManager}}</td>
       <td *ngIf="PM" class="tooltip_td">{{data.RManager}}</td>
       <td *ngIf="PM" class="tooltip_td">{{data.LManager}}</td>
@@ -65,7 +67,7 @@
       <td *ngIf="Digital" class="tooltip_td">{{data.RegionalDigitalPortraitLead}}</td>
       <td *ngIf="Digital" class="tooltip_td">{{data.GlobalDigitalHRFeedSpeciallist}}</td>
       <td *ngIf="PM" class="tooltip_td">{{data.ProjectEffort}}</td>
-      <td *ngIf="Digital" class="tooltip_td">{{data.ComplexityScore}}</td>
+      <td *ngIf="Digital" class="tooltip_td">{{data.Complexity_Score}}</td>
       <td *ngIf="PM && Digital" class="tooltip_td" >{{data.CalculatedEffort}}</td>
     </tr>
     <!-- <tr style="position: sticky;bottom: 0px;">

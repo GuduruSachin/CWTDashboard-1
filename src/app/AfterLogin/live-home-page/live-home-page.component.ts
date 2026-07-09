@@ -27,9 +27,13 @@ export class LiveHomePageComponent implements OnInit {
   // screenWidth : number;screenHeight  : number;
   // imageUrl : string = "assets/images/cwt.png";
   CurrentMonthVolume: string;
+  CurrentMonthNActiveVolume: string;
   CurrentMonthRecords: string;
+  CurrentMonthNActiveRecords: string;
   NextMonthVolume: string;
+  NextMonthNActiveVolume: string;
   NextMonthRecords: string;
+  NextMonthNActiveRecords: string;
   PreMonthVolume: string;
   PreMonthRecords: string;
   RoyMonthVolume: string;
@@ -99,9 +103,13 @@ export class LiveHomePageComponent implements OnInit {
       this.ProjectsCount = data.Projects;
       this.PipelineVolume = this.NumberConverter(data.PipelineVolume);
       this.CurrentMonthVolume = this.NumberConverter(data.CurrentMonthVolume);
+      this.CurrentMonthNActiveVolume = this.NumberConverter(data.CurrentMonthNActiveVolume);
       this.CurrentMonthRecords = data.CurrentMonthRecords+"";
+      this.CurrentMonthNActiveRecords = data.CurrentMonthNActiveRecords+"";
       this.NextMonthVolume = this.NumberConverter(data.NextMonthVolume);
+      this.NextMonthNActiveVolume = this.NumberConverter(data.NextMonthNActiveVolume);
       this.NextMonthRecords = data.NextMonthRecords+"";
+      this.NextMonthNActiveRecords = data.NextMonthNActiveRecords+"";
       this.PreMonthVolume = this.NumberConverter(data.PreMonthVolume);
       this.PreMonthRecords = data.PreMonthRecords+"";
       this.RoyMonthVolume = this.NumberConverter(data.RoyMonthVolume);
@@ -283,10 +291,10 @@ export class LiveHomePageComponent implements OnInit {
         },
         options : options3,
       })
-      if(Region == "APAC,EMEA,LATAM,NORAM,Global"){
-      }else{
-        this.onCountrychange();
-      }
+      // if(Region == "APAC,EMEA,LATAM,NORAM,Global"){
+      // }else{
+      //   this.onCountrychange();
+      // }
       this.dashboard.ShowSpinnerHandler(false);
     })
   }
@@ -376,9 +384,13 @@ export class LiveHomePageComponent implements OnInit {
         this.ProjectsCount = data.Projects;
         this.PipelineVolume = this.NumberConverter(data.PipelineVolume);
         this.CurrentMonthVolume = this.NumberConverter(data.CurrentMonthVolume);
+        this.CurrentMonthNActiveVolume = this.NumberConverter(data.CurrentMonthNActiveVolume);
         this.CurrentMonthRecords = data.CurrentMonthRecords+"";
+        this.CurrentMonthNActiveRecords = data.CurrentMonthNActiveRecords+"";
         this.NextMonthVolume = this.NumberConverter(data.NextMonthVolume);
+        this.NextMonthNActiveVolume = this.NumberConverter(data.NextMonthNActiveVolume);
         this.NextMonthRecords = data.NextMonthRecords+"";
+        this.NextMonthNActiveRecords = data.NextMonthNActiveRecords+"";
         this.PreMonthVolume = this.NumberConverter(data.PreMonthVolume);
         this.PreMonthRecords = data.PreMonthRecords+"";
         this.RoyMonthVolume = this.NumberConverter(data.RoyMonthVolume);

@@ -16,7 +16,7 @@
         </div>
     </div>
 </div>
-<div *ngIf="ShowForm" class="mat-elevation-z2" style="margin: 15px 20px 0px 20px;">
+<div *ngIf="displayNPSClientForm" class="mat-elevation-z2" style="margin: 15px 20px 0px 20px;">
     <div class="row col-md-12" style="margin: 0px;padding : 0px">
         <div class="col-md-12">
             <label class="heading">{{HeadingName}}</label>
@@ -135,7 +135,7 @@
         </div>
         <div class="col-md-4">
             <mat-form-field class="mat-form">
-                <mat-label style="font-size: 15px;">Global Manager</mat-label>
+                <mat-label style="font-size: 15px;">Global Project Manager</mat-label>
                 <mat-select [formControl]="GManager">
                     <mat-option>
                         <ngx-mat-select-search
@@ -150,7 +150,7 @@
         </div>
         <div class="col-md-4">
             <mat-form-field class="mat-form">
-                <mat-label style="font-size: 15px;">Regional Manager</mat-label>
+                <mat-label style="font-size: 15px;">Regional Project Manager</mat-label>
                 <mat-select [formControl]="RManager">
                     <mat-option>
                         <ngx-mat-select-search
@@ -165,7 +165,7 @@
         </div>
         <div class="col-md-4">
             <mat-form-field class="mat-form" >
-                <mat-label style="font-size: 15px;">Local Manager</mat-label>
+                <mat-label style="font-size: 15px;">Local Project Manager</mat-label>
                 <mat-select [formControl]="LManager">
                     <mat-option>
                         <ngx-mat-select-search
@@ -175,6 +175,51 @@
                         </ngx-mat-select-search>
                     </mat-option>
                     <mat-option *ngFor="let manager of AFNData | async" [value]="manager.GlobalProjectManager">{{manager.GlobalProjectManager}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="col-md-4">
+            <mat-form-field class="mat-form" >
+                <mat-label style="font-size: 15px;">Global Digital OBT Lead</mat-label>
+                <mat-select [formControl]="GDManager">
+                    <mat-option>
+                        <ngx-mat-select-search
+                          [formControl]="GDPMsearch"
+                          placeholderLabel=""
+                          noEntriesFoundLabel="'no match found'">
+                        </ngx-mat-select-search>
+                    </mat-option>
+                    <mat-option *ngFor="let manager of GDPMData | async" [value]="manager.GlobalProjectManager">{{manager.GlobalProjectManager}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="col-md-4">
+            <mat-form-field class="mat-form" >
+                <mat-label style="font-size: 15px;">Regional Digital OBT Lead</mat-label>
+                <mat-select [formControl]="RDManager">
+                    <mat-option>
+                        <ngx-mat-select-search
+                          [formControl]="RDPMsearch"
+                          placeholderLabel=""
+                          noEntriesFoundLabel="'no match found'">
+                        </ngx-mat-select-search>
+                    </mat-option>
+                    <mat-option *ngFor="let manager of RDPMData | async" [value]="manager.GlobalProjectManager">{{manager.GlobalProjectManager}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="col-md-4">
+            <mat-form-field class="mat-form" >
+                <mat-label style="font-size: 15px;">Local Digital OBT Lead</mat-label>
+                <mat-select [formControl]="LDManager">
+                    <mat-option>
+                        <ngx-mat-select-search
+                          [formControl]="LDPMsearch"
+                          placeholderLabel=""
+                          noEntriesFoundLabel="'no match found'">
+                        </ngx-mat-select-search>
+                    </mat-option>
+                    <mat-option *ngFor="let manager of LDPMData | async" [value]="manager.GlobalProjectManager">{{manager.GlobalProjectManager}}</mat-option>
                 </mat-select>
             </mat-form-field>
         </div>
@@ -205,8 +250,8 @@
         </div>
     </div>
 </div>
-<div style="margin: 15px 20px 20px 20px;">
-    <div class="row col-md-12" style="margin: 0px;padding : 0px">
+<div style="margin: 15px 20px 20px 20px;" >
+    <div class="row col-md-12" style="margin: 0px;padding : 0px" *ngIf="!displayNPSClientForm">
         <div class="example-container mat-elevation-z2" [ngStyle]="{'height' : (screenHeight-230)+'px'}" style="border: 2px solid black;">
             <table mat-table [dataSource]="dataSource" matSort>
                 <ng-container matColumnDef="Company">

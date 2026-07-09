@@ -73,7 +73,7 @@
     </div>
 </div>
 <div style="margin: 15px 20px 20px 20px;">
-    <div class="row col-md-12" style="margin: 0px;padding : 0px">
+    <div *ngIf="!ShowForm" class="row col-md-12" style="margin: 0px;padding : 0px">
         <div class="example-container mat-elevation-z2" [ngStyle]="{'height' : (screenHeight-230)+'px'}" style="border: 2px solid black;">
             <table mat-table [dataSource]="dataSource" matSort>
                 <ng-container matColumnDef="Con">

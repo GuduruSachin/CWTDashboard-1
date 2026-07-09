@@ -2,7 +2,6 @@ import { Component, Inject, OnInit, ViewChild, ViewEncapsulation } from '@angula
 import { DashboardServiceService } from '../../dashboard-service.service';
 import { IMPSData } from '../../Models/IMPSResponse';
 import { Chart} from 'chart.js';
-import { ExcelService } from '../../excel.service';
 import { AssigneeReportTO, Assignee, Region, ProjectLevel, ProjectStatus } from '../../Models/IMPSFilters';
 import { DatePipe } from '@angular/common';
 import { MatTableDataSource } from '@angular/material/table';
@@ -13,6 +12,8 @@ import { LivedashboardComponent } from '../livedashboard/livedashboard.component
 import { GroupName } from 'src/app/Models/CtoFilters';
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { ExcelSXService } from '../../excelsx.service';
+
 export interface IMPSDailog {
   Dailog_WTitle : string;
   Dailog_PStatus : string;
@@ -43,13 +44,16 @@ export class ImplementationProjectStatusComponent implements OnInit {
   Apply_disable : boolean;
 
   GroupNames = [];
+  Regions = [];
   GroupNamesCount = [];
+  RegionsCount = [];
   LeadersCount = [];
   Leaders = [];
   chart : any;
   PSchart : any;
   PLchart : any;
   GNchart : any;
+  Regionchart : any;
   dataSource;
   dateStart : Date;
   dateEnd : Date;
@@ -63,7 +67,7 @@ export class ImplementationProjectStatusComponent implements OnInit {
   LoginUID : string;
   displayedColumns: string[] = ['Workspace_Title','Milestone_Title','Milestone__Assignee__Reports_to__Full_Name','Milestone__Assignee__Full_Name','Task_Start_Date_c','Group_Name','Milestone__Region','Milestone__Project_Status','Workspace__Project_Level','Milestone__CRM_Revenue_ID__','Task_Title','Task__Task_Record_ID_Key','Workspace__CRM_Customer_Row_ID','Workspace__ELT_Overall_Status','Workspace__ELT_Overall_Comments','Milestone__Country','C__Complete','Milestone__Project_Notes','Milestone__Reason_Code','Milestone__Closed_Loop_Owner'];
   @ViewChild(MatSort, {static: true}) sort: MatSort;
-  constructor(public datepipe : DatePipe,public dialog: MatDialog,public service : DashboardServiceService,private excelService:ExcelService,public dashboard : LivedashboardComponent) 
+  constructor(public datepipe : DatePipe,public dialog: MatDialog,public service : DashboardServiceService,private excelxsService : ExcelSXService,public dashboard : LivedashboardComponent) 
   {
     //set screenWidth on page load
     this.screenWidth = window.innerWidth;
@@ -81,7 +85,7 @@ export class ImplementationProjectStatusComponent implements OnInit {
   ResetFilters(){
     this.LoginUID = localStorage.getItem("UID");
     var today = new Date();
-    this.dateStart = new Date("01/01/2015");
+    this.dateStart = new Date("01/01/"+(today.getFullYear()));
     this.dateEnd = new Date("01/01/"+(today.getFullYear()+5));
     // this.dateStart = new Date("01/01/"+today.getFullYear());
     // this.dateEnd = new Date("01/01/"+(today.getFullYear()+1));
@@ -489,104 +493,215 @@ export class ImplementationProjectStatusComponent implements OnInit {
             this.GroupNames.push(GNdata.Data[i].Group_Name.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' '));
           }
           this.GroupNamesCount.push(GNdata.Data[i].WorkspaceCount);
-          var data = {
-            labels : this.GroupNames,
-            datasets : [
-              {
-                label : "Total Count By Group Names ("+Math.round(GNdata.Data.map(t => t.WorkspaceCount).reduce((acc,value) => acc + value,0))+")",
-                data : this.GroupNamesCount,
-                backgroundColor : 'rgba(48, 219, 193 ,0.4)',
-                borderColor : 'rgba(48, 219, 193 ,1)',
-                hoverBackgroundColor : 'rgba(48, 219, 193,1)',
-                // backgroundColor : 'rgb(52, 152, 219 ,0.4)',
-                // borderColor : 'rgb(52, 152, 219 ,1)',
-                // hoverBackgroundColor : 'rgb(52, 152, 219 ,1)',
-                borderWidth: 2,
-                fill : false
-                //backgroundColor: 'rgb(70, 191, 189,0.7)',//rgb(59, 138, 217,0.9)',
-                //           fill : false,
-              }
-            ]
-          };
-          var options = {
-            responsive : true,
-            legend: {
-              display: true,
-              position : 'bottom' as 'bottom',
-              fullWidth : true,
-              labels: {
-                fontColor: '#000000',
-                fontSize :  12,
-                padding : 10,
-                fontStyle : 'bold',
-                fontFamily : 'Arial',
-              }
-            },
-            title: {
-              display: true,
-              text: ' '
-            },
-            scales: {
-              xAxes: [{
-                ticks: {
-                  beginAtZero: true,
-                  fontSize : 10,
-                  fontStyle : 'bold',
-                  fontColor : '#000000',
-                  fontFamily : 'Arial',
-                },
-              }],
-              yAxes: [{
-                ticks: {
-                  beginAtZero:true,
-                  fontSize : 10,
-                  fontStyle : 'bold',
-                  fontColor : '#000000',
-                  fontFamily : 'Arial',
-                },
-                gridLines: {
-                  color: "rgba(0, 0, 0, 0)",
-                }
-              }]
-            },
-            plugins: {
-              datalabels: {
-                anchor : 'end' as 'end',
-                align : 'end' as 'end',
-                color : 'black',
-                backgroundColor : 'rgb(48, 219, 193 ,0.4)',
-                padding : 3,
-                borderRadius : 6,
-                font: {
-                  size: 11,
-                  weight: 'bold' as 'bold'
-                }
-              }
-            },
-            tooltips: {
-              mode: 'index' as 'index',
-              intersect: false,
-              callbacks: {
-                label: function(tooltipItem) {
-                  return tooltipItem.yLabel;
-                }
-              }
-            },
-          };
-          var canvas : any = document.getElementById("GNcanvas");
-          var ctx = canvas.getContext("2d");
-          if(this.GNchart != undefined){
-            this.GNchart.destroy();
-          }
-          this.GNchart = new Chart(ctx, {
-            plugins: [ChartDataLabels],
-            type: 'horizontalBar',
-            data: data,
-            options: options
-          });
-          this.dashboard.ShowSpinnerHandler(false);
         }
+        var data = {
+          labels : this.GroupNames,
+          datasets : [
+            {
+              label : "Total Count By Group Names ("+Math.round(GNdata.Data.map(t => t.WorkspaceCount).reduce((acc,value) => acc + value,0))+")",
+              data : this.GroupNamesCount,
+              backgroundColor : 'rgba(48, 219, 193 ,0.4)',
+              borderColor : 'rgba(48, 219, 193 ,1)',
+              hoverBackgroundColor : 'rgba(48, 219, 193,1)',
+              // backgroundColor : 'rgb(52, 152, 219 ,0.4)',
+              // borderColor : 'rgb(52, 152, 219 ,1)',
+              // hoverBackgroundColor : 'rgb(52, 152, 219 ,1)',
+              borderWidth: 2,
+              fill : false
+              //backgroundColor: 'rgb(70, 191, 189,0.7)',//rgb(59, 138, 217,0.9)',
+              //           fill : false,
+            }
+          ]
+        };
+        var options = {
+          responsive : true,
+          legend: {
+            display: true,
+            position : 'bottom' as 'bottom',
+            fullWidth : true,
+            labels: {
+              fontColor: '#000000',
+              fontSize :  12,
+              padding : 10,
+              fontStyle : 'bold',
+              fontFamily : 'Arial',
+            }
+          },
+          title: {
+            display: true,
+            text: ' '
+          },
+          scales: {
+            xAxes: [{
+              ticks: {
+                beginAtZero: true,
+                fontSize : 10,
+                fontStyle : 'bold',
+                fontColor : '#000000',
+                fontFamily : 'Arial',
+              },
+            }],
+            yAxes: [{
+              ticks: {
+                beginAtZero:true,
+                fontSize : 10,
+                fontStyle : 'bold',
+                fontColor : '#000000',
+                fontFamily : 'Arial',
+              },
+              gridLines: {
+                color: "rgba(0, 0, 0, 0)",
+              }
+            }]
+          },
+          plugins: {
+            datalabels: {
+              anchor : 'end' as 'end',
+              align : 'end' as 'end',
+              color : 'black',
+              backgroundColor : 'rgb(48, 219, 193 ,0.4)',
+              padding : 3,
+              borderRadius : 6,
+              font: {
+                size: 11,
+                weight: 'bold' as 'bold'
+              }
+            }
+          },
+          tooltips: {
+            mode: 'index' as 'index',
+            intersect: false,
+            callbacks: {
+              label: function(tooltipItem) {
+                return tooltipItem.yLabel;
+              }
+            }
+          },
+        };
+        var canvas : any = document.getElementById("GNcanvas");
+        var ctx = canvas.getContext("2d");
+        if(this.GNchart != undefined){
+          this.GNchart.destroy();
+        }
+        this.GNchart = new Chart(ctx, {
+          plugins: [ChartDataLabels],
+          type: 'horizontalBar',
+          data: data,
+          options: options
+        });
+        this.dashboard.ShowSpinnerHandler(false);
+        
       });
+      this.Regions = [];
+      this.RegionsCount = [];
+      this.dashboard.ShowSpinnerHandler(true);
+      this.service.RegionWiseCountIMPS(this.dateStart.toLocaleDateString(),this.dateEnd.toLocaleDateString(),this.SelectedStatus,this.SelectedLevel,this.SelectedRegion,this.SelectedAssigneReport,this.SelectedGroupName).subscribe(Rdata => {
+        for(let i = 0; i<Rdata.Data.length;i++){
+          if(Rdata.Data[i].Region == null){
+            this.Regions.push("(Blanks)");
+          }
+          else{
+            this.Regions.push(Rdata.Data[i].Region.toUpperCase());
+          }
+          this.RegionsCount.push(Rdata.Data[i].WorkspaceCount);
+        }
+        var data = {
+          labels : this.Regions,
+          datasets : [
+            {
+              label : "Total Count By Regions ("+Math.round(Rdata.Data.map(t => t.WorkspaceCount).reduce((acc,value) => acc + value,0))+")",
+              data : this.RegionsCount,
+              backgroundColor : 'rgba(48, 219, 193 ,0.4)',
+              borderColor : 'rgba(48, 219, 193 ,1)',
+              hoverBackgroundColor : 'rgba(48, 219, 193,1)',
+              // backgroundColor : 'rgb(52, 152, 219 ,0.4)',
+              // borderColor : 'rgb(52, 152, 219 ,1)',
+              // hoverBackgroundColor : 'rgb(52, 152, 219 ,1)',
+              borderWidth: 2,
+              fill : false
+              //backgroundColor: 'rgb(70, 191, 189,0.7)',//rgb(59, 138, 217,0.9)',
+              //           fill : false,
+            }
+          ]
+        };
+        var options = {
+          responsive : true,
+          legend: {
+            display: true,
+            position : 'bottom' as 'bottom',
+            fullWidth : true,
+            labels: {
+              fontColor: '#000000',
+              fontSize :  12,
+              padding : 10,
+              fontStyle : 'bold',
+              fontFamily : 'Arial',
+            }
+          },
+          title: {
+            display: true,
+            text: ' '
+          },
+          scales: {
+            xAxes: [{
+              ticks: {
+                beginAtZero: true,
+                fontSize : 10,
+                fontStyle : 'bold',
+                fontColor : '#000000',
+                fontFamily : 'Arial',
+              },
+            }],
+            yAxes: [{
+              ticks: {
+                beginAtZero:true,
+                fontSize : 10,
+                fontStyle : 'bold',
+                fontColor : '#000000',
+                fontFamily : 'Arial',
+              },
+              gridLines: {
+                color: "rgba(0, 0, 0, 0)",
+              }
+            }]
+          },
+          plugins: {
+            datalabels: {
+              anchor : 'end' as 'end',
+              align : 'end' as 'end',
+              color : 'black',
+              backgroundColor : 'rgb(48, 219, 193 ,0.4)',
+              padding : 3,
+              borderRadius : 6,
+              font: {
+                size: 11,
+                weight: 'bold' as 'bold'
+              }
+            }
+          },
+          tooltips: {
+            mode: 'index' as 'index',
+            intersect: false,
+            callbacks: {
+              label: function(tooltipItem) {
+                return tooltipItem.yLabel;
+              }
+            }
+          },
+        };
+        var canvas : any = document.getElementById("Regioncanvas");
+        var ctx = canvas.getContext("2d");
+        if(this.Regionchart != undefined){
+          this.Regionchart.destroy();
+        }
+        this.Regionchart = new Chart(ctx, {
+          plugins: [ChartDataLabels],
+          type: 'horizontalBar',
+          data: data,
+          options: options
+        });
+        this.dashboard.ShowSpinnerHandler(false);
+      })
       this.dashboard.ShowSpinnerHandler(true);
       this.service.ImplementationProjectStatusData(this.dateStart.toLocaleDateString(),this.dateEnd.toLocaleDateString(),this.SelectedStatus,this.SelectedLevel,this.SelectedRegion,this.SelectedAssigneReport,this.SelectedGroupName).subscribe(data =>{ //this.SelectedAssigne,
         this.Apply_disable = true;
@@ -649,7 +764,21 @@ export class ImplementationProjectStatusComponent implements OnInit {
               'Group Name' : o.Group_Name,
             };
           });
-          this.excelService.exportAsExcelFile(CustomizedData, 'ImplementationProjectStatus');
+          this.excelxsService.exportAsExcelFile(
+          [
+            {
+              sheetName: 'Implementation Project Status',
+              data: CustomizedData,
+              defaultBackgroundColor : 'FF34495E',
+              defaultTextColor : 'FFFFFFFF',
+              columnFormats: {
+                'dd/MMM/yyyy' : ['Milestone Project Start Date','Task Start Date'], // Negative and Positive Numbers with 2 decimals with Dolor Symbol
+                '0' : ['% Complete','Workspace CRM Customer Row ID','Milestone CRM Revenue ID'],
+              },
+            },
+          ],
+          'Implementation Project Status'
+        );
         }else{
           alert("Something went wrong, Please try again later");
         }

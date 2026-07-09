@@ -151,7 +151,7 @@
                     <mat-expansion-panel class="mat-elevation-z0" style="margin: 10px 0px 0px 0px;" [expanded]="true">
                         <mat-expansion-panel-header [collapsedHeight]="'35px'" [expandedHeight]="'35px'">
                             <mat-panel-title style="margin-left: 0px">
-                                <label style="padding-top: 10px;">Implementation Type</label>
+                                <label style="padding-top: 10px;">Revenue Opportunity Type</label>
                             </mat-panel-title>
                         </mat-expansion-panel-header>
                         <mat-divider style="width: 100%;margin: 10px 0px 0px 0px;"></mat-divider>
@@ -183,175 +183,74 @@
                         </div>
                     </mat-card>
                 </div>
-                <div class="col-md-12" *ngIf="DisplayDelta">
+                <!-- <div class="col-md-12" *ngIf="DisplayDelta">
                     <div class="example-container" style="margin-left: 15px;border: 2px solid black;">
-                        <table mat-table [dataSource]="dataSource2">
+                        <table mat-table [dataSource]="dataSource_delta">
                             <ng-container matColumnDef="Leftheaders" sticky>
                                 <th mat-header-cell *matHeaderCellDef class="textSizes" style="min-width: 160px;font-size: 14px;padding-left: 10px;background-color:  rgb(213, 216, 220);color: black;border-right: 1px solid rgb(196, 196, 196);font-weight: bold;">{{CurrentYear}}</th>
-                                <td mat-cell *matCellDef="let element" class="textSizes" style="min-width: 160px;font-size: 14px;padding-left: 10px;background-color:  rgb(213, 216, 220);color: black;border-right: 1px solid rgb(196, 196, 196);"> {{element.Leftheaders}} </td>
-                                <td mat-footer-cell *matFooterCellDef class="textSizes" style="min-width: 160px;font-size: 14px;padding-left: 10px;background-color:  rgb(213, 216, 220);color: black;border-right: 1px solid rgb(196, 196, 196);">Comments</td>
+                                <td mat-cell *matCellDef="let element" class="textSizes" matTooltip="Please check Volume/Traffic Variance Tracker Report for Volume Variance" style="min-width: 160px;font-size: 14px;padding-left: 10px;background-color:  rgb(213, 216, 220);color: black;border-right: 1px solid rgb(196, 196, 196);"> {{element.Leftheaders}} </td>
                             </ng-container>
                             <ng-container matColumnDef="Jan">
                                 <th mat-header-cell *matHeaderCellDef class="textSizes" style="background-color:  rgb(213, 216, 220);color: black;padding-left: 5px;text-align: center;font-weight: bold"> Jan </th>
-                                <td mat-cell *matCellDef="let element" class="row_textsize" style="padding-left: 5px;" class="row_textsize ref" (click)="PevDataDialog(element.Jan,'Jan')"> {{element.Jan}} </td>
-                                <td mat-footer-cell *matFooterCellDef class="row_textsize ref" (click)="CommentsDialog(1,'Jan',Jan_Comments)"><label class="showlessText ref">{{Jan_Comments}}</label></td>
+                                <td mat-cell *matCellDef="let element;let i = index" matTooltip="Please check Volume/Traffic Variance Tracker Report for Volume Variance" style="padding-left: 5px;" class="row_textsize ref" [ngStyle]="{'color' : i == 2 ? element.Jan.includes('-')  ? 'red' : element.Jan == '$0' ? 'black' : 'green' : 'black'}"> {{element.Jan}} </td>
                             </ng-container>
                             <ng-container matColumnDef="Feb">
                                 <th mat-header-cell *matHeaderCellDef class="textSizes" style="background-color:  rgb(213, 216, 220);color: black;text-align: center;font-weight: bold"> Feb </th>
-                                <td mat-cell *matCellDef="let element" class="row_textsize ref" (click)="PevDataDialog(element.Feb,'Feb')"> {{element.Feb}} </td>
-                                <td mat-footer-cell *matFooterCellDef class="row_textsize ref" (click)="CommentsDialog(2,'Feb',Feb_Comments)"><label class="showlessText ref">{{Feb_Comments}}</label></td>
+                                <td mat-cell *matCellDef="let element;let i = index" matTooltip="Please check Volume/Traffic Variance Tracker Report for Volume Variance" style="padding-left: 5px;" class="row_textsize ref" [ngStyle]="{'color' : i == 2 ? element.Feb.includes('-')  ? 'red' : element.Feb == '$0' ? 'black' : 'green' : 'black'}"> {{element.Feb}} </td>
                             </ng-container>
                             <ng-container matColumnDef="Mar">
                                 <th mat-header-cell *matHeaderCellDef class="textSizes" style="background-color:  rgb(213, 216, 220);color: black;text-align: center;font-weight: bold"> Mar </th>
-                                <td mat-cell *matCellDef="let element" class="row_textsize ref" (click)="PevDataDialog(element.Mar,'Mar')"> {{element.Mar}} </td>
-                                <td mat-footer-cell *matFooterCellDef class="row_textsize ref" (click)="CommentsDialog(3,'Mar',Mar_Comments)"><label class="showlessText ref">{{Mar_Comments}}</label></td>
+                                <td mat-cell *matCellDef="let element;let i = index" matTooltip="Please check Volume/Traffic Variance Tracker Report for Volume Variance" style="padding-left: 5px;" class="row_textsize ref" [ngStyle]="{'color' : i == 2 ? element.Mar.includes('-')  ? 'red' : element.Mar == '$0' ? 'black' : 'green' : 'black'}"> {{element.Mar}} </td>
                             </ng-container>
                             <ng-container matColumnDef="Apr">
                                 <th mat-header-cell *matHeaderCellDef class="textSizes" style="background-color:  rgb(213, 216, 220);color: black;text-align: center;font-weight: bold"> Apr </th>
-                                <td mat-cell *matCellDef="let element" class="row_textsize ref" (click)="PevDataDialog(element.Apr,'Apr')"> {{element.Apr}} </td>
-                                <td mat-footer-cell *matFooterCellDef class="row_textsize ref" (click)="CommentsDialog(4,'Apr',Apr_Comments)"><label class="showlessText ref">{{Apr_Comments}}</label></td>
+                                <td mat-cell *matCellDef="let element;let i = index" matTooltip="Please check Volume/Traffic Variance Tracker Report for Volume Variance" style="padding-left: 5px;" class="row_textsize ref" [ngStyle]="{'color' : i == 2 ? element.Apr.includes('-')  ? 'red' : element.Apr == '$0' ? 'black' : 'green' : 'black'}"> {{element.Apr}} </td>
                             </ng-container>
                             <ng-container matColumnDef="May">
                                 <th mat-header-cell *matHeaderCellDef class="textSizes" style="background-color:  rgb(213, 216, 220);color: black;text-align: center;font-weight: bold"> May </th>
-                                <td mat-cell *matCellDef="let element" class="row_textsize ref" (click)="PevDataDialog(element.May,'May')"> {{element.May}} </td>
-                                <td mat-footer-cell *matFooterCellDef class="row_textsize ref" (click)="CommentsDialog(5,'May',May_Comments)"><label class="showlessText ref">{{May_Comments}}</label></td>
+                                <td mat-cell *matCellDef="let element;let i = index" matTooltip="Please check Volume/Traffic Variance Tracker Report for Volume Variance" style="padding-left: 5px;" class="row_textsize ref" [ngStyle]="{'color' : i == 2 ? element.May.includes('-')  ? 'red' : element.May == '$0' ? 'black' : 'green' : 'black'}"> {{element.May}} </td>
                             </ng-container>
                             <ng-container matColumnDef="Jun">
                                 <th mat-header-cell *matHeaderCellDef class="textSizes" style="background-color:  rgb(213, 216, 220);color: black;text-align: center;font-weight: bold"> Jun </th>
-                                <td mat-cell *matCellDef="let element" class="row_textsize ref" (click)="PevDataDialog(element.Jun,'Jun')"> {{element.Jun}} </td>
-                                <td mat-footer-cell *matFooterCellDef class="row_textsize ref" (click)="CommentsDialog(6,'Jun',Jun_Comments)"><label class="showlessText ref">{{Jun_Comments}}</label></td>
+                                <td mat-cell *matCellDef="let element;let i = index" matTooltip="Please check Volume/Traffic Variance Tracker Report for Volume Variance" style="padding-left: 5px;" class="row_textsize ref" [ngStyle]="{'color' : i == 2 ? element.Jun.includes('-')  ? 'red' : element.Jun == '$0' ? 'black' : 'green' : 'black'}"> {{element.Jun}} </td>
                             </ng-container>
                             <ng-container matColumnDef="Jul">
                                 <th mat-header-cell *matHeaderCellDef class="textSizes" style="background-color:  rgb(213, 216, 220);color: black;text-align: center;font-weight: bold"> Jul </th>
-                                <td mat-cell *matCellDef="let element" class="row_textsize ref" (click)="PevDataDialog(element.Jul,'Jul')"> {{element.Jul}} </td>
-                                <td mat-footer-cell *matFooterCellDef class="row_textsize ref" (click)="CommentsDialog(7,'Jul',Jul_Comments)"><label class="showlessText ref">{{Jul_Comments}}</label></td>
+                                <td mat-cell *matCellDef="let element;let i = index" matTooltip="Please check Volume/Traffic Variance Tracker Report for Volume Variance" style="padding-left: 5px;" class="row_textsize ref" [ngStyle]="{'color' : i == 2 ? element.Jul.includes('-')  ? 'red' : element.Jul == '$0' ? 'black' : 'green' : 'black'}"> {{element.Jul}} </td>
                             </ng-container>
                             <ng-container matColumnDef="Aug">
                                 <th mat-header-cell *matHeaderCellDef class="textSizes" style="background-color:  rgb(213, 216, 220);color: black;text-align: center;font-weight: bold"> Aug </th>
-                                <td mat-cell *matCellDef="let element" class="row_textsize ref" (click)="PevDataDialog(element.Aug,'Aug')"> {{element.Aug}} </td>
-                                <td mat-footer-cell *matFooterCellDef class="row_textsize ref" (click)="CommentsDialog(8,'Aug',Aug_Comments)"><label class="showlessText ref">{{Aug_Comments}}</label></td>
+                                <td mat-cell *matCellDef="let element;let i = index" matTooltip="Please check Volume/Traffic Variance Tracker Report for Volume Variance" style="padding-left: 5px;" class="row_textsize ref" [ngStyle]="{'color' : i == 2 ? element.Aug.includes('-')  ? 'red' : element.Aug == '$0' ? 'black' : 'green' : 'black'}"> {{element.Aug}} </td>
                             </ng-container>
                             <ng-container matColumnDef="Sep">
                                 <th mat-header-cell *matHeaderCellDef class="textSizes" style="background-color:  rgb(213, 216, 220);color: black;text-align: center;font-weight: bold"> Sep </th>
-                                <td mat-cell *matCellDef="let element" class="row_textsize ref" (click)="PevDataDialog(element.Sep,'Sep')"> {{element.Sep}} </td>
-                                <td mat-footer-cell *matFooterCellDef class="row_textsize ref" (click)="CommentsDialog(9,'Sep',Sep_Comments)"><label class="showlessText ref">{{Sep_Comments}}</label></td>
+                                <td mat-cell *matCellDef="let element;let i = index" matTooltip="Please check Volume/Traffic Variance Tracker Report for Volume Variance" style="padding-left: 5px;" class="row_textsize ref" [ngStyle]="{'color' : i == 2 ? element.Sep.includes('-')  ? 'red' : element.Sep == '$0' ? 'black' : 'green' : 'black'}"> {{element.Sep}} </td>
                             </ng-container>
                             <ng-container matColumnDef="Oct">
                                 <th mat-header-cell *matHeaderCellDef class="textSizes" style="background-color:  rgb(213, 216, 220);color: black;text-align: center;font-weight: bold;"> Oct </th>
-                                <td mat-cell *matCellDef="let element" class="row_textsize ref" (click)="PevDataDialog(element.Oct,'Oct')"> {{element.Oct}} </td>
-                                <td mat-footer-cell *matFooterCellDef class="row_textsize ref" (click)="CommentsDialog(10,'Oct',Oct_Comments)"><label class="showlessText ref">{{Oct_Comments}}</label></td>
+                                <td mat-cell *matCellDef="let element;let i = index" matTooltip="Please check Volume/Traffic Variance Tracker Report for Volume Variance" style="padding-left: 5px;" class="row_textsize ref" [ngStyle]="{'color' : i == 2 ? element.Oct.includes('-')  ? 'red' : element.Oct == '$0' ? 'black' : 'green' : 'black'}"> {{element.Oct}} </td>
                             </ng-container>
                             <ng-container matColumnDef="Nov">
                                 <th mat-header-cell *matHeaderCellDef class="textSizes" style="background-color:  rgb(213, 216, 220);color: black;text-align: center;font-weight: bold"> Nov </th>
-                                <td mat-cell *matCellDef="let element" class="row_textsize ref" (click)="PevDataDialog(element.Nov,'Nov')"> {{element.Nov}} </td>
-                                <td mat-footer-cell *matFooterCellDef class="row_textsize" (click)="CommentsDialog(11,'Nov',Nov_Comments)"><label class="showlessText ref">{{Nov_Comments}}</label></td>
+                                <td mat-cell *matCellDef="let element;let i = index" matTooltip="Please check Volume/Traffic Variance Tracker Report for Volume Variance" style="padding-left: 5px;" class="row_textsize ref" [ngStyle]="{'color' : i == 2 ? element.Nov.includes('-')  ? 'red' : element.Nov == '$0' ? 'black' : 'green' : 'black'}"> {{element.Nov}} </td>
                             </ng-container>
                             <ng-container matColumnDef="Dec">
                                 <th mat-header-cell *matHeaderCellDef class="textSizes" style="background-color:  rgb(213, 216, 220);color: black;text-align: center;font-weight: bold"> Dec </th>
-                                <td mat-cell *matCellDef="let element" class="row_textsize ref" (click)="PevDataDialog(element.Dec,'Dec')"> {{element.Dec}} </td>
-                                <td mat-footer-cell *matFooterCellDef class="row_textsize ref" (click)="CommentsDialog(12,'Dec',Dec_Comments)"><label class="showlessText">{{Dec_Comments}}</label></td>
+                                <td mat-cell *matCellDef="let element;let i = index" matTooltip="Please check Volume/Traffic Variance Tracker Report for Volume Variance" style="padding-left: 5px;" class="row_textsize ref" [ngStyle]="{'color' : i == 2 ? element.Dec.includes('-')  ? 'red' : element.Dec == '$0' ? 'black' : 'green' : 'black'}"> {{element.Dec}} </td>
                             </ng-container>
                             <ng-container matColumnDef="Total">
                                 <th mat-header-cell *matHeaderCellDef class="textSizes" style="padding-right: 10px;border-right: none;background-color:  rgb(213, 216, 220);color: black;text-align: center;font-weight: bold"> Total </th>
-                                <td mat-cell *matCellDef="let element" class="row_textsize ref" style="padding-right: 10px;border-right: none;" (click)="PevDataDialog(element.Total,'All')"> {{element.Total}} </td>
-                                <td mat-footer-cell *matFooterCellDef class="row_textsize ref" style="padding-right: 10px;border-right: none;"></td>
-                            </ng-container>
-                            <ng-container matColumnDef="MonthTotalName" sticky>
-                                <th mat-header-cell *matHeaderCellDef class="textSizes" style="min-width: 160px;font-size: 14px;padding-left: 10px;border-right: 1px solid rgb(196, 196, 196);background-color:  rgb(213, 216, 220);color: black;">Current Total Volume</th>
-                            </ng-container>
-                            <ng-container matColumnDef="JanTotal">
-                                <th mat-header-cell *matHeaderCellDef  class="row_textsize ref" (click)="DataDialog(JanTotal,'Jan')">{{JanTotal}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="FebTotal">
-                                <th mat-header-cell *matHeaderCellDef  class="row_textsize ref" (click)="DataDialog(FebTotal,'Feb')">{{FebTotal}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="MarTotal">
-                                <th mat-header-cell *matHeaderCellDef  class="row_textsize ref" (click)="DataDialog(MarTotal,'Mar')">{{MarTotal}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="AprTotal">
-                                <th mat-header-cell *matHeaderCellDef  class="row_textsize ref" (click)="DataDialog(AprTotal,'Apr')">{{AprTotal}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="MayTotal">
-                                <th mat-header-cell *matHeaderCellDef  class="row_textsize ref" (click)="DataDialog(MayTotal,'May')">{{MayTotal}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="JunTotal">
-                                <th mat-header-cell *matHeaderCellDef  class="row_textsize ref" (click)="DataDialog(JunTotal,'Jun')">{{JunTotal}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="JulTotal">
-                                <th mat-header-cell *matHeaderCellDef  class="row_textsize ref" (click)="DataDialog(JulTotal,'Jul')">{{JulTotal}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="AugTotal">
-                                <th mat-header-cell *matHeaderCellDef  class="row_textsize ref" (click)="DataDialog(AugTotal,'Aug')">{{AugTotal}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="SepTotal">
-                                <th mat-header-cell *matHeaderCellDef  class="row_textsize ref" (click)="DataDialog(SepTotal,'Sep')">{{SepTotal}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="OctTotal">
-                                <th mat-header-cell *matHeaderCellDef  class="row_textsize ref" (click)="DataDialog(OctTotal,'Oct')">{{OctTotal}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="NovTotal">
-                                <th mat-header-cell *matHeaderCellDef  class="row_textsize ref" (click)="DataDialog(NovTotal,'Nov')">{{NovTotal}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="DecTotal">
-                                <th mat-header-cell *matHeaderCellDef  class="row_textsize ref" (click)="DataDialog(DecTotal,'Dec')">{{DecTotal}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="MonthsTotal">
-                                <th mat-header-cell *matHeaderCellDef  class="row_textsize ref" style="padding-right: 10px;border-right: none;" (click)="DataDialog(MonthsTotal,'All')">{{MonthsTotal}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="MonthTotalName_f" sticky>
-                                <th mat-footer-cell *matFooterCellDef class="textSizes" style="min-width: 160px;font-size: 14px;padding-left: 10px;border-right: 1px solid rgb(196, 196, 196);background-color:  rgb(213, 216, 220);color: black;font-weight: normal;">Delta</th>
-                            </ng-container>
-                            <ng-container matColumnDef="JanTotal_f">
-                                <th mat-footer-cell *matFooterCellDef  class="row_textsize" [ngStyle]="{'color': JanTotal_v == 'true' ? 'green' : 'red'}" style="font-weight: 500">{{JanTotal_f}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="FebTotal_f">
-                                <th mat-footer-cell *matFooterCellDef  class="row_textsize" [ngStyle]="{'color': FebTotal_v == 'true' ? 'green' : 'red'}" style="font-weight: 500">{{FebTotal_f}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="MarTotal_f">
-                                <th mat-footer-cell *matFooterCellDef  class="row_textsize" [ngStyle]="{'color': MarTotal_v == 'true' ? 'green' : 'red'}" style="font-weight: 500">{{MarTotal_f}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="AprTotal_f">
-                                <th mat-footer-cell *matFooterCellDef  class="row_textsize" [ngStyle]="{'color': AprTotal_v == 'true' ? 'green' : 'red'}" style="font-weight: 500">{{AprTotal_f}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="MayTotal_f">
-                                <th mat-footer-cell *matFooterCellDef  class="row_textsize" [ngStyle]="{'color': MayTotal_v == 'true' ? 'green' : 'red'}" style="font-weight: 500">{{MayTotal_f}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="JunTotal_f">
-                                <th mat-footer-cell *matFooterCellDef  class="row_textsize" [ngStyle]="{'color': JunTotal_v == 'true' ? 'green' : 'red'}" style="font-weight: 500">{{JunTotal_f}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="JulTotal_f">
-                                <th mat-footer-cell *matFooterCellDef  class="row_textsize" [ngStyle]="{'color': JulTotal_v == 'true' ? 'green' : 'red'}" style="font-weight: 500">{{JulTotal_f}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="AugTotal_f">
-                                <th mat-footer-cell *matFooterCellDef  class="row_textsize" [ngStyle]="{'color': AugTotal_v == 'true' ? 'green' : 'red'}" style="font-weight: 500">{{AugTotal_f}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="SepTotal_f">
-                                <th mat-footer-cell *matFooterCellDef  class="row_textsize" [ngStyle]="{'color': SepTotal_v == 'true' ? 'green' : 'red'}" style="font-weight: 500">{{SepTotal_f}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="OctTotal_f">
-                                <th mat-footer-cell *matFooterCellDef  class="row_textsize" [ngStyle]="{'color': OctTotal_v == 'true' ? 'green' : 'red'}" style="font-weight: 500">{{OctTotal_f}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="NovTotal_f">
-                                <th mat-footer-cell *matFooterCellDef  class="row_textsize" [ngStyle]="{'color': NovTotal_v == 'true' ? 'green' : 'red'}" style="font-weight: 500">{{NovTotal_f}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="DecTotal_f">
-                                <th mat-footer-cell *matFooterCellDef  class="row_textsize" [ngStyle]="{'color': DecTotal_v == 'true' ? 'green' : 'red'}" style="font-weight: 500;">{{DecTotal_f}}</th>
-                            </ng-container>
-                            <ng-container matColumnDef="MonthsTotal_f">
-                                <th mat-footer-cell *matFooterCellDef  class="row_textsize" [ngStyle]="{'color': Total_v == 'true' ? 'green' : 'red'}" style="font-weight: 500;padding-right: 10px;border-right: none;">{{MonthsTotal_f}}</th>
+                                <td mat-cell *matCellDef="let element;let i = index" matTooltip="Please check Volume/Traffic Variance Tracker Report for Volume Variance" class="row_textsize ref" [ngStyle]="{'color' : i == 2 ? element.Total > 0 ? 'green' : element.Total == '$0' ? 'black' : 'red' : 'black'}" style="padding-right: 10px;border-right: none;" > {{element.Total}} </td>
                             </ng-container>
                             <ng-container matColumnDef="header">
                                 <th mat-header-cell *matHeaderCellDef style="background-color: #34495E;text-align: center" colspan="14"> <label style="padding-top: 12px;font-size: 15px;color: white;">A-Active/Date Confirmed & C-Closed Data <label style="color: white;padding-top: 11px;font-weight: bold;font-size: 12px;font: normal;">&nbsp;&nbsp;(Last Updated On : {{LastUpdatedOn}})</label></label></th>
                             </ng-container>
                             <tr mat-header-row *matHeaderRowDef="['header']; sticky: true" style="height: 35px;"></tr>
-                            <tr mat-header-row *matHeaderRowDef="MonthlydisplayedColumns" style="height: 35px;"></tr>
-                            <tr mat-header-row *matHeaderRowDef="['MonthTotalName','JanTotal','FebTotal','MarTotal','AprTotal','MayTotal','JunTotal','JulTotal','AugTotal','SepTotal','OctTotal','NovTotal','DecTotal','MonthsTotal']" style="height: 35px;"></tr>
-                            <tr mat-row *matRowDef="let row; columns: MonthlydisplayedColumns;" style="height: 35px;"></tr>
-                            <tr mat-footer-row *matFooterRowDef="['MonthTotalName_f','JanTotal_f','FebTotal_f','MarTotal_f','AprTotal_f','MayTotal_f','JunTotal_f','JulTotal_f','AugTotal_f','SepTotal_f','OctTotal_f','NovTotal_f','DecTotal_f','MonthsTotal_f']" style="height: 35px;"></tr>
-                            <tr mat-footer-row *matFooterRowDef="MonthlydisplayedColumns;" style="height: 35px;border-top : 1px solid #dadada"></tr>
+                            <tr mat-header-row *matHeaderRowDef="MonthlyTotaldisplayedColumns" style="height: 35px;"></tr>
+                            <tr mat-row *matRowDef="let row; columns: MonthlyTotaldisplayedColumns;" style="height: 35px;"></tr>
                         </table>
                     </div>
-                </div>
+                </div> -->
                 <div class="col-md-6">
                     <mat-card class="example-card mat-elevation-z2" style="margin-left: 15px;height: auto;overflow: auto;padding: 0px;">
                         <div class="col-12" style="height: 40px;background-color: #34495E ;color:white;padding: 5px 0px 0px 0px; margin : 0px;text-align: center">
@@ -584,14 +483,14 @@
                                 </th>
                             </ng-container>
                             <ng-container matColumnDef="Implementation_Type">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header class="textSizes" style="border-top: 2px solid rgb(213, 216, 220);text-align: center;background-color:  #34495E;color: white;font-size: 15px"> Implementation Type </th>
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header class="textSizes" style="border-top: 2px solid rgb(213, 216, 220);text-align: center;background-color:  #34495E;color: white;font-size: 15px"> Revenue Opportunity Type </th>
                                 <td mat-cell *matCellDef="let element"> {{element.Implementation_Type}} </td>
                                 <td mat-footer-cell *matFooterCellDef style="border-top: 2px solid black;background-color:  rgb(213, 216, 220);color: black;border-right: 2px solid black;"></td>
                             </ng-container>
                             <ng-container matColumnDef="Implementation_Type_h">
                                 <th mat-header-cell *matHeaderCellDef class="formheader">
                                     <mat-form-field appearance="outline" style="width: 140px;">
-                                        <mat-label>Implementation Type</mat-label>
+                                        <mat-label>Revenue Opportunity Type</mat-label>
                                         <input (change)="FilterChange()" style="font-weight: bold" matInput  [(ngModel)]="filterEntity.Implementation_Type">
                                     </mat-form-field>
                                 </th>

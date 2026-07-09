@@ -43,8 +43,11 @@
     border-top: 2px solid black;
   }
   .mat-form-wrap{
-    margin-left: 15px;
-    margin-top: 25px;
+    margin-left: 0px;
+    margin-top: 0px;
+  }
+  ::ng-deep .mat-form-field-wrapper{
+    padding-bottom: 0px;
   }
   .textSizes_header{
     text-align: center;

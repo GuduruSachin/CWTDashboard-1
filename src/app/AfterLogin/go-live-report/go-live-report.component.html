@@ -158,7 +158,7 @@
                     <mat-expansion-panel class="mat-elevation-z0" style="margin: 10px 0px 0px 0px;" [expanded]="true">
                         <mat-expansion-panel-header [collapsedHeight]="'35px'" [expandedHeight]="'35px'">
                             <mat-panel-title style="margin-left: 0px">
-                                <label style="padding-top: 10px;">Implementation Type</label>
+                                <label style="padding-top: 10px;">Revenue Opportunity Type</label>
                             </mat-panel-title>
                         </mat-expansion-panel-header>
                         <mat-divider style="width: 100%;margin: 10px 0px 0px 0px;"></mat-divider>
@@ -176,6 +176,7 @@
             <div class="row col-md-12">
                 <div class="col-md-12">
                     <button mat-raised-button (click)="OnClickHideorUnhide()" style="background-color: #F16950;color: white;margin : 20px 0px 0px 15px;" matTooltip="Data issues">{{ELTHideorUnhide}}</button>
+                    <button mat-raised-button (click)="OnClickShowTransactionsOrVolume()" style="background-color: #F16950;color: white;margin : 20px 0px 0px 15px;" matTooltip="Data issues">{{ShowTransactionsOrVolume}}</button>
                     <mat-form-field class="mat-form-wrap" appearance="outline">
                         <mat-label>Region</mat-label>
                         <mat-select [formControl]="RegionFilter" multiple (selectionChange)="onRegionchange()">
@@ -229,27 +230,52 @@
                             </ng-container>
                             <ng-container matColumnDef="CurrentMonth">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header class="textSizes" style="border-bottom: 2px solid black;text-align: center;min-width : 150px;max-width:200px;background-color:#34495E;color: white;"> {{CurrentMonthYear}} </th>
-                                <td mat-cell *matCellDef="let element" style="min-width : 150px;max-width:200px;"> {{element.CurrentMonth_n}} </td>
+                                <td mat-cell *matCellDef="let element" style="min-width : 150px;max-width:200px;" [ngStyle]="{'background-color': element.CurrentMonth == 0 ? element.GoLiveMonth == CurrentMonth ? '#b4e5c8' : '#FFFFFF' : '#FFFFFF'}"> {{element.CurrentMonth_n}} </td>
                                 <!-- <td mat-footer-cell *matFooterCellDef style="background-color:  rgb(213, 216, 220);color: black;"></td> -->
                             </ng-container>
-                            <ng-container matColumnDef="NextMonth" >
+                            <ng-container matColumnDef="NextMonth">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header class="textSizes" style="border-bottom: 2px solid black;text-align: center;min-width : 150px;max-width:200px;background-color:#34495E;color: white;"> {{NextMonthYear}} </th>
-                                <td mat-cell *matCellDef="let element" style="min-width : 150px;max-width:200px;"> {{element.NextMonth_n}} </td>
+                                <td mat-cell *matCellDef="let element" style="min-width : 150px;max-width:200px;" [ngStyle]="{'background-color': element.NextMonth == 0 ? element.GoLiveMonth == NextMonth ? '#b4e5c8' : '#FFFFFF' : '#FFFFFF'}"> {{element.NextMonth_n}} </td>
                                 <!-- <td mat-footer-cell *matFooterCellDef style="background-color:  rgb(213, 216, 220);color: black;"></td> -->
                             </ng-container>
                             <ng-container matColumnDef="NextMonthPlusOne">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header class="textSizes" style="border-bottom: 2px solid black;text-align: center;min-width : 150px;max-width:200px;background-color:#34495E;color: white;"> {{NextMonthYearPlusOne}} </th>
-                                <td mat-cell *matCellDef="let element" style="min-width : 150px;max-width:200px;"> {{element.NextMonthPlusOne_n}} </td>
+                                <td mat-cell *matCellDef="let element" style="min-width : 150px;max-width:200px;" [ngStyle]="{'background-color': element.NextMonthPlusOne == 0 ? element.GoLiveMonth == NextMonthPlusOne ? '#b4e5c8' : '#FFFFFF' : '#FFFFFF'}"> {{element.NextMonthPlusOne_n}} </td>
                                 <!-- <td mat-footer-cell *matFooterCellDef style="background-color:  rgb(213, 216, 220);color: black;"></td> -->
                             </ng-container>
                             <ng-container matColumnDef="NextMonthPlusTwo">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header class="textSizes" style="border-bottom: 2px solid black;text-align: center;min-width : 150px;max-width:200px;background-color:#34495E;color: white;"> {{NextMonthYearPlusTwo}} </th>
-                                <td mat-cell *matCellDef="let element" style="min-width : 150px;max-width:200px;"> {{element.NextMonthPlusTwo_n}} </td>
+                                <td mat-cell *matCellDef="let element" style="min-width : 150px;max-width:200px;" [ngStyle]="{'background-color': element.NextMonthPlusTwo == 0 ? element.GoLiveMonth == NextMonthPlusTwo ? '#b4e5c8' : '#FFFFFF' : '#FFFFFF'}"> {{element.NextMonthPlusTwo_n}} </td>
                                 <!-- <td mat-footer-cell *matFooterCellDef style="background-color:  rgb(213, 216, 220);color: black;"></td> -->
                             </ng-container>
                             <ng-container matColumnDef="NextMonthPlusThree">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header class="textSizes" style="border-bottom: 2px solid black;text-align: center;min-width : 150px;max-width:200px;padding-right: 10px;border-right: none;background-color:#34495E;color: white;"> {{NextMonthYearPlusThree}} </th>
-                                <td mat-cell *matCellDef="let element" style="min-width : 150px;max-width:200px;padding-right: 10px;border-right: none;"> {{element.NextMonthPlusThree_n}} </td>
+                                <td mat-cell *matCellDef="let element" style="min-width : 150px;max-width:200px;padding-right: 10px;border-right: none;" [ngStyle]="{'background-color': element.NextMonthPlusThree == 0 ? element.GoLiveMonth == NextMonthPlusThree ? '#b4e5c8' : '#FFFFFF' : '#FFFFFF'}"> {{element.NextMonthPlusThree_n}} </td>
+                                <!-- <td mat-footer-cell *matFooterCellDef style="background-color:  rgb(213, 216, 220);color: black;"></td> -->
+                            </ng-container>
+                            <ng-container matColumnDef="CurrentMonthCount">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header class="textSizes" style="border-bottom: 2px solid black;text-align: center;min-width : 150px;max-width:200px;background-color:#34495E;color: white;"> {{CurrentMonthYear}} </th>
+                                <td mat-cell *matCellDef="let element" style="min-width : 150px;max-width:200px;" [ngStyle]="{'background-color': element.CurrentMonthCount_n == 0 ? element.GoLiveMonth == CurrentMonth ? '#b4e5c8' : '#FFFFFF' : '#FFFFFF'}"> {{element.CurrentMonthCount_n}} </td>
+                                <!-- <td mat-footer-cell *matFooterCellDef style="background-color:  rgb(213, 216, 220);color: black;"></td> -->
+                            </ng-container>
+                            <ng-container matColumnDef="NextMonthCount">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header class="textSizes" style="border-bottom: 2px solid black;text-align: center;min-width : 150px;max-width:200px;background-color:#34495E;color: white;"> {{NextMonthYear}} </th>
+                                <td mat-cell *matCellDef="let element" style="min-width : 150px;max-width:200px;" [ngStyle]="{'background-color': element.NextMonthCount_n == 0 ? element.GoLiveMonth == NextMonth ? '#b4e5c8' : '#FFFFFF' : '#FFFFFF'}"> {{element.NextMonthCount_n}} </td>
+                                <!-- <td mat-footer-cell *matFooterCellDef style="background-color:  rgb(213, 216, 220);color: black;"></td> -->
+                            </ng-container>
+                            <ng-container matColumnDef="NextMonthPlusOneCount">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header class="textSizes" style="border-bottom: 2px solid black;text-align: center;min-width : 150px;max-width:200px;background-color:#34495E;color: white;"> {{NextMonthYearPlusOne}} </th>
+                                <td mat-cell *matCellDef="let element" style="min-width : 150px;max-width:200px;" [ngStyle]="{'background-color': element.NextMonthPlusOneCount_n == 0 ? element.GoLiveMonth == NextMonthPlusOne ? '#b4e5c8' : '#FFFFFF' : '#FFFFFF'}"> {{element.NextMonthPlusOneCount_n}} </td>
+                                <!-- <td mat-footer-cell *matFooterCellDef style="background-color:  rgb(213, 216, 220);color: black;"></td> -->
+                            </ng-container>
+                            <ng-container matColumnDef="NextMonthPlusTwoCount">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header class="textSizes" style="border-bottom: 2px solid black;text-align: center;min-width : 150px;max-width:200px;background-color:#34495E;color: white;"> {{NextMonthYearPlusTwo}} </th>
+                                <td mat-cell *matCellDef="let element" style="min-width : 150px;max-width:200px;" [ngStyle]="{'background-color': element.NextMonthPlusTwoCount_n == 0 ? element.GoLiveMonth == NextMonthPlusTwo ? '#b4e5c8' : '#FFFFFF' : '#FFFFFF'}"> {{element.NextMonthPlusTwoCount_n}} </td>
+                                <!-- <td mat-footer-cell *matFooterCellDef style="background-color:  rgb(213, 216, 220);color: black;"></td> -->
+                            </ng-container>
+                            <ng-container matColumnDef="NextMonthPlusThreeCount">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header class="textSizes" style="border-bottom: 2px solid black;text-align: center;min-width : 150px;max-width:200px;padding-right: 10px;border-right: none;background-color:#34495E;color: white;"> {{NextMonthYearPlusThree}} </th>
+                                <td mat-cell *matCellDef="let element" style="min-width : 150px;max-width:200px;padding-right: 10px;border-right: none;" [ngStyle]="{'background-color': element.NextMonthPlusThreeCount_n == 0 ? element.GoLiveMonth == NextMonthPlusThree ? '#b4e5c8' : '#FFFFFF' : '#FFFFFF'}"> {{element.NextMonthPlusThreeCount_n}} </td>
                                 <!-- <td mat-footer-cell *matFooterCellDef style="background-color:  rgb(213, 216, 220);color: black;"></td> -->
                             </ng-container>
                             <ng-container matColumnDef="expand">
@@ -269,7 +295,7 @@
                                         [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
                                         <table mat-table [dataSource]="element.CountrywiseSum" style="border-top: 1px solid rgb(196, 196, 196);border-bottom: 1px solid rgb(196, 196, 196);width: 100%;">
                                             <ng-container matColumnDef="expand">
-                                                <td mat-cell *matCellDef="let element" style="width: 100px;padding-left: 10px;border-left: none;border-right: none;"> </td>
+                                                <td mat-cell *matCellDef="let element" style="width: 100px;padding-left: 10px;border-left: none;border-right: none;color: white;">1111111</td>
                                             </ng-container>
                                             <ng-container matColumnDef="Client">
                                                 <td mat-cell *matCellDef="let element" style="min-width : 200px;max-width : 350px; text-align: left;"> {{element.Client}} </td>
@@ -278,7 +304,7 @@
                                                 <td mat-cell *matCellDef="let element" style="width:130px;"> {{element.Country}} </td>
                                             </ng-container>
                                             <ng-container matColumnDef="EltStatus">
-                                                <td mat-cell *matCellDef="let element" style="width:150px;"> {{element.EltStatus}} </td>
+                                                <td mat-cell *matCellDef="let element" style="width:150px;" [ngStyle]="{'color' : element.EltStatus == 'Red - Issue' ? 'white' : element.EltStatus == 'Amber - Risk' ? 'black' : element.EltStatus == 'Green - On Track' ? 'white' : 'black','background-color' : element.EltStatus == 'Red - Issue' ? '#CB4335' : element.EltStatus == 'Amber - Risk' ? '#F7DC6F' : element.EltStatus == 'Green - On Track' ? '#229954' :'white'}"> {{element.EltStatus}} </td>
                                             </ng-container>
                                             <ng-container matColumnDef="EltComments">
                                                 <td mat-cell *matCellDef="let element" style="min-width : 300px;max-width : 350px;"> <label (click)="ShowComment(element.Client,'',element.EltComments)" class="showlessText">{{element.EltComments}}</label> </td>
@@ -298,6 +324,21 @@
                                             <ng-container matColumnDef="NextMonthPlusThree">
                                                 <td mat-cell *matCellDef="let element" style="padding-right: 10px;border-right: none;min-width : 150px;max-width:200px;"> {{element.NextMonthPlusThree_n}} </td>
                                             </ng-container>
+                                            <ng-container matColumnDef="CurrentMonthCount">
+                                                <td mat-cell *matCellDef="let element" style="min-width : 150px;max-width:200px;"> {{element.CurrentMonthCount_n}} </td>
+                                            </ng-container>
+                                            <ng-container matColumnDef="NextMonthCount">
+                                                <td mat-cell *matCellDef="let element" style="min-width : 150px;max-width:200px;"> {{element.NextMonthCount_n}} </td>
+                                            </ng-container>
+                                            <ng-container matColumnDef="NextMonthPlusOneCount">
+                                                <td mat-cell *matCellDef="let element" style="min-width : 150px;max-width:200px;"> {{element.NextMonthPlusOneCount_n}} </td>
+                                            </ng-container>
+                                            <ng-container matColumnDef="NextMonthPlusTwoCount">
+                                                <td mat-cell *matCellDef="let element" style="min-width : 150px;max-width:200px;"> {{element.NextMonthPlusTwoCount_n}} </td>
+                                            </ng-container>
+                                            <ng-container matColumnDef="NextMonthPlusThreeCount">
+                                                <td mat-cell *matCellDef="let element" style="padding-right: 10px;border-right: none;min-width : 150px;max-width:200px;"> {{element.NextMonthPlusThreeCount_n}} </td>
+                                            </ng-container>
                                             <tr mat-row *matRowDef="let row; columns: columnsToDisplay_h;" class="element-row">
                                             </tr>
                                         </table>
@@ -305,7 +346,7 @@
                                 </td>
                             </ng-container>
                             <ng-container matColumnDef="ecc_footer">
-                                <td mat-footer-cell *matFooterCellDef class="footer_cell" style="padding-left: 10px;text-align: right;padding-right: 20px;" [attr.colspan]="EltHideColumns ? 4 : 5">Total Volume By Month :-  </td>
+                                <td mat-footer-cell *matFooterCellDef class="footer_cell" style="padding-left: 10px;text-align: right;padding-right: 20px;" [attr.colspan]="EltHideColumns ? 4 : 5">{{ShowTransactionsOrVolumeText}}  </td>
                             </ng-container>
                             <ng-container matColumnDef="CurrentMonth_footer">
                                 <td mat-footer-cell *matFooterCellDef class="footer_cell"> {{CurrentMonth_Total}}</td>
@@ -321,6 +362,21 @@
                             </ng-container>
                             <ng-container matColumnDef="NextMonthPlusThree_footer">
                                 <td mat-footer-cell *matFooterCellDef class="footer_cell" style="padding-right: 10px;border-right: none;">{{NextMonthPlusThree_Total}}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="CurrentMonthCount_footer">
+                                <td mat-footer-cell *matFooterCellDef class="footer_cell"> {{CurrentMonthCount_Total}}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="NextMonthCount_footer">
+                                <td mat-footer-cell *matFooterCellDef class="footer_cell">{{NextMonthCount_Total}}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="NextMonthPlusOneCount_footer">
+                                <td mat-footer-cell *matFooterCellDef class="footer_cell">{{NextMonthPlusOneCount_Total}}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="NextMonthPlusTwoCount_footer">
+                                <td mat-footer-cell *matFooterCellDef class="footer_cell">{{NextMonthPlusTwoCount_Total}}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="NextMonthPlusThreeCount_footer">
+                                <td mat-footer-cell *matFooterCellDef class="footer_cell" style="padding-right: 10px;border-right: none;">{{NextMonthPlusThreeCount_Total}}</td>
                             </ng-container>
                             <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true" style="padding-top: 0px;margin-top: 0px;height: 35px"></tr>
                             <tr mat-row *matRowDef="let row; columns: columnsToDisplay;" style="height: 35px;"

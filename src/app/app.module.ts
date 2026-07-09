@@ -9,7 +9,7 @@ import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
 import { DashboardComponent } from './AfterLogin/dashboard/dashboard.component';
 import { LoadingSpinnerComponent } from './Other/loading-spinner/loading-spinner.component';
-import { ImplementationMarketReportComponent, CommentsDialog, DataDialog } from './AfterLogin/implementation-market-report/implementation-market-report.component';
+import { ImplementationMarketReportComponent  } from './AfterLogin/implementation-market-report/implementation-market-report.component';
 import { CommonModule, DatePipe } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { CriticalTasksOverDueComponent } from './AfterLogin/critical-tasks-over-due/critical-tasks-over-due.component';
@@ -21,6 +21,7 @@ import { CommentDialogComponent } from './Dialog/comment-dialog/comment-dialog.c
 import { StageGateTestingComponent } from './AfterLogin/stage-gate-testing/stage-gate-testing.component';
 import { LessonsLearntComponent, LessonsLearntdailog } from './AfterLogin/lessons-learnt/lessons-learnt.component';
 import { ExcelService } from './excel.service';
+import { ExcelSXService } from './excelsx.service';
 import { HomepageComponent } from './AfterLogin/homepage/homepage.component';import {MatAutocompleteModule} from '@angular/material/autocomplete';
 //import { MarketImplementationComponent } from './AfterLogin/market-implementation/market-implementation.component';
 import { RefreshComponent } from './AfterLogin/refresh/refresh.component';
@@ -70,6 +71,8 @@ import { ErrorsAllocatedComponent} from './DDO/errors-allocated/errors-allocated
 import { DeleteRequestDialogComponent } from './DDO/delete-request-dialog/delete-request-dialog.component';
 import { HomeComponent } from './DDO/home/home.component';
 import { DDODataComponent } from './DDO/ddodata/ddodata.component';
+import { PriorityReportComponent } from './AfterLogin/priority-report/priority-report.component';
+import { TestingComponent } from './AfterLogin/testing/testing.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -90,7 +93,7 @@ import { DDODataComponent } from './DDO/ddodata/ddodata.component';
     LessonsLearntComponent,EltDailog, CLRCommentdailog,LessonsLearntdailog, 
     PriorMonthData,DigitalTeamdailog,AuditLogdailog,RecordLevelAuditLogdailog,
     HomepageComponent,AddingUser,DeleteUser,RecordLevelHistorydailog,RecordAvailabilitydailog,
-    CommentsDialog,DataDialog, RefreshComponent, CycleTimeComponent,
+    RefreshComponent, CycleTimeComponent,
     HierarchyComponent, PerformanceLeaderComponent,
     //  MarketImplementationComponent
     TrackerComponent,ResourceUtilizationComponent,
@@ -128,7 +131,9 @@ import { DDODataComponent } from './DDO/ddodata/ddodata.component';
     ErrorsAllocatedComponent,
     DeleteRequestDialogComponent,
     HomeComponent,ConfirmationDailog,
-    DDODataComponent
+    DDODataComponent,
+    PriorityReportComponent,
+    TestingComponent
   ],
   imports: [
     BrowserModule, CommonModule,
@@ -138,8 +143,10 @@ import { DDODataComponent } from './DDO/ddodata/ddodata.component';
     BrowserAnimationsModule, HttpClientModule,NgMultiSelectDropDownModule.forRoot()
     //,SelectAutocompleteModule
   ],
-  entryComponents: [ELTReportComponent,EltDailog,ConfirmationDailog,PriorMonthData,CLRCommentdailog,ResourceComment,ResourceClientDetails,ManagerPojectDetails,DigitalManagerDetails,AuditLogdailog,RecordLevelAuditLogdailog,RecordLevelHistorydailog,RecordAvailabilitydailog,ConfigDeleteDialog,DigitalTeamdailog,MatTableFilterModule,TrackerCommentdailog,LessonsLearntdailog,ImplementationProjectStatusdailog, CommentsDialog, DataDialog, AddingUser, DeleteUser, CapacityHierarchyDailog,ProfileDialog,EditUserAccess,GrantAccessDialog,DeleteUserDailog,DeleteSteeringCommitteeDailog,DeleteNPSClient,DeleteRequestDialogComponent,AdminDeleteDialog,ProjectTeamDailog,ReplicateDailog],
-  providers: [DatePipe, ExcelService],
+  entryComponents: [ELTReportComponent,EltDailog,ConfirmationDailog,PriorMonthData,CLRCommentdailog,ResourceComment,ResourceClientDetails,ManagerPojectDetails,DigitalManagerDetails,AuditLogdailog,RecordLevelAuditLogdailog,
+  RecordLevelHistorydailog,RecordAvailabilitydailog,ConfigDeleteDialog,DigitalTeamdailog,MatTableFilterModule,TrackerCommentdailog,LessonsLearntdailog,ImplementationProjectStatusdailog, 
+  AddingUser, DeleteUser, CapacityHierarchyDailog,ProfileDialog,EditUserAccess,GrantAccessDialog,DeleteUserDailog,DeleteSteeringCommitteeDailog,DeleteNPSClient,DeleteRequestDialogComponent,AdminDeleteDialog,ProjectTeamDailog,ReplicateDailog],
+  providers: [DatePipe, ExcelService, ExcelSXService],
   // BnNgIdleService
   bootstrap: [AppComponent]
 })

@@ -19,7 +19,7 @@ export class LivedashboardComponent implements OnInit, OnDestroy {
   screenHeight : number;
   ReportSelected : string = "Home Page";
   imageUrl : string = "assets/images/cwt.png";
-  Userimage : string = "assets/images/CWTlogo.jpg";
+  Userimage : string = "assets/images/CWTlogo.png";
   sub : Subscription;
   // Search_Filter = new FormControl();
   LoggedINID;
@@ -63,6 +63,7 @@ export class LivedashboardComponent implements OnInit, OnDestroy {
   ShowDigitalReport : boolean = false;
   ShowDDOReports : boolean = false;
   ShowDDOHome : boolean = false;
+  ShowPriorityReport : boolean = false;
   constructor(public service : DashboardServiceService,public datepipe : DatePipe,private route : ActivatedRoute,private breakpointObserver: BreakpointObserver,private router : Router,public _location : Location) {
     // set screenWidth on page load
     this.screenWidth = window.innerWidth;
@@ -304,6 +305,18 @@ export class LivedashboardComponent implements OnInit, OnDestroy {
             }else{
               this.ShowDDOReports = false;
             }
+            if(data.Data[0].PriorityReport == true){
+              this.ShowPriorityReport = true;
+            }else{
+              this.ShowPriorityReport = false;
+            }
+            if(data.Data[0].DDOHome == true){
+              this.ShowDDOHome = true;
+              this.router.navigate(["/Dashboard/"+localStorage.getItem("UID")+"/DDOHomePage"]);
+            }else{
+              this.ShowDDOHome = false;
+              this.router.navigate(["/Dashboard/"+localStorage.getItem("UID")+"/HomePage"]);
+            }
             if(data.Data[0].DDOHome == true){
               this.ShowDDOHome = true;
               this.router.navigate(["/Dashboard/"+localStorage.getItem("UID")+"/DDOHomePage"]);
@@ -362,6 +375,9 @@ export class LivedashboardComponent implements OnInit, OnDestroy {
   }
   GloryErrorCorrection(){
     window.open('https://app.powerbi.com/view?r=eyJrIjoiMWY3NDQ5ZmQtZjZjNC00ZWE2LTk5ZWMtYmI2NDMxZDYzOGM1IiwidCI6ImNhZmU0YTY3LTk0NzUtNDc3Ni04OWZkLTRiNDcyODYwMDk2MiIsImMiOjN9', "_blank");
+  }
+  OpenOnOffBoardingForm(){
+    window.open('https://mycwt.sharepoint.com/sites/CI/_layouts/15/listforms.aspx?cid=ZWEyYjc0NmMtMDNhMC00MzlkLWExOGItZmEzNTYzMmYxNGUx&nav=NGJhN2Q5YzAtNjA1NC00NDJjLWE0NzktY2NhOTE3MzY1ZmQw',"_blank");
   }
   ShowSpinnerHandler(value){
     this.showSpinner = value;
@@ -440,7 +456,7 @@ export class LivedashboardComponent implements OnInit, OnDestroy {
       }
       break;
       case 7 : {
-        this.ReportSelected = "ELT Report";
+        this.ReportSelected = "Volume/Traffic Variance Tracker";
         this.LastUpdatedText = "";
         // if(this.ELT == null || this.ELT == ""){
         //   this.LastUpdatedText = "";
@@ -580,6 +596,11 @@ export class LivedashboardComponent implements OnInit, OnDestroy {
       break;
       case 25 : {
         this.ReportSelected = "DDO Home";
+        this.LastUpdatedText = "";
+      }
+      break;
+      case 26 : {
+        this.ReportSelected = "Priority";
         this.LastUpdatedText = "";
       }
       break;

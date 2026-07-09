@@ -50,6 +50,8 @@ import { StatusTrackerComponent } from './AfterLogin/status-tracker/status-track
 import { ErrorsAllocatedComponent } from './DDO/errors-allocated/errors-allocated.component';
 import { GpnContactComponent } from './DDO/gpn-contact/gpn-contact.component';
 import { HomeComponent } from './DDO/home/home.component';
+import { PriorityReportComponent } from './AfterLogin/priority-report/priority-report.component';
+import { TestingComponent} from './AfterLogin/testing/testing.component';
 const routes: Routes = [
   { path:'',redirectTo: 'Dashboard', pathMatch: 'full'},
   { path:'Login',component:LoginComponent},
@@ -68,6 +70,7 @@ const routes: Routes = [
     children : [
       {path:'',redirectTo: 'HomePage', pathMatch: 'full'},
       //{path:'',redirectTo: 'HomePage', pathMatch: 'full'},
+      // {path:'Testing',component:TestingComponent},
       {path:'DDOHomePage',component:HomeComponent},
       {path:'HomePage',component:LiveHomePageComponent},
       {path:'INProgressHomePage',component:HomepageComponent},
@@ -82,7 +85,7 @@ const routes: Routes = [
       {path:'Hierarchy',component:HierarchyComponent},
       {path:'CriticalTaskOverdue',component:CriticalTasksOverDueComponent},
       {path:'ImplementationProjectStatus',component:ImplementationProjectStatusComponent},
-      {path:'EltReport',component:ELTReportComponent},
+      {path:'VolumeORTrafficVarianceTracker',component:ELTReportComponent},
       {path:'CapacityManagement',component:CapacityManagementComponent},
       {path:'eSOWReport',component:ESowReportComponent},
       {path:'StageGateTesting',component:StageGateTestingComponent},
@@ -111,6 +114,7 @@ const routes: Routes = [
       {path:'StatusTracker',component:StatusTrackerComponent},
       {path:'ErrorsAllocated',component:ErrorsAllocatedComponent},
       {path:'GPNContact',component:GpnContactComponent},
+      {path:'Priority',component:PriorityReportComponent},
   ]},
   // {path:'refresh',component : RefreshComponent}
 ];

@@ -59,8 +59,6 @@ export class SteeringCommitteeRecordViewComponent implements OnInit {
       this.SC_Data = data.Data;
       this.SearchValueChanges();
     })
-    
-    
   }
 
   onClientNameChange(){

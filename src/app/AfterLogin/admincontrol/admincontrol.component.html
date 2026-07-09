@@ -47,7 +47,7 @@
 </div>
 <div class="col-12">
     <div class="example-container" [ngStyle]="{'height' : (screenHeight-180)+'px'}" style="border: 1px solid rgb(196, 196, 196);">
-        <table mat-table [dataSource]="dataSource" matSort>
+        <table mat-table [dataSource]="dataSource" #UserDetailsSort="matSort" matSort>
             <ng-container matColumnDef="UID" sticky>
                 <th mat-sort-header mat-header-cell *matHeaderCellDef class="maintextSizes" style="padding-left: 10px;min-width: 120px;">UID</th>
                 <td mat-cell *matCellDef="let element"  style="padding-left: 10px;"> <div> {{element.UID}}</div> </td>
@@ -159,6 +159,10 @@
                 <th mat-sort-header mat-header-cell *matHeaderCellDef class="maintextSizes" style="width: 60px;"> <div class="text-transpose"> DDO Home Page</div></th>
                 <td mat-cell *matCellDef="let element"><mat-icon style="margin-top: 8px;width: 60px;" [ngStyle]="{'color': element.DDOHome == true ?  '#28B463' : '#E74C3C'}" >{{element.DDOHome_icon}}</mat-icon></td>
             </ng-container>
+            <ng-container matColumnDef="PriorityReport">
+                <th mat-sort-header mat-header-cell *matHeaderCellDef class="maintextSizes" style="width: 60px;"> <div class="text-transpose"> Priority Report</div></th>
+                <td mat-cell *matCellDef="let element"><mat-icon style="margin-top: 8px;width: 60px;" [ngStyle]="{'color': element.PriorityReport == true ?  '#28B463' : '#E74C3C'}" >{{element.PriorityReport_icon}}</mat-icon></td>
+            </ng-container>
             <ng-container matColumnDef="UserAccessStatus">
                 <th mat-sort-header mat-header-cell *matHeaderCellDef class="maintextSizes"> User Access Status </th>
                 <td mat-cell *matCellDef="let element"> {{element.UserAccessStatus}} </td>
@@ -187,7 +191,7 @@
                 <th mat-header-cell *matHeaderCellDef class="maintextSizes" style="width: 300px;padding-right: 10px;border-right: none;border-left: 1px solid rgb(196, 196, 196)"> Edit </th>
                 <td mat-cell *matCellDef="let element"  style="width: 300px;padding-right: 10px;border-right: none;border-left: 1px solid rgb(196, 196, 196);">
                     <!-- <button mat-icon-button style="color:gray;"> -->
-                        <mat-icon style="display: inline;margin-left: 8px;margin-right: 6px;cursor: pointer;" aria-label="Edit" (click)="RowSelected(j,element.UID,element.UserName,element.IMPS,element.CTO,element.LessonsLearnt,element.StageGate,element.AutomatedCLR,element.CLREdits,element.MarketReport,element.MarketCommentsEdit,element.ELTReport,element.UserAccessStatus,element.AccountStatus,element.CycleTime,element.CapacityTracker,element.ResourceUtilization,element.C_Hierarchy,element.C_HierarchyEdits,element.NPS,element.NPSEdit,element.NPSClientInfo,element.NPSAdmin,element.DigitalReport,element.PerformanceAnalysis,element.JobType,element.SteeringCommittee,element.SteeringCommitteeEdits,element.DDO,element.DDOHome)">edit</mat-icon>
+                        <mat-icon style="display: inline;margin-left: 8px;margin-right: 6px;cursor: pointer;" aria-label="Edit" (click)="RowSelected(j,element.UID,element.UserName,element.IMPS,element.CTO,element.LessonsLearnt,element.StageGate,element.AutomatedCLR,element.CLREdits,element.MarketReport,element.MarketCommentsEdit,element.ELTReport,element.UserAccessStatus,element.AccountStatus,element.CycleTime,element.CapacityTracker,element.ResourceUtilization,element.C_Hierarchy,element.C_HierarchyEdits,element.NPS,element.NPSEdit,element.NPSClientInfo,element.NPSAdmin,element.DigitalReport,element.PerformanceAnalysis,element.JobType,element.SteeringCommittee,element.SteeringCommitteeEdits,element.DDO,element.DDOHome,element.PriorityReport)">edit</mat-icon>
                         <p style="display: inline;margin-right: 6px;font-size: 26px;">|</p>
                         <mat-icon style="display: inline;margin-right: 8px;cursor: pointer;" aria-label="Delete" (click)="DeleteUser(element.UID,element.UserName)">delete</mat-icon>
                     <!-- </button> -->
@@ -306,6 +310,11 @@
                             <mat-option value="2023">2023</mat-option>
                             <mat-option value="2024">2024</mat-option>
                             <mat-option value="2025">2025</mat-option>
+                            <mat-option value="2026">2026</mat-option>
+                            <mat-option value="2027">2027</mat-option>
+                            <mat-option value="2028">2028</mat-option>
+                            <mat-option value="2029">2029</mat-option>
+                            <mat-option value="2030">2030</mat-option>
                         </mat-select>
                     </mat-form-field>
                     <div class="col-12" style="margin: 0px;padding: 0px;text-align: center">
@@ -369,6 +378,30 @@
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="displayedColumns_CTT;sticky: true" style="height: 50px;"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns_CTT;" style="height: 23px;"></tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="example-container mat-elevation-z2" [ngStyle]="{'height' : 'auto'}" style="border: 1px solid rgb(196, 196, 196);">
+            <table mat-table [dataSource]="dataSource_RU_ON">
+                <ng-container matColumnDef="ReportName">
+                    <th mat-header-cell *matHeaderCellDef class="maintextSizes_ctt" style="padding-left: 10px;"> Report Name </th>
+                    <td mat-cell *matCellDef="let element" class="texttd" style="padding-left: 0px;"> {{element.ReportName}} </td>
+                </ng-container>
+                <ng-container matColumnDef="Updated_On">
+                    <th mat-header-cell *matHeaderCellDef class="maintextSizes_ctt"> Updated On </th>
+                    <td mat-cell *matCellDef="let element" class="texttd"> {{element.Updated_On}} </td>
+                </ng-container>
+                <ng-container matColumnDef="AvailableRows">
+                    <th mat-header-cell *matHeaderCellDef class="maintextSizes_ctt"> Rows in Source </th>
+                    <td mat-cell *matCellDef="let element" class="texttd"> {{element.AvailableRows}} </td>
+                </ng-container>
+                <ng-container matColumnDef="UploadedRows">
+                    <th mat-header-cell *matHeaderCellDef class="maintextSizes_ctt" style="padding-right: 10px;"> Rows Uploaded in DB </th>
+                    <td mat-cell *matCellDef="let element" class="texttd" style="padding-right: 10px;"> {{element.UploadedRows}} </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns_RU_ON;sticky: true" style="height: 50px;"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns_RU_ON;" style="height: 23px;"></tr>
             </table>
         </div>
     </div>

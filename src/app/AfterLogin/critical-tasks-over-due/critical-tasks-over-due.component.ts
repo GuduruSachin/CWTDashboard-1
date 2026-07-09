@@ -4,12 +4,12 @@ import { Chart } from 'chart.js';
 import { ProjectStatus, CriticalOverDue, GroupName, TaskType, ProjectLevel, Region, Country, AssigneFullName } from '../../Models/CtoFilters';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort} from '@angular/material/sort';
-import { ExcelService } from '../../excel.service';
 import { LivedashboardComponent } from '../livedashboard/livedashboard.component';
 import { DatePipe } from '@angular/common';
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { FormControl } from '@angular/forms';
+import { ExcelSXService } from '../../excelsx.service';
 
 @Component({
   selector: 'app-critical-tasks-over-due',
@@ -54,7 +54,7 @@ export class CriticalTasksOverDueComponent implements OnInit {
   FilteredCount;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   displayedColumns: string[] = ['Workspace_Title', 'Milestone_Title_Country___Est_Go_Live_Date','Task_Title','Milestone__Project_Status','Milestone__Region','Workspace__Project_Level','Group_Name','OwnershipRevenue','Task_Due_Date_c','Task_Overdue'];
-  constructor(public datepipe : DatePipe,public service : DashboardServiceService, public dashboard : LivedashboardComponent, private excelService:ExcelService) {
+  constructor(public datepipe : DatePipe,public service : DashboardServiceService, public dashboard : LivedashboardComponent, private excelxsService : ExcelSXService) {
     //set screenWidth on page load
     this.screenWidth = window.innerWidth;
     this.screenHeight = window.innerHeight;
@@ -387,7 +387,21 @@ export class CriticalTasksOverDueComponent implements OnInit {
             'TaskType' : o.TaskType,
           };
         });
-        this.excelService.exportAsExcelFile(CustomizedData, 'Critical Task Overdue');
+        this.excelxsService.exportAsExcelFile(
+          [
+            {
+              sheetName: 'Task Over Due',
+              data: CustomizedData,
+              defaultBackgroundColor : 'FF34495E',
+              defaultTextColor : 'FFFFFFFF',
+              columnFormats: {
+                'dd/MMM/yyyy' : ['Estimated Go Live','Milestone Due Date','Task Start Date','Task Due Date'], // Negative and Positive Numbers with 2 decimals with Dolor Symbol
+                '0' : ['Critical Overdue','Task Overdue']
+              },
+            },
+          ],
+          'CriticalTaskOverDue'
+        );
       }else{
         alert("Something Went wrong, Please Try again later");
       }

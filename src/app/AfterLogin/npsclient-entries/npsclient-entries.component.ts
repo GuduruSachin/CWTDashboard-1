@@ -36,6 +36,7 @@ export class NPSClientEntriesComponent implements OnInit {
         this.screenHeight = window.innerHeight;
       };
   }
+  displayNPSClientForm : boolean = false;
   matcher = new MyErrorStateMatcher();
   screenHeight;screenWidth;
   displayedColumns : string[] = ['Company','ClientName','Country','Email','Region','InsertedBy','Inserted_On','actions'];
@@ -56,6 +57,9 @@ export class NPSClientEntriesComponent implements OnInit {
   LManager = new FormControl();
   RManager = new FormControl();
   GManager = new FormControl();
+  GDManager = new FormControl();
+  RDManager = new FormControl();
+  LDManager = new FormControl();
   Country  = new FormControl('', [
     Validators.required,
   ]);
@@ -102,6 +106,21 @@ export class NPSClientEntriesComponent implements OnInit {
       .subscribe(() => {
         this.AFNfilter();
       });
+    this.GDPMsearch.valueChanges
+      .pipe(takeUntil(this._onDestroy))
+      .subscribe(() => {
+        this.GDPMfilter();
+      });
+    this.RDPMsearch.valueChanges
+      .pipe(takeUntil(this._onDestroy))
+      .subscribe(() => {
+        this.RDPMfilter();
+      });
+    this.LDPMsearch.valueChanges
+      .pipe(takeUntil(this._onDestroy))
+      .subscribe(() => {
+        this.LDPMfilter();
+      });
     this.CountrySearch.valueChanges
       .pipe(takeUntil(this._onDestroy))
       .subscribe(() => {
@@ -116,6 +135,9 @@ export class NPSClientEntriesComponent implements OnInit {
   GPMsearch = new FormControl();
   RPMsearch = new FormControl();
   AFNsearch = new FormControl();
+  GDPMsearch = new FormControl();
+  RDPMsearch = new FormControl();
+  LDPMsearch = new FormControl();
   CountrySearch = new FormControl();
   CompanyNameSearch = new FormControl();
   Region = new FormControl('', [
@@ -125,11 +147,17 @@ export class NPSClientEntriesComponent implements OnInit {
   GManagerList : FilterGlobalProjectManager[];
   RManagerList : FilterGlobalProjectManager[];
   LManagerList : FilterGlobalProjectManager[];
+  GDManagerList : FilterGlobalProjectManager[];
+  RDManagerList : FilterGlobalProjectManager[];
+  LDManagerList : FilterGlobalProjectManager[];
   CountryList : FilterCountry[];
   CompanyNameList : FilterAccountName[];
   public GPMData: ReplaySubject<FilterGlobalProjectManager[]> = new ReplaySubject<FilterGlobalProjectManager[]>(1);
   public RPMData: ReplaySubject<FilterGlobalProjectManager[]> = new ReplaySubject<FilterGlobalProjectManager[]>(1);
   public AFNData: ReplaySubject<FilterGlobalProjectManager[]> = new ReplaySubject<FilterGlobalProjectManager[]>(1);
+  public GDPMData: ReplaySubject<FilterGlobalProjectManager[]> = new ReplaySubject<FilterGlobalProjectManager[]>(1);
+  public RDPMData: ReplaySubject<FilterGlobalProjectManager[]> = new ReplaySubject<FilterGlobalProjectManager[]>(1);
+  public LDPMData: ReplaySubject<FilterGlobalProjectManager[]> = new ReplaySubject<FilterGlobalProjectManager[]>(1);
   public CountryData: ReplaySubject<FilterCountry[]> = new ReplaySubject<FilterCountry[]>(1);
   public CompanyNameData : ReplaySubject<FilterAccountName[]> = new ReplaySubject<FilterAccountName[]>(1);
   
@@ -165,6 +193,15 @@ export class NPSClientEntriesComponent implements OnInit {
         data.FilterGlobalProjectManager.push(datas);
         data.FilterGlobalProjectManager.push(datas1);
         data.FilterGlobalProjectManager.push(datas2);
+        data.FilterGlobalDigitalData.push(datas);
+        data.FilterGlobalDigitalData.push(datas1);
+        data.FilterGlobalDigitalData.push(datas2);
+        data.FilterRegionalDigitalData.push(datas);
+        data.FilterRegionalDigitalData.push(datas1);
+        data.FilterRegionalDigitalData.push(datas2);
+        data.FilterLocalDigitalData.push(datas);
+        data.FilterLocalDigitalData.push(datas1);
+        data.FilterLocalDigitalData.push(datas2);
         data.FilterCountry.push(datas4);
         data.FilterCountry.push(datas5);
         data.FilterAccountName.push(datas6);
@@ -174,6 +211,12 @@ export class NPSClientEntriesComponent implements OnInit {
         this.RPMData.next(this.RManagerList.slice());
         this.LManagerList = data.FilterGlobalProjectManager;
         this.AFNData.next(this.LManagerList.slice());
+        this.GDManagerList = data.FilterGlobalDigitalData;
+        this.GDPMData.next(this.GDManagerList.slice());
+        this.RDManagerList = data.FilterRegionalDigitalData;
+        this.RDPMData.next(this.RDManagerList.slice());
+        this.LDManagerList = data.FilterLocalDigitalData;
+        this.LDPMData.next(this.LDManagerList.slice());
         this.CountryList = data.FilterCountry;
         this.CountryData.next(this.CountryList.slice());
         this.CompanyNameList = data.FilterAccountName;
@@ -232,6 +275,57 @@ export class NPSClientEntriesComponent implements OnInit {
     // filter the manager
     this.RPMData.next(
       this.RManagerList.filter(manager => manager.GlobalProjectManager.toLowerCase().indexOf(search) > -1)
+    );
+  }
+  protected GDPMfilter() {
+    if (!this.GDManagerList) {
+      return;
+    }
+    // get the search keyword
+    let search = this.GDPMsearch.value;
+    if (!search) {
+      this.GDPMData.next(this.GDManagerList.slice());
+      return;
+    } else {
+      search = search.toLowerCase();
+    }
+    // filter the manager
+    this.GDPMData.next(
+      this.GDManagerList.filter(manager => manager.GlobalProjectManager.toLowerCase().indexOf(search) > -1)
+    );
+  }
+  protected RDPMfilter() {
+    if (!this.RDManagerList) {
+      return;
+    }
+    // get the search keyword
+    let search = this.RDPMsearch.value;
+    if (!search) {
+      this.RDPMData.next(this.RDManagerList.slice());
+      return;
+    } else {
+      search = search.toLowerCase();
+    }
+    // filter the manager
+    this.RDPMData.next(
+      this.RDManagerList.filter(manager => manager.GlobalProjectManager.toLowerCase().indexOf(search) > -1)
+    );
+  }
+  protected LDPMfilter() {
+    if (!this.LDManagerList) {
+      return;
+    }
+    // get the search keyword
+    let search = this.LDPMsearch.value;
+    if (!search) {
+      this.LDPMData.next(this.LDManagerList.slice());
+      return;
+    } else {
+      search = search.toLowerCase();
+    }
+    // filter the manager
+    this.LDPMData.next(
+      this.LDManagerList.filter(manager => manager.GlobalProjectManager.toLowerCase().indexOf(search) > -1)
     );
   }
   protected Countryfilter() {
@@ -310,7 +404,7 @@ export class NPSClientEntriesComponent implements OnInit {
         // console.log(this.ClientName.value,this.CompanyName.value,this.Email.value,this.Country.value,this.Region.value,this.RManager.value,this.GManager.value,
         //     this.LManager.value,DateGo_Live,this.ClientType.value,this.ClientContactNumber,this.Language.value,"New Record",localStorage.getItem("UID"))
         this.service.NpsInsert(this.ClientName.value,this.CompanyName.value,this.Email.value,this.Country.value,this.Region.value,this.RManager.value,this.GManager.value,
-          this.LManager.value,DateGo_Live,this.ClientType.value,this.ClientContactNumber,this.Language.value,"New Record",localStorage.getItem("UID")).subscribe(data=>{
+          this.LManager.value,DateGo_Live,this.ClientType.value,this.ClientContactNumber,this.Language.value,"New Record",this.GDManager.value,this.RDManager.value,this.LDManager.value,localStorage.getItem("UID")).subscribe(data=>{
             if(data.code == 200){
               alert(data.message);
               this.GetNPSData();
@@ -321,7 +415,7 @@ export class NPSClientEntriesComponent implements OnInit {
         })
       }else{
         this.service.NPSUpdate(this.NPSID,this.ClientName.value,this.CompanyName.value,this.Email.value,this.Country.value,this.Region.value,this.RManager.value,this.GManager.value,
-          this.LManager.value,DateGo_Live,this.ClientType.value,this.ClientContactNumber,this.Language.value,localStorage.getItem("UID")).subscribe(data=>{
+          this.LManager.value,DateGo_Live,this.ClientType.value,this.ClientContactNumber,this.Language.value,this.GDManager.value,this.RDManager.value,this.LDManager.value,localStorage.getItem("UID")).subscribe(data=>{
             if(data.code == 200){
               alert(data.message);
               this.GetNPSData();
@@ -375,7 +469,7 @@ export class NPSClientEntriesComponent implements OnInit {
         this.RecordNO = i;
       }else{}
     }
-    this.ShowForm = true;
+    this.displayNPSClientForm = true;
     this.ButtonName = "Update";
     this.HeadingName = "Edit Record - "+this.NPSViewData[this.RecordNO].ClientName;
     this.NPSID = this.NPSViewData[this.RecordNO].NpsId;
@@ -398,6 +492,21 @@ export class NPSClientEntriesComponent implements OnInit {
     }else{
       this.GManager.setValue(this.NPSViewData[this.RecordNO].GlobalProjectManager);
     }
+    if(this.NPSViewData[this.RecordNO].LocalDigitalPM == null || this.NPSViewData[this.RecordNO].LocalDigitalPM == "null"){
+      this.LDManager.setValue("---");
+    }else{
+      this.LDManager.setValue(this.NPSViewData[this.RecordNO].LocalDigitalPM);
+    }
+    if(this.NPSViewData[this.RecordNO].RegionalDigitalPM == null || this.NPSViewData[this.RecordNO].RegionalDigitalPM == "null"){
+      this.RDManager.setValue("---");
+    }else{
+      this.RDManager.setValue(this.NPSViewData[this.RecordNO].RegionalDigitalPM);
+    }
+    if(this.NPSViewData[this.RecordNO].GlobalDigitalPM == null || this.NPSViewData[this.RecordNO].GlobalDigitalPM == "null"){
+      this.GDManager.setValue("---");
+    }else{
+      this.GDManager.setValue(this.NPSViewData[this.RecordNO].GlobalDigitalPM);
+    }
     this.Region.setValue(this.NPSViewData[this.RecordNO].Region);
     this.Country.setValue(this.NPSViewData[this.RecordNO].Country);
     this.Email.setValue(this.NPSViewData[this.RecordNO].Email);
@@ -408,11 +517,10 @@ export class NPSClientEntriesComponent implements OnInit {
   Deleterow(NPSID : string,client : string){
     this.openDeleteDialog(NPSID,client);
   }
-  ShowForm : boolean = false;
   NewRecord(){
     this.ButtonName = "Save";
     this.HeadingName = "Add Record";
-    this.ShowForm = true;
+    this.displayNPSClientForm = true;
     this.NPSID = "";
     this.ClientName.setValue("");
     this.ClientType.setValue("");
@@ -429,7 +537,7 @@ export class NPSClientEntriesComponent implements OnInit {
     this.DateGolive = null;
   }
   OnCancelClick(){
-    this.ShowForm = false;
+    this.displayNPSClientForm = false;
     this.ClientName.setValue("");
     this.ClientType.setValue("");
     // this.SingleResource = "";
@@ -456,9 +564,12 @@ export class NPSClientEntriesComponent implements OnInit {
         "Go Live date" : o.GoLiveDate,
         "Email address (Client)" : o.Email,
         "Global ProjectManager" : o.GlobalProjectManager,
+        "Regional Project Manager" : o.RegionalProjectManager,
         "Local Project Manager" : o.LocalProjectManager,
         "Region" : o.Region,
-        "Regional Project Manager" : o.RegionalProjectManager,
+        "Global Digital OBT Lead" : o.GlobalDigitalPM,
+        "Regional Digital OBT Lead" : o.RegionalDigitalPM,
+        "Local Digital OBT Lead" : o.LocalDigitalPM,
         // "Single Resource" : o.SingleResource,
         "Language" : o.Language,
       };

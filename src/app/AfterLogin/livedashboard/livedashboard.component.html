@@ -63,7 +63,7 @@
                 <mat-icon style="color:#CB4335;" aria-label="Side nav toggle icon">power_settings_new</mat-icon>
             </button>
             <a (click)= "[sidenav.close(), SelectedReport(0)]" [routerLink]="['HomePage']" matTooltip="Home"><!-- <a [matMenuTriggerFor]="menu" >-->
-                <img class="mat-elevation-z2" [src]="Userimage" style="width: 45px; height: 45px; border-radius: 50%;">
+                <img [src]="Userimage" style="height: 45px;">
             </a>
             <!-- <mat-menu #menu="matMenu">
                 <button mat-menu-item>Profile</button>
@@ -79,8 +79,8 @@
         <mat-sidenav style="background-color: #D5DBDB;padding-top: 60px; overflow-x: hidden;position: fixed;" #sidenav [opened]="screenWidth < 840" mode = "over" class="sidenav mat-elevation-z3">
             <div style="text-align: center;" (click)= "[sidenav.close(), SelectedReport(0)]" [routerLink]="ShowDDOHome ? ['DDOHomePage'] : ['HomePage']" matTooltip="Home">
                 <div style="text-align: center;padding-top :10px;">
-                    <a><img [src]="imageUrl"  style="width: 70px; height: 45px;cursor: pointer;"></a>
-                    <a style="vertical-align: bottom;"><label style="cursor: pointer;color:#F16950;margin-left: 7px;font-weight: bold;font-family: Playtoy;src : url(assets/font/Playtoy.ttf) format('opentype');font-size: 22px;">DashBoard</label></a>
+                    <a><img [src]="imageUrl"  style="height: 55px;cursor: pointer;"></a>
+                    <a style="vertical-align: middle;"><label style="cursor: pointer;color:#F16950;margin-left: 7px;font-weight: bold;font-family: Playtoy;src : url(assets/font/Playtoy.ttf) format('opentype');font-size: 22px;">DashBoard</label></a>
                 </div>
                 <div style="margin : 10px;background-color: #333F48;height: 1px;">
                 </div>
@@ -102,7 +102,7 @@
                 </mat-expansion-panel>
                 <mat-list-item *ngIf="ShowCycleTime" (click)= "[sidenav.close(), SelectedReport(8)]" routerLinkActive="active-list-item" [routerLink]="['CycleTime']">Cycle Time</mat-list-item>
                 <mat-list-item (click)= "[sidenav.close(), SelectedReport(18)]" routerLinkActive="active-list-item" [routerLink]="['DigitalReport']">Digital Team Dashboard</mat-list-item>
-                <mat-list-item *ngIf="ShowELT" (click)= "[sidenav.close(), SelectedReport(7)]" routerLinkActive="active-list-item" [routerLink]="['EltReport']">ELT Report</mat-list-item>
+                <mat-list-item *ngIf="ShowELT" (click)= "[sidenav.close(), SelectedReport(7)]" routerLinkActive="active-list-item" [routerLink]="['VolumeORTrafficVarianceTracker']">Volume/Traffic Variance Tracker</mat-list-item>
                 <mat-list-item *ngIf="ShowMarketReport" (click)= "[sidenav.close(), SelectedReport(6)]" routerLinkActive="active-list-item" [routerLink]="['ImplementationMarket']">Implementation Market Report</mat-list-item>
                 <mat-list-item *ngIf="ShowMarketReport" (click)= "[sidenav.close(), SelectedReport(20)]" routerLinkActive="active-list-item" [routerLink]="['GoLiveReport']">Go Live Report</mat-list-item>
                 <mat-list-item *ngIf="ShowIMPS" (click)= "[sidenav.close(), SelectedReport(1)]" routerLinkActive="active-list-item" [routerLink]="['ImplementationProjectStatus']">Implementation Project Status</mat-list-item>
@@ -135,8 +135,8 @@
                     </mat-nav-list>
                 </mat-expansion-panel>
                 <mat-list-item *ngIf="ShowCTO" (click)= "[sidenav.close(), SelectedReport(2)]" routerLinkActive="active-list-item" [routerLink]="['CriticalTaskOverdue']">Critical Tasks Overdue</mat-list-item>
-                <mat-list-item *ngIf="ShowAutomatedCLR" (click)="[sidenav.close(), SelectedReport(15)]" routerLinkActive="active-list-item" [routerLink]="['ResourceAssignment']">Resource Assignment</mat-list-item>
-                <mat-list-item *ngIf="ShowLL" (click)= "[sidenav.close(), SelectedReport(3)]" routerLinkActive="active-list-item" [routerLink]="['LessonsLearnt']">Lessons Learnt</mat-list-item>
+                <!-- <mat-list-item *ngIf="ShowAutomatedCLR" (click)="[sidenav.close(), SelectedReport(15)]" routerLinkActive="active-list-item" [routerLink]="['ResourceAssignment']">Resource Assignment</mat-list-item>
+                <mat-list-item *ngIf="ShowLL" (click)= "[sidenav.close(), SelectedReport(3)]" routerLinkActive="active-list-item" [routerLink]="['LessonsLearnt']">Lessons Learnt</mat-list-item> -->
                 <!-- <mat-list-item (click)= "[sidenav.close(), GloryErrorCorrection()]" matTooltip="Global Glory Error Correction">Global Glory Error Correction Dashboard</mat-list-item>
                 <mat-list-item (click)= "[sidenav.close(), SelectedReport(23)]" routerLinkActive="active-list-item" [routerLink]="['ErrorsAllocated']">Errors Allocated</mat-list-item>
                 <mat-list-item (click)= "[sidenav.close(), SelectedReport(24)]" routerLinkActive="active-list-item" [routerLink]="['GPNContact']">GPN Contact</mat-list-item> -->
@@ -171,6 +171,8 @@
                         <!-- <mat-list-item (click)= "[sidenav.close(), SelectedReport(12)]" routerLinkActive="active-list-item" [routerLink]="['Prospect']">Prospect</mat-list-item> -->
                     </mat-nav-list>
                 </mat-expansion-panel>
+                <mat-list-item *ngIf="ShowPriorityReport" (click)= "[sidenav.close(), SelectedReport(26)]" routerLinkActive="active-list-item" [routerLink]="['Priority']">Prioritization Report</mat-list-item>
+                <mat-list-item (click)="OpenOnOffBoardingForm()" >IMP On/Off Boarding Form</mat-list-item>
             </mat-nav-list>
         </mat-sidenav>
         <mat-sidenav-content style="background-color: #FEFEFF;padding-top: 60px">

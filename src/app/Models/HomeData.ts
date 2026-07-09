@@ -10,9 +10,13 @@ export interface HomeData{
     CurrentMonth : number;
     NextMonth : number;
     CurrentMonthVolume: number;
+    CurrentMonthNActiveVolume: number;
     CurrentMonthRecords: number;
+    CurrentMonthNActiveRecords: number;
     NextMonthVolume: number;
+    NextMonthNActiveVolume: number;
     NextMonthRecords: number;
+    NextMonthNActiveRecords: number;
     PreMonthVolume: number;
     PreMonthRecords: number;
     RoyMonthVolume: number;

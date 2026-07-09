@@ -47,6 +47,8 @@ export interface ReportSAccess {
     DDO_icon : string;
     DDOHome : boolean;
     DDOHome_icon : string;
+    PriorityReport : boolean;
+    PriorityReport_icon : string;
     UserStatus: string;
     Prospect: boolean;
     InsertedOn: Date;

@@ -15,6 +15,17 @@
             </mat-form-field>
             <div class="col-md-3">
                 <mat-form-field style="width: 100%;">
+                    <mat-label style="font-size: 15px;">Select Priority</mat-label>
+                    <mat-select [(value)]="Priority">
+                        <mat-option value="---">---</mat-option>
+                        <mat-option value="Removed - Started">Removed - Started</mat-option>
+                        <mat-option value="Removed - No Action">Removed - No Action</mat-option>
+                        <mat-option value="Yes">Yes</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>  
+            <div class="col-md-3">
+                <mat-form-field style="width: 100%;">
                     <mat-label style="font-size: 15px;">Select Implementation Type</mat-label>
                     <mat-select [(value)]="Implementation_Type">
                         <mat-option value="---">---</mat-option>
@@ -129,6 +140,14 @@
                     <!-- [min]="todayDate" -->
                     <mat-datepicker-toggle matSuffix [for]="Assignment_date"></mat-datepicker-toggle>
                     <mat-datepicker #Assignment_date color="primary"></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="col-md-3">
+                <mat-form-field style="width: 100%;">
+                    <mat-label>TX Resourcing (Default value : OK for TX)</mat-label>
+                    <input matInput [matDatepicker]="TX_Resourcing" [(ngModel)]="TXResourcing">
+                    <mat-datepicker-toggle matSuffix [for]="TX_Resourcing"></mat-datepicker-toggle>
+                    <mat-datepicker #TX_Resourcing color="primary"></mat-datepicker>
                 </mat-form-field>
             </div>
             <div class="col-md-6">

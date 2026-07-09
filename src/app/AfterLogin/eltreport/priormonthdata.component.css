@@ -9,7 +9,9 @@ table {
     font-size: 15px;
     font-weight: bold;
     color : #333F48 ;
-    font-family: "Montserrat", sans-serif;
+    font-family: "Montserrat", sans-serif;   
+    padding-left: 10px;
+    padding-right: 10px;
   }
   .mat-cell,.mat-header-cell {
     min-width: 80px;

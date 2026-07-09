@@ -36,7 +36,7 @@ export interface ParsingData{
   SteeringCommitteeEdits : boolean;
   DDOReports : boolean;
   DDOHome : boolean;
-  // Prospect: boolean;
+  PriorityReport : boolean;
 }
 @Component({
   selector: 'app-admincontrol',
@@ -50,30 +50,29 @@ export class AdmincontrolComponent implements OnInit {
   SemiAnnual;Year;
   screenHeight : number;ShowNotificationsTable:boolean = false;
   //displayedColumns : string[] = ['UID', 'UserName','IMPS','CTO','LessonsLearnt','StageGate','MarketReport','AutomatedCLR','CLREdits','CapacityTracker','ELTReport','CycleTime','C_Hierarchy','UserAccessStatus','ResourceUtilization','Prospect','InsertedOn','UpdatedOn','UpdatedBy'];
-  displayedColumns : string[] = ['UID', 'UserName','JobType','AutomatedCLR','CLREdits','MarketReport','MarketCommentsEdit','ELTReport','CycleTime','IMPS','CTO','LessonsLearnt','StageGate','CapacityTracker','ResourceUtilization','C_Hierarchy','C_HierarchyEdits','PerformanceAnalysis','NPS','NPSAdmin','NPSClientInfo','NPSEdit','DigitalReport','SteeringCommittee','SteeringCommitteeEdits','DDO','DDOHome','UserAccessStatus','AccountStatus','InsertedOn_s','UpdatedOn_s','UpdatedBy','actions'];
+  displayedColumns : string[] = ['UID', 'UserName','JobType','AutomatedCLR','CLREdits','MarketReport','MarketCommentsEdit','ELTReport','CycleTime','IMPS','CTO','LessonsLearnt','StageGate','CapacityTracker','ResourceUtilization','C_Hierarchy','C_HierarchyEdits','PerformanceAnalysis','NPS','NPSAdmin','NPSClientInfo','NPSEdit','DigitalReport','SteeringCommittee','SteeringCommitteeEdits','DDO','DDOHome','PriorityReport','UserAccessStatus','AccountStatus','InsertedOn_s','UpdatedOn_s','UpdatedBy','actions'];
   displayedColumns_notifications : string[] = ['UID','Username','ReportName','RequestedOn','TicketStatuts','actions'];
-  constructor(
-    public service : DashboardServiceService,public dashboard : LivedashboardComponent,public dialog: MatDialog,public datepipe : DatePipe,) { 
-      //set screenWidth on page load
+  constructor(public service : DashboardServiceService,public dashboard : LivedashboardComponent,public dialog: MatDialog,public datepipe : DatePipe,) { 
+    //set screenWidth on page load
+    this.screenWidth = window.innerWidth;
+    this.screenHeight = window.innerHeight;
+    window.onresize = () => {
+      //set screenWidth on screen size change
       this.screenWidth = window.innerWidth;
       this.screenHeight = window.innerHeight;
-      window.onresize = () => {
-        //set screenWidth on screen size change
-        this.screenWidth = window.innerWidth;
-        this.screenHeight = window.innerHeight;
-      };
-    }
-    ButtonText;dataSource_CTT;displayedColumns_CTT : string[] = ['TargetID','ExistingServiceConfigChange','NewGlobal','NewLocal','NewRegional','Overall','ExistingAddChange','Year','Months','actions'];;
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
-  // @ViewChild(MatPaginator) paginator: MatPaginator;
-  ngAfterViewInit() {
-    // this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-    // this.GetData();
+    };
   }
+  ButtonText;dataSource_CTT;
+  displayedColumns_CTT : string[] = ['TargetID','ExistingServiceConfigChange','NewGlobal','NewLocal','NewRegional','Overall','ExistingAddChange','Year','Months','actions'];
+  displayedColumns_RU_ON : string[] = ['ReportName','Updated_On','AvailableRows','UploadedRows'];
+  dataSource_RU_ON;
+  // @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild('UserDetailsSort') UserDetailsSort: MatSort;
+  // @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit(): void {
     this.ButtonText = "Save";
     this.GetData();
+    this.GetCycleTimeTargets();
   }
   GetData(){
     this.dashboard.ShowSpinnerHandler(true);
@@ -211,10 +210,15 @@ export class AdmincontrolComponent implements OnInit {
           }else{
             data.Data[i].DDOHome_icon ="cancel";
           }
+          if(data.Data[i].PriorityReport == true){
+            data.Data[i].PriorityReport_icon = "check_circle";
+          }else{
+            data.Data[i].PriorityReport_icon ="cancel";
+          }
         }
         this.dataSource = new MatTableDataSource(data.Data);
         // this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
+        this.dataSource.sort = this.UserDetailsSort;
         this.FilteredCount = this.dataSource.filteredData.length;
       }else{
         alert("SOmething went wrong please try again later");
@@ -235,15 +239,15 @@ export class AdmincontrolComponent implements OnInit {
       }
       this.dashboard.ShowSpinnerHandler(false);
     })
+    
     this.dashboard.ShowSpinnerHandler(true);
-    this.service.TargetsCycleTimeData().subscribe(data=>{
+    this.service.GetReportsUpdatedON().subscribe(data=>{
       console.log(data);
       if(data.code == 200){
-        this.dataSource_CTT = new MatTableDataSource(data.Data);
+        this.dataSource_RU_ON = new MatTableDataSource(data.ReportsUpdatedON);
       }
       this.dashboard.ShowSpinnerHandler(false);
     })
-    
     // this.dashboard.ShowSpinnerHandler(true);
     // this.service.TargetsCycleTimeData().subscribe(data =>{
     //   // this.TargetID = data.Data[0].TargetID;
@@ -256,13 +260,24 @@ export class AdmincontrolComponent implements OnInit {
     //   this.dashboard.ShowSpinnerHandler(false);
     // })
   }
-  NewGlobal : string = "0";NewRegional : string = "0";NewLocal : string = "0";Overall;ExistingAddChange : string = "0";ExistingServiceConfigChange : string = "0";TargetID;
+  GetCycleTimeTargets(){
+    this.dashboard.ShowSpinnerHandler(true);
+    this.service.TargetsCycleTimeData().subscribe((data:any)=>{
+      console.log(data);
+      if(data.code == 200){
+        this.dataSource_CTT = new MatTableDataSource(data.Data);
+      }
+      this.dashboard.ShowSpinnerHandler(false);
+    })
+  }
+  NewGlobal : string = "0";NewRegional : string = "0";NewLocal : string = "0";Overall : string = "0";ExistingAddChange : string = "0";ExistingServiceConfigChange : string = "0";TargetID;
   OnUpdateClick(){
     if(this.ButtonText == "Save"){
       console.log(this.ExistingServiceConfigChange,this.NewGlobal,this.NewRegional,this.NewLocal,this.Overall,this.ExistingAddChange,localStorage.getItem("UID"),this.Year,this.SemiAnnual);
       this.service.TargetCycleTimeInsert(this.ExistingServiceConfigChange,this.NewGlobal,this.NewRegional,this.NewLocal,this.Overall,this.ExistingAddChange,localStorage.getItem("UID"),this.Year,this.SemiAnnual).subscribe(data=>{
         if(data.code == 200){
           alert("Successfully Updated");
+          this.GetCycleTimeTargets();
         }else{
           alert("Something went wrong please try again later");
         }
@@ -272,6 +287,7 @@ export class AdmincontrolComponent implements OnInit {
       this.service.TargetCycleTimeUpdate(this.TargetID,this.ExistingServiceConfigChange,this.NewGlobal,this.NewRegional,this.NewLocal,this.Overall,this.ExistingAddChange,localStorage.getItem("UID"),this.Year,this.SemiAnnual).subscribe(data=>{
         if(data.code == 200){
           alert("Successfully Updated");
+          this.GetCycleTimeTargets();
         }else{
           alert("Something went wrong please try again later");
         }
@@ -295,7 +311,7 @@ export class AdmincontrolComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
     this.FilteredCount = this.dataSource.filteredData.length;
   }
-  RowSelected(j,UID : string,UserName : string,IMPS : boolean,CTO : boolean,LessonsLearnt : boolean,StageGate : boolean,AutomatedCLR : boolean,CLREdits : boolean,MarketReport : boolean,MarketCommentsEdit : boolean,ELTReport : boolean,UserAccessStatus : string,AccountStatus : string,CycleTime : boolean,CapacityTracker :boolean,ResourceUtilization : boolean,C_Hierarchy : boolean,C_HierarchyEdits : boolean,NPS : boolean,NPSEdit : boolean,NPSClientInfo : boolean,NPSAdmin : boolean,DigitalReport : boolean,PerformanceAnalysis : boolean,JobType : string,SteeringCommittee : boolean,SteeringCommitteeEdits : boolean,DDOReports : boolean,DDOHome : boolean){
+  RowSelected(j,UID : string,UserName : string,IMPS : boolean,CTO : boolean,LessonsLearnt : boolean,StageGate : boolean,AutomatedCLR : boolean,CLREdits : boolean,MarketReport : boolean,MarketCommentsEdit : boolean,ELTReport : boolean,UserAccessStatus : string,AccountStatus : string,CycleTime : boolean,CapacityTracker :boolean,ResourceUtilization : boolean,C_Hierarchy : boolean,C_HierarchyEdits : boolean,NPS : boolean,NPSEdit : boolean,NPSClientInfo : boolean,NPSAdmin : boolean,DigitalReport : boolean,PerformanceAnalysis : boolean,JobType : string,SteeringCommittee : boolean,SteeringCommitteeEdits : boolean,DDOReports : boolean,DDOHome : boolean,PriorityReport : boolean){
     let p_data : ParsingData = {
       UID : UID,
       UserName : UserName,
@@ -325,7 +341,8 @@ export class AdmincontrolComponent implements OnInit {
       SteeringCommittee : SteeringCommittee,
       SteeringCommitteeEdits : SteeringCommitteeEdits,
       DDOHome : DDOHome,
-      DDOReports : DDOReports
+      DDOReports : DDOReports,
+      PriorityReport : PriorityReport
     }
     const dialogRef = this.dialog.open(EditUserAccess, {
       // width: '600px',
@@ -450,6 +467,7 @@ export class EditUserAccess {
   SteeringCommitteeEdits : boolean;
   DDOReports : boolean;
   DDOHome : boolean;
+  PriorityReport : boolean;
   constructor(
     public dialogRef: MatDialogRef<EditUserAccess>,
     public service : DashboardServiceService,
@@ -483,6 +501,7 @@ export class EditUserAccess {
       this.SteeringCommitteeEdits = data.SteeringCommitteeEdits;
       this.DDOHome = data.DDOHome;
       this.DDOReports = data.DDOReports;
+      this.PriorityReport = data.PriorityReport;
       // set screenWidth on page load
       this.screenWidth = window.innerWidth;
       this.screenHeight = window.innerHeight;
@@ -510,7 +529,7 @@ export class EditUserAccess {
         this.CapacityTracker+"",this.ResourceUtilization+"",
         this.CapacityHierarchy+"",this.CapacityHierarchyEdits+"",
         this.NPS+"",this.NPSAdmin+"",this.NPSClientInfo+"",
-        this.NPSEdit+"",this.SteeringCommittee+"",this.SteeringCommitteeEdits+"",this.DDOReports+"",this.DDOHome+"",
+        this.NPSEdit+"",this.SteeringCommittee+"",this.SteeringCommitteeEdits+"",this.DDOReports+"",this.DDOHome+"",this.PriorityReport+"",
         this.DigitalReport+"",this.PerformanceAnalysis+"").subscribe(data =>{
           if(data.code == 200){
             alert("Updated Succesfully");

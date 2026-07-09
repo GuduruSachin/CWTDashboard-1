@@ -33,7 +33,7 @@
             </mat-form-field>
         </div>
         <div class="col-md-12">
-            <label style="color: red;font-weight:  bold;"> *Partner Markets and Ad-hoc records are not included</label>
+            <!-- <label style="color: red;font-weight:  bold;"> *Partner Markets and Ad-hoc records are not included</label> -->
         </div>
         <div class="col-md-10" style="margin-left: 7.9%;background-color: #3498DB;text-align: center;border-top : 2px solid white;border-bottom : 2px solid white;height : 50px">
             <p style="color: white;font-size : 18px;padding-top:12px;letter-spacing: 1px;">NPS</p>
@@ -87,15 +87,15 @@
         <div class="col-md-2">
             <mat-card class="example-card mat-elevation-z6" style="background-color: #212F3D;">
                 <label class="main_heading" style="color: #F7DC6F;">Current Month</label><br>
-                <label class="sub_heading" style="color: #F7DC6F;">(Active & Closed)</label><br>
+                <label class="sub_heading" style="color: #F7DC6F;">Active, Closed & (N-Active)</label><br>
                 <mat-divider style="width: 90%;align-items: center;margin-left: 15px;text-align: center;"></mat-divider>
                 <div class="row col-md-12" style="margin: 15px 0px 0px 0px;padding : 0px;">
                     <div class="col-md-6" style="margin: 0px;padding : 0px;">
-                        <label class="number_style">{{CurrentMonthVolume}}</label>
+                        <label class="number_style">{{CurrentMonthVolume}} ({{CurrentMonthNActiveVolume}})</label>
                         <label class="des_style" style="color: #58D68D;">Volume</label>
                     </div>
                     <div class="col-md-6" style="margin: 0px;padding : 0px;">
-                        <label class="number_style">{{CurrentMonthRecords}}</label>
+                        <label class="number_style">{{CurrentMonthRecords}} ({{CurrentMonthNActiveRecords}})</label>
                         <label class="des_style" style="color: #5DADE2;">Count</label>
                     </div>
                 </div>
@@ -105,15 +105,15 @@
         <div class="col-md-2">
             <mat-card class="example-card mat-elevation-z6" style="background-color: #212F3D;">
                 <label class="main_heading" style="color: #F7DC6F;">Next Month</label><br>
-                <label class="sub_heading" style="color: #F7DC6F;">(Active)</label><br>
+                <label class="sub_heading" style="color: #F7DC6F;">Active & (N-Active)</label><br>
                 <mat-divider style="width: 90%;align-items: center;margin-left: 15px;text-align: center;"></mat-divider>
                 <div class="row col-md-12" style="margin: 15px 0px 0px 0px;padding : 0px;">
                     <div class="col-md-6" style="margin: 0px;padding : 0px;">
-                        <label class="number_style">{{NextMonthVolume}}</label>
+                        <label class="number_style">{{NextMonthVolume}} ({{NextMonthNActiveVolume}})</label>
                         <label class="des_style" style="color: #58D68D;">Volume</label>
                     </div>
                     <div class="col-md-6" style="margin: 0px;padding : 0px;">
-                        <label class="number_style">{{NextMonthRecords}}</label>
+                        <label class="number_style">{{NextMonthRecords}} ({{NextMonthNActiveRecords}})</label>
                         <label class="des_style" style="color: #5DADE2;">Count</label>
                     </div>
                 </div>
@@ -255,7 +255,7 @@
             <p style="display: inline-block;color: white;font-size : 18px;padding-top:12px;letter-spacing: 1px;">Cycle Time By Categories </p> 
         </div>
         <div class="col-md-12">
-            <label style="color: red;font-weight:  bold;margin-top: 10px;"> *Go-live Year :- Current Year, Project Status :- Closed, Ownership :- WO</label>
+            <label style="color: red;font-weight:  bold;margin-top: 10px;"> *Go-live Year :- Current Year, Project Status :- Closed, Ownership :- WO, Cycle Time :- Less Than 365 days</label>
         </div>
         <div class="col-md-2" style="margin-left: 7%;">
             <mat-card class=" example-card mat-elevation-z6" style="background-color: #212F3D;">

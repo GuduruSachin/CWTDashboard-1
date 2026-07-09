@@ -1,10 +1,10 @@
 export interface EltData {
     Client : string;
-    CurrentMonth? : number;
+    CurrentMonth : number;
     CurrentMonth_s : string;
     PriorMonthElt : any;
     PriorMonthElt_s : string;
-    Delta? : number;
+    Delta : number;
     Delta_s : string;
     DeltaColor : string;
     Status : string;
@@ -15,7 +15,9 @@ export interface EltData {
     Month1_N? : number;
     Month2_N? : number;
     RemainingTBC? : number;
+    Remaining_Months : number;
     RemainingMonths : string;
+    Total_Months : number;
     TotalMonths : string;
     PreviousYear? : number;
     TotalAcountVolume? : number;
@@ -48,7 +50,9 @@ export interface EltResponse {
     code : number;
     Data : EltData[];
     YearMonth : YearMonth[];
+    ELTDeltaComments : ELTDeltaComments[];
     TotalAmountMonth1 : number;
+    TotalAmountPriorMonth1 : number;
     TotalAmountMonth2 : number;
     TotalAmountRemainingMonths : number;
     Workspace : string;
@@ -74,4 +78,32 @@ export interface YearMonth{
     Country : string;
     RevenueID : number;
     ChangesMadeforAccount : string;
+}
+export interface ELTDeltaComments{
+    Client : string;
+    RevenueID : number;
+    RevenueVolumeUSD : number;
+    RevenueVolumeUSD_s : string;
+    ProjectStatus : string;   
+    GoLiveMonth : string;
+    GoLiveYear : string;
+    Country : string;
+    Region : string;
+    Workspace_Title : string;
+    PreviousVolume : number;
+    CurrentVolume : number;
+    CurrentProjectStatus : string;
+    CurrentMonth : string;
+    CurrentYear : string;
+    Comments : string;
+    DeltaColor : string;
+    RevenueId : number;
+    Month  : string;
+    Year : number;
+    WorkspaceTitle : string;
+    Comment : string;
+    InsertedOn : Date;
+    Status : string;
+    Revenue : number;
+    Revenue_s : string;
 }

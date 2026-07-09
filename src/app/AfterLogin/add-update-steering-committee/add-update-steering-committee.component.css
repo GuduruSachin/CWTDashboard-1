@@ -1,8 +1,11 @@
 .header_wrap_ad{
     height: 50px;
     width: 100%;
-    /* background-color: #F16950; */
     position: relative;
+}
+::ng-deep ng-template{
+    width :1000px;
+    background-color: green;
 }
 .inside_wrap_ad{
     position: absolute;
@@ -14,8 +17,6 @@
     text-align: right;
 }
 .Cancel_button_ad{
-    /* height: 50px;
-    width: 50px; */
     margin-right: 20px;
     padding-top: 10px;
     color: #F16950;
@@ -69,10 +70,6 @@ button:focus{
 :host ::ng-deep .dropdown-list .filter-textbox input {
     padding: 10px 10px 10px 36px !important;
 }
-/* .mat_select {
-    min-width: calc(100% + 20px);
-    margin: 55px 0px 0px 12px !important;
-} */
 
 :host ::ng-deep .mat-select-arrow {
     color: white !important;

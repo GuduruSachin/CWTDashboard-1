@@ -63,13 +63,15 @@ export interface ManualCLRDataResponse {
 }
 export class DataCLR {
     CLRID : number;
-    CheckComments : string;
+    DataQuality : string;
     Select_Row : boolean;
     ManualID : number;
     Revenue_ID : number;
     RevenueID: string;
     Client: string;
     DTID : number;
+    Priority : string;
+    TXResourcing : string;
     RecordHistory : Date;
     RecordHistory_C : string;
     ComplexityScore : number;
@@ -156,7 +158,6 @@ export class DataCLR {
     EMEA_Billing_notes: any;
     Manual_Entry__Wave_2__Wave_3__etc_: any;
     Project_Effort : number;
-    Priority: any;
     Resource_Status : string;
     Global_Project_Manager_replacement: any;
     Regional_Project_Manager_replacement : string;

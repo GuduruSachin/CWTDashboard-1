@@ -49,6 +49,7 @@ export class AdhocComponent implements OnChanges, OnInit {
   ProjectStatus = new FormControl();
   GlobalDQSLead = new FormControl();
   Comments : string;
+  PipelineComments : string;
   GlobalCISOBTLead = new FormControl();
   GlobalCISOBTLeadsearch = new FormControl();
   RegionalCISOBTLead = new FormControl();
@@ -65,6 +66,7 @@ export class AdhocComponent implements OnChanges, OnInit {
   ActivityType : string = "Ad-hoc";
   ComplexityScore : number;
   Record_Status : string = "Active";
+  Priority : string = "---";
   LoginUID : string;
   NgIfStatus : Boolean = true;
   HeaderText : string = "Add new Ad-hoc Project for Digital Team";
@@ -306,6 +308,8 @@ export class AdhocComponent implements OnChanges, OnInit {
       this.GlobalCISHRFeedSpecialist.setValue("");
       this.GDS.setValue("");
       this.ActivityType = "Ad-hoc";
+      this.Priority = "---";
+      this.PipelineComments = "---";
       this.ComplexityScore = null;
       this.Record_Status = "Active";
     }else{
@@ -326,6 +330,8 @@ export class AdhocComponent implements OnChanges, OnInit {
       this.ActivityType = ParsedAdhocData.ActivityType;
       this.ComplexityScore = ParsedAdhocData.ComplexityScore;
       this.Record_Status = ParsedAdhocData.Status;
+      this.Priority = ParsedAdhocData.Priority;
+      this.PipelineComments = ParsedAdhocData.Pipeline_comments;
       this.HeaderText = "Update Ad-hoc Project";
       this.NgIfStatus = true;
     }
@@ -433,7 +439,7 @@ export class AdhocComponent implements OnChanges, OnInit {
         this.GlobalCISHRFeedSpecialist.setValue("");
       }
         if(this.ButtonName == "Save"){
-          this.service.AdhocInsert(this.RevenueID+"",this.Client,StartDate,GoLiveDate,this.Country.value,this.Region.value,this.Comments,this.ProjectStatus.value,this.GlobalDQSLead.value,this.GlobalCISOBTLead.value,this.RegionalCISOBTLead.value,this.LocalDigitalOBTLead.value,this.GlobalCISPortraitLead.value,this.RegionalCISPortraitLead.value,this.GlobalCISHRFeedSpecialist.value,this.GDS.value,this.ComplexityScore+"",this.ActivityType,"Active",this.LoginUID).subscribe(data =>{
+          this.service.AdhocInsert(this.RevenueID+"",this.Client,StartDate,GoLiveDate,this.Country.value,this.Region.value,this.Comments,this.ProjectStatus.value,this.GlobalDQSLead.value,this.GlobalCISOBTLead.value,this.RegionalCISOBTLead.value,this.LocalDigitalOBTLead.value,this.GlobalCISPortraitLead.value,this.RegionalCISPortraitLead.value,this.GlobalCISHRFeedSpecialist.value,this.GDS.value,this.ComplexityScore+"",this.ActivityType,"Active",this.Priority,this.PipelineComments,this.LoginUID).subscribe(data =>{
             if(data.code == 200){
               alert(data.message);
               this.SendOutput.emit([{SelectionType : "Inserted"}]);
@@ -444,13 +450,13 @@ export class AdhocComponent implements OnChanges, OnInit {
           this.service.UsersUsageofReports(localStorage.getItem("UID"),"Adhoc","Insert").subscribe(data =>{
           })
         }else if(this.ButtonName == "Update"){
-          this.service.AdhocUpdate(this.RevenueID+"",this.Client,StartDate,GoLiveDate,this.Country.value,this.Region.value,this.Comments,this.ProjectStatus.value,this.GlobalDQSLead.value,this.GlobalCISOBTLead.value,this.RegionalCISOBTLead.value,this.LocalDigitalOBTLead.value,this.GlobalCISPortraitLead.value,this.RegionalCISPortraitLead.value,this.GlobalCISHRFeedSpecialist.value,this.GDS.value,this.ComplexityScore+"",this.ActivityType,this.Record_Status,this.LoginUID).subscribe(data =>{
+          this.service.AdhocUpdate(this.RevenueID+"",this.Client,StartDate,GoLiveDate,this.Country.value,this.Region.value,this.Comments,this.ProjectStatus.value,this.GlobalDQSLead.value,this.GlobalCISOBTLead.value,this.RegionalCISOBTLead.value,this.LocalDigitalOBTLead.value,this.GlobalCISPortraitLead.value,this.RegionalCISPortraitLead.value,this.GlobalCISHRFeedSpecialist.value,this.GDS.value,this.ComplexityScore+"",this.ActivityType,this.Record_Status,this.Priority,this.PipelineComments,this.LoginUID).subscribe(data =>{
             if(data.code == 200){
               this.SendOutput.emit([{SelectionType : 'Updated',RevenueID : this.RevenueID,GlobalCISOBTLead : this.GlobalCISOBTLead.value,
               RegionalCISOBTLead : this.RegionalCISOBTLead.value,LocalDigitalOBTLead : this.LocalDigitalOBTLead.value,GlobalCISPortraitLead : this.GlobalCISPortraitLead.value,
               RegionalCISPortraitLead : this.RegionalCISPortraitLead.value,GlobalCISHRFeedSpecialist : this.GlobalCISHRFeedSpecialist.value, GlobalDQSLead : this.GlobalDQSLead.value,ActivityType : this.ActivityType,
               GDS : this.GDS.value,ComplexityScore : this.ComplexityScore,Client : this.Client,StartDate : StartDate,GoLiveDate : GoLiveDate,Country : this.Country.value,
-              Region : this.Region.value,Comments : this.Comments,ProjectStatus : this.ProjectStatus.value,Record_Status : this.Record_Status}]);
+              Region : this.Region.value,Comments : this.Comments,ProjectStatus : this.ProjectStatus.value,Record_Status : this.Record_Status,Priority : this.Priority,Pipeline_comments : this.PipelineComments}]);
             }else{
               alert(data.message);
             }

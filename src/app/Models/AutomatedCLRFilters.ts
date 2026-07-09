@@ -14,6 +14,10 @@ export interface FilterRegion {
     Region: string;
     isSelected: boolean;
 }
+export interface FilterPriority {
+    Priority: string;
+    isSelected: boolean;
+}
 export interface FilterOwnerShip {
     OwnerShip: string;
     isSelected: boolean;
@@ -162,6 +166,7 @@ export interface AutomatedCLRFilters {
     CycleTimeCategories : CycleTimeCategories[];
     FilterImplementationType: FilterImplementationType[];
     FilterRegion: FilterRegion[];
+    FilterPriority: FilterPriority[];
     FilterQuarter : FilterQuarter[];
     FilterYears : FilterYears[];
     FilterOwnerShip: FilterOwnerShip[];
@@ -196,4 +201,7 @@ export interface AutomatedCLRFilters {
     FilterAccountCategory : FilterAccountCategory[];
     FiltereSowStatus : FiltereSowStatus[];
     FilterServiceConfiguration : FilterServiceConfiguration[];
+    FilterGlobalDigitalData: FilterGlobalProjectManager[];
+    FilterRegionalDigitalData: FilterGlobalProjectManager[];
+    FilterLocalDigitalData: FilterGlobalProjectManager[];
 }

@@ -41,6 +41,18 @@
                 </mat-expansion-panel-header>
                 <div class="row" style="margin : 10px 0px 0px 0px;width: 100%;">
                     <div class="col-md-3">
+                        <mat-checkbox [(ngModel)]="Prioritychecked" style="margin-right: 16px;"  class="checkboxFields"></mat-checkbox>
+                        <mat-form-field style="width: 85%;">
+                            <mat-label style="font-size: 15px;">Select Priority</mat-label>
+                            <mat-select [(value)]="Priority">
+                                <mat-option value="---">---</mat-option>
+                                <mat-option value="Removed - Started">Removed - Started</mat-option>
+                                <mat-option value="Removed - No Action">Removed - No Action</mat-option>
+                                <mat-option value="Yes">Yes</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>  
+                    <div class="col-md-3">
                         <mat-checkbox [(ngModel)]="ImpTypechecked" style="margin-right: 16px;"  class="checkboxFields"></mat-checkbox>
                         <mat-form-field style="width: 85%">
                             <mat-label style="font-size: 15px;">Select Implementation Type</mat-label>
@@ -147,6 +159,15 @@
                             <input matInput [matDatepicker]="Assignment_date" [(ngModel)]="dateAssignment">
                             <mat-datepicker-toggle matSuffix [for]="Assignment_date"></mat-datepicker-toggle>
                             <mat-datepicker #Assignment_date color="primary"></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-checkbox [(ngModel)]="TXResourcingchecked" style="margin-right: 16px;"  class="checkboxFields"></mat-checkbox>
+                        <mat-form-field style="width: 85%">
+                            <mat-label>TX Resourcing (Default value : OK for TX)</mat-label>
+                            <input matInput [matDatepicker]="TX_Resourcing" [(ngModel)]="TXResourcing">
+                            <mat-datepicker-toggle matSuffix [for]="TX_Resourcing"></mat-datepicker-toggle>
+                            <mat-datepicker #TX_Resourcing color="primary"></mat-datepicker>
                         </mat-form-field>
                     </div>
                     <div class="col-md-3" *ngIf="DisablePipelineColumns">

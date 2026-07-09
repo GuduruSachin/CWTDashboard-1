@@ -19,6 +19,9 @@ export interface SC_Region {
 export interface SC_Country {
     Country : string;
 }
+export interface SC_StandardKeyDeliverables {
+    KeyDeliverable : string;
+}
 export interface KB_Data {
     Name : string;
     Link : string;

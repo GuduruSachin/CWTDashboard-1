@@ -320,3 +320,21 @@ table {
 ::ng-deep .mat-form-wrap .mat-form-field-appearance-outline .mat-form-field-wrapper{
   margin: 0px;
 }
+
+.mat-form-wrap-columns{
+  width: 150px;
+  margin-right: 25px;
+}
+/* ::ng-deep  .mat-form-wrap-columns .mat-form-field-appearance-outline .mat-form-field-wrapper{
+  margin: 0px;
+}
+::ng-deep .mat-form-wrap-columns .mat-form-field-wrapper{
+  padding-bottom: 0px;
+}
+
+::ng-deep .mat-form-wrap-columns .mat-form-field{
+  line-height: 1;
+}
+::ng-deep .mat-form-wrap-columns .mat-form-field-appearance-outline .mat-form-field-wrapper{
+  margin: 0px;
+} */

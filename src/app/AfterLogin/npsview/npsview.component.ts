@@ -37,6 +37,9 @@ export class NPSViewComponent implements OnInit {
   LManager = new FormControl();
   RManager = new FormControl();
   GManager = new FormControl();
+  GDManager = new FormControl();
+  RDManager = new FormControl();
+  LDManager = new FormControl();
   Country = new FormControl();
   Language = new FormControl();
   CompanyName;
@@ -52,13 +55,15 @@ export class NPSViewComponent implements OnInit {
   AssignLeader = new FormControl();
   NPSScore = new FormControl();
   NPSIndicator = new FormControl();
-  displayedColumns : string[] = ['Company','ClientName','Updated_On','AssignLeaderForClosedLoop','ClientType','DateServey_Sent','Language','RecipientId','NPSScore','NPSIndicator','DateSurvey_Received','Country','Region','RecordStatus','actions'];
+  displayedColumns : string[] = ['Company','ClientName','Inserted_On','AssignLeaderForClosedLoop','ClientType','DateServey_Sent','Language','RecipientId','NPSScore','NPSIndicator','DateSurvey_Received','Country','Region','RecordStatus','actions'];
   dataSource;
   NPSViewData : NPSViewData[];
   GManagerList : FilterGlobalProjectManager[];
   RManagerList : FilterGlobalProjectManager[];
   LManagerList : FilterGlobalProjectManager[];
-  
+  GDManagerList : FilterGlobalProjectManager[];
+  RDManagerList : FilterGlobalProjectManager[];
+  LDManagerList : FilterGlobalProjectManager[];
   Nps_Comment_One : NPSComment[];
   Nps_COmment_Two : NPSComment[];
   Nps_Comment_Three : NPSComment[];
@@ -67,6 +72,9 @@ export class NPSViewComponent implements OnInit {
   public GPMData: ReplaySubject<FilterGlobalProjectManager[]> = new ReplaySubject<FilterGlobalProjectManager[]>(1);
   public RPMData: ReplaySubject<FilterGlobalProjectManager[]> = new ReplaySubject<FilterGlobalProjectManager[]>(1);
   public AFNData: ReplaySubject<FilterGlobalProjectManager[]> = new ReplaySubject<FilterGlobalProjectManager[]>(1);
+  public GDPMData: ReplaySubject<FilterGlobalProjectManager[]> = new ReplaySubject<FilterGlobalProjectManager[]>(1);
+  public RDPMData: ReplaySubject<FilterGlobalProjectManager[]> = new ReplaySubject<FilterGlobalProjectManager[]>(1);
+  public LDPMData: ReplaySubject<FilterGlobalProjectManager[]> = new ReplaySubject<FilterGlobalProjectManager[]>(1);
   public CountryData: ReplaySubject<FilterCountry[]> = new ReplaySubject<FilterCountry[]>(1);
   public CommentOneNPS: ReplaySubject<NPSComment[]> = new ReplaySubject<NPSComment[]>(1);
   public CommentTwoNPS: ReplaySubject<NPSComment[]> = new ReplaySubject<NPSComment[]>(1);
@@ -94,6 +102,15 @@ export class NPSViewComponent implements OnInit {
         data.FilterGlobalProjectManager.push(datas);
         data.FilterGlobalProjectManager.push(datas1);
         data.FilterGlobalProjectManager.push(datas2);
+        data.FilterGlobalDigitalData.push(datas);
+        data.FilterGlobalDigitalData.push(datas1);
+        data.FilterGlobalDigitalData.push(datas2);
+        data.FilterRegionalDigitalData.push(datas);
+        data.FilterRegionalDigitalData.push(datas1);
+        data.FilterRegionalDigitalData.push(datas2);
+        data.FilterLocalDigitalData.push(datas);
+        data.FilterLocalDigitalData.push(datas1);
+        data.FilterLocalDigitalData.push(datas2);
         data.FilterCountry.push(datas4);
         data.FilterCountry.push(datas5);
         data.FilterAccountName.push(datas6);
@@ -103,6 +120,12 @@ export class NPSViewComponent implements OnInit {
         this.RPMData.next(this.RManagerList.slice());
         this.LManagerList = data.FilterGlobalProjectManager;
         this.AFNData.next(this.LManagerList.slice());
+        this.GDManagerList = data.FilterGlobalDigitalData;
+        this.GDPMData.next(this.GDManagerList.slice());
+        this.RDManagerList = data.FilterRegionalDigitalData;
+        this.RDPMData.next(this.RDManagerList.slice());
+        this.LDManagerList = data.FilterLocalDigitalData;
+        this.LDPMData.next(this.LDManagerList.slice());
         this.Nps_Comment_One = data.NPSCommentOne;
         this.CommentOneNPS.next(this.Nps_Comment_One.slice());
         this.Nps_COmment_Two = data.NPSCommentTwo;
@@ -147,6 +170,21 @@ export class NPSViewComponent implements OnInit {
       .pipe(takeUntil(this._onDestroy))
       .subscribe(() => {
         this.AFNfilter();
+      });
+    this.GDPMsearch.valueChanges
+      .pipe(takeUntil(this._onDestroy))
+      .subscribe(() => {
+        this.GDPMfilter();
+      });
+    this.RDPMsearch.valueChanges
+      .pipe(takeUntil(this._onDestroy))
+      .subscribe(() => {
+        this.RDPMfilter();
+      });
+    this.LDPMsearch.valueChanges
+      .pipe(takeUntil(this._onDestroy))
+      .subscribe(() => {
+        this.LDPMfilter();
       });
     this.CountrySearch.valueChanges
       .pipe(takeUntil(this._onDestroy))
@@ -207,6 +245,9 @@ export class NPSViewComponent implements OnInit {
   GPMsearch = new FormControl();
   RPMsearch = new FormControl();
   AFNsearch = new FormControl();
+  GDPMsearch = new FormControl();
+  RDPMsearch = new FormControl();
+  LDPMsearch = new FormControl();
   commentonesearch = new FormControl();
   commenttwosearch = new FormControl();
   commentthreesearch = new FormControl();
@@ -261,6 +302,58 @@ export class NPSViewComponent implements OnInit {
     // filter the manager
     this.RPMData.next(
       this.RManagerList.filter(manager => manager.GlobalProjectManager.toLowerCase().indexOf(search) > -1)
+    );
+  }
+  
+  protected GDPMfilter() {
+    if (!this.GDManagerList) {
+      return;
+    }
+    // get the search keyword
+    let search = this.GDPMsearch.value;
+    if (!search) {
+      this.GDPMData.next(this.GDManagerList.slice());
+      return;
+    } else {
+      search = search.toLowerCase();
+    }
+    // filter the manager
+    this.GDPMData.next(
+      this.GDManagerList.filter(manager => manager.GlobalProjectManager.toLowerCase().indexOf(search) > -1)
+    );
+  }
+  protected RDPMfilter() {
+    if (!this.RDManagerList) {
+      return;
+    }
+    // get the search keyword
+    let search = this.RDPMsearch.value;
+    if (!search) {
+      this.RDPMData.next(this.RDManagerList.slice());
+      return;
+    } else {
+      search = search.toLowerCase();
+    }
+    // filter the manager
+    this.RDPMData.next(
+      this.RDManagerList.filter(manager => manager.GlobalProjectManager.toLowerCase().indexOf(search) > -1)
+    );
+  }
+  protected LDPMfilter() {
+    if (!this.LDManagerList) {
+      return;
+    }
+    // get the search keyword
+    let search = this.LDPMsearch.value;
+    if (!search) {
+      this.LDPMData.next(this.LDManagerList.slice());
+      return;
+    } else {
+      search = search.toLowerCase();
+    }
+    // filter the manager
+    this.LDPMData.next(
+      this.LDManagerList.filter(manager => manager.GlobalProjectManager.toLowerCase().indexOf(search) > -1)
     );
   }
   protected Countryfilter() {
@@ -355,10 +448,10 @@ export class NPSViewComponent implements OnInit {
     this.service.NpsViewData().subscribe(data=>{
       if(data.code == 200){
         for(let i = 0;i<data.NPSViewData.length;i++){
-          if(data.NPSViewData[i].UpdatedOn == null){
-            data.NPSViewData[i].Updated_On = "---";
+          if(data.NPSViewData[i].InsertedOn == null){
+            data.NPSViewData[i].Inserted_On = "---";
           }else{
-            data.NPSViewData[i].Updated_On = this.datepipe.transform(data.NPSViewData[i].UpdatedOn, "yyyy-MM-dd");
+            data.NPSViewData[i].Inserted_On = this.datepipe.transform(data.NPSViewData[i].InsertedOn, "yyyy-MM-dd");
           }
           if(data.NPSViewData[i].DateSurveyReceived == null){
             data.NPSViewData[i].DateSurvey_Received = "---";
@@ -512,10 +605,20 @@ export class NPSViewComponent implements OnInit {
       Errors = Errors+1;
       ErrorMessage += "Country Should Not be empty";
     }
+    if(this.NPSScore.value != null)
+    {
+      console.log("checked");
+      if(Survey_Received == null)
+      {
+        Errors = Errors+1;
+        ErrorMessage += "Please Enter the Survey Received Date";
+        console.log("checked2");
+      }
+    }
     if(Errors == 0){
       this.service.NPSViewUpdate(this.NPSID,this.ClientName,this.CompanyName,this.Email,this.Country.value,this.Region,this.Language.value,this.RManager.value,this.GManager.value,
         this.LManager.value,this.ClientType,this.ClientContactNumber,Survey_Sent,this.ClientScope,Survey_Received,this.Status,this.AssignLeader.value,this.OpportunityId,this.NPSScore.value,this.NPSIndicator.value,this.Nps_comments_positive,this.Nps_comments_improve,this.Nps_comments_happier,
-        this.Client_Feedback,this.action,this.SelectedReasonType,localStorage.getItem("UID"),nps_commentone,nps_commenttwo,nps_commentthree,RecordStatus).subscribe(data=>{
+        this.Client_Feedback,this.action,this.SelectedReasonType,localStorage.getItem("UID"),nps_commentone,nps_commenttwo,nps_commentthree,RecordStatus,this.GDManager.value,this.RDManager.value,this.LDManager.value).subscribe(data=>{
           if(data.code == 200){
             alert(data.message);
             this.GetNPSData();
@@ -566,7 +669,12 @@ export class NPSViewComponent implements OnInit {
         "NPS Comments What is the one thing we can do to make you happier" : o.NPSComments_Whatistheonethingwecandotomakeyouhappier,
         "What can we do to go above expectations" : o.NPSCommentsThree,
         "Record Status" : o.RecordStatus,
-        "Opportunity Id" : o.OpprtunityId
+        "Global Digital OBT Lead" : o.GlobalDigitalPM,
+        "Regional Digital OBT Lead" : o.RegionalDigitalPM,
+        "Local Digital OBT Lead" : o.LocalDigitalPM,
+        "Opportunity Id" : o.OpprtunityId,
+        "Created On" : o.InsertedOn,
+        "Updated On" : o.Updated_On
       };
     });
     this.excelservice.exportAsExcelFile(CustomizedData, 'NPS View');
@@ -639,6 +747,21 @@ export class NPSViewComponent implements OnInit {
       this.GManager.setValue("---");
     }else{
       this.GManager.setValue(this.NPSViewData[this.RecordNO].GlobalProjectManager);
+    }
+    if(this.NPSViewData[this.RecordNO].LocalDigitalPM == null || this.NPSViewData[this.RecordNO].LocalDigitalPM == "null"){
+      this.LDManager.setValue("---");
+    }else{
+      this.LDManager.setValue(this.NPSViewData[this.RecordNO].LocalDigitalPM);
+    }
+    if(this.NPSViewData[this.RecordNO].RegionalDigitalPM == null || this.NPSViewData[this.RecordNO].RegionalDigitalPM == "null"){
+      this.RDManager.setValue("---");
+    }else{
+      this.RDManager.setValue(this.NPSViewData[this.RecordNO].RegionalDigitalPM);
+    }
+    if(this.NPSViewData[this.RecordNO].GlobalDigitalPM == null || this.NPSViewData[this.RecordNO].GlobalDigitalPM == "null"){
+      this.GDManager.setValue("---");
+    }else{
+      this.GDManager.setValue(this.NPSViewData[this.RecordNO].GlobalDigitalPM);
     }
     this.Country.setValue(this.NPSViewData[this.RecordNO].Country);
     this.Region = this.NPSViewData[this.RecordNO].Region;

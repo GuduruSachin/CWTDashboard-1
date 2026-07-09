@@ -1,3 +1,5 @@
+import { CLRColumns } from "./CLRColumns";
+
 export interface Responce {
     message: string;
     code: number;
@@ -9,7 +11,147 @@ export interface Responce {
     CycleTimeData : CycleTimeData[];
     GlobalManager : number;
     TargetCycleTimeData : TargetCycleTimeData[];
+    CLRColumns : CLRColumns[];
+    PriorityData : PriorityData[];
+    ProjectStatusActivityData : ProjectStatusActivityData[];
+    SalesStageNameActivityData : SalesStageNameActivityData[];
+    MonthlyTotalRevenueWithDelta : MonthlyTotalRevenueWithDelta[];
+    ReportsUpdatedON : ReportsUpdatedON[];
 }
+export interface ReportsUpdatedON{
+    ReportID : number;
+    ReportName : string;
+    UpdatedOn : Date;
+    Updated_On : Date;
+    AvailableRows : number;
+    UploadedRows : number;
+}
+export interface MonthlyTotalRevenueWithDelta{
+    CMJan : number;
+    CMFeb : number;
+    CMMar : number;
+    CMApr : number;
+    CMMay : number;
+    CMJun : number;
+    CMJul : number;
+    CMAug : number;
+    CMSep : number;
+    CMOct : number;
+    CMNov : number;
+    CMDec : number;
+    CMTot : number;
+    LMJan : number;
+    LMFeb : number;
+    LMMar : number;
+    LMApr : number;
+    LMMay : number;
+    LMJun : number;
+    LMJul : number;
+    LMAug : number;
+    LMSep : number;
+    LMOct : number;
+    LMNov : number;
+    LMDec : number;
+    LMTot : number;
+    Delta_Jan : string;
+    Delta_Feb : string;
+    Delta_Mar : string;
+    Delta_Apr : string;
+    Delta_May : string;
+    Delta_Jun : string;
+    Delta_Jul : string;
+    Delta_Aug : string;
+    Delta_Sep : string;
+    Delta_Oct : string;
+    Delta_Nov : string;
+    Delta_Dec : string;
+    Delta_Tot : string;
+}
+export class ProjectStatusActivityData {
+    RevenueID : string;
+    EPDate_c : any;
+    HPDate_c : any;
+    PDate_c : any;
+    EPDate : string;
+    HPDate : string;
+    PDate : string;
+    Assignment: string;
+    ExpectedDecision : string;
+    ResourceRequested : string;
+    ProjectStart : string;
+    GoLive : string;
+    ExpectedDecision_c : any;
+    Assignment_c: any;
+    ResourceRequested_c : any;
+    ProjectStart_c : any;
+    GoLive_c : any;
+    CycleTime : any;
+}
+export class SalesStageNameActivityData {
+    RevenueID : string;
+
+    Withdrawn_c : any;
+    NoGo_c : any;
+    ClosedLost_c : any;
+    PresentationStage_c : any;
+    VerbalAward_c : any;
+    Negotiations_c : any;
+    Shortlisted_c : any;
+    Sold_c : any;
+    ProposalSubmitted_c : any;
+    NeedsAreIdentified_c : any;
+    ContractSigned_c : any;
+
+    Withdrawn : string;
+    NoGo : string;
+    ClosedLost : string;
+    PresentationStage : string;
+    VerbalAward : string;
+    Negotiations : string;
+    Shortlisted : string;
+    Sold : string;
+    ProposalSubmitted : string;
+    NeedsAreIdentified : string;
+    ContractSigned : string;
+}
+export interface PriorityData {
+    Client: string
+    Workspace_Title : string;
+    OppTOtalVolume: number;
+    OppTOtalVolume_c: string;
+    RevenueVolumeUSD: number;
+    RevenueVolumeUSD_c: string;
+    Line_Win_Probability: number;
+    Sales_Stage_Name: string
+    Opportunity_Type: string
+    ExpectedDecisionDate?: any;
+    ExpectedDecisionDate_c?: any;
+    Assignment_date?: string;
+    Assignment_date_c : string;
+    Pipeline_comments: string
+    Country: number
+    CountryWiseData: CountryWiseData[]
+  }
+  
+  export interface CountryWiseData {
+    Client: string
+    Workspace_Title : string;
+    Opportunity_Type: string
+    ManualCLient: string
+    OppTOtalVolume: number
+    OppTOtalVolume_c: string;
+    RevenueVolumeUSD: number;
+    RevenueVolumeUSD_c: string;
+    Line_Win_Probability: number
+    ExpectedDecisionDate?: any
+    ExpectedDecisionDate_c?: string
+    Assignment_date?: string
+    Assignment_date_c?: string
+    Sales_Stage_Name: string
+    Revenue_Opportunity_Type: string
+    Pipeline_comments: string
+    Country: string
+  }
 export class TargetCycleTimeData{
     TargetID : string;
     ExistingServiceConfigChange : number;
@@ -52,6 +194,7 @@ export class CycleTimeData{
     GoLiveYear : string;
     GoLiveMonth : string;
 }
+
 export class Data {
     ID : string;
     Candidate_Name : string;
@@ -106,54 +249,27 @@ export class Data {
     LATAM: number;
     NORAM: number;
     Blanks: number;
-    CWJanuary: number;
-    LWJanuary: number;
-    CWFebruary: number;
-    LWFebruary: number;
-    CWMarch: number;
-    LWMarch: number;
-    CWApril: number;
-    LWApril: number;
-    CWMay: number;
-    LWMay: number;
-    CWJune: number;
-    LWJune: number;
-    CWJuly: number;
-    LWJuly: number;
-    CWAugust: number;
-    LWAugust: number;
-    CWSeptember: number;
-    LWSeptember: number;
-    CWOctober: number;
-    LWOctober: number;
-    CWNovember: number;
-    LWNovember: number;
-    CWDecember: number;
-    LWDecember: number;
-    CWTotal : number;
-    LWTotal : number;
-    JanComments: string;
-    FebComments: string;
-    MarComments: string;
-    AprComments: string;
-    MayComments: string;
-    JunComments: string;
-    JulComments: string;
-    AugComments: string;
-    SepComments: string;
-    OctComments: string;
-    NovComments: string;
-    DecComments: string;
+    
     CurrentMonth : any;
+    CurrentMonthCount : any;
     NextMonth : any;
+    NextMonthCount : any;
     NextMonthPlusOne : any;
+    NextMonthPlusOneCount : any;
     NextMonthPlusTwo : any;
+    NextMonthPlusTwoCount : any;
     NextMonthPlusThree : any;
+    NextMonthPlusThreeCount : any;
     CurrentMonth_n : any;
     NextMonth_n : any;
     NextMonthPlusOne_n : any;
     NextMonthPlusTwo_n : any;
     NextMonthPlusThree_n : any;
+    CurrentMonthCount_n : any;
+    NextMonthCount_n : any;
+    NextMonthPlusOneCount_n : any;
+    NextMonthPlusTwoCount_n : any;
+    NextMonthPlusThreeCount_n : any;
     Jan: any;
     Feb: any;
     Mar: any;
@@ -166,7 +282,6 @@ export class Data {
     Oct: any;
     Nov: any;
     Dec: any;
-    DeltaID: number;
     January : any;
     February : any;
     March : any;
@@ -334,6 +449,7 @@ export class Data {
     GlobalDigitalHRFeedSpeciallist : string;
     GDS : string;
     ComplexityScore : number;
+    Complexity_Score : number;
     ProjectDelay : number;
     ProjectEffort?: number;
     CalculatedEffort?: string;
@@ -401,17 +517,11 @@ export class Data {
     UpdatedDate : string;
     UpdatedDate_text : string
     //Record History
-    EPDate : string;
-    HPDate : string;
-    PDate : string;
     Assignment: string;
     ExpectedDecision : string;
     ResourceRequested : string;
     ProjectStart : string;
     GoLive : string;
-    EPDate_c : any;
-    HPDate_c : any;
-    PDate_c : any;
     ExpectedDecision_c : any;
     Assignment_c: any;
     ResourceRequested_c : any;

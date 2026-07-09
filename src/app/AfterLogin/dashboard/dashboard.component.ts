@@ -19,7 +19,7 @@ export class DashboardComponent implements OnInit{
   sub : Subscription;
   ReportSelected : string = "CWT Dashboard";
   imageUrl : string = "assets/images/cwt.png";
-  Userimage : string = "assets/images/CWTlogo.jpg";
+  Userimage : string = "assets/images/CWTlogo.png";
   public destroyed = new Subject<any>();
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
   .pipe(

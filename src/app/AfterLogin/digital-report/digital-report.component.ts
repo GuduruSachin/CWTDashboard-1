@@ -154,6 +154,7 @@ export class DigitalReportComponent implements OnInit {
   @ViewChild('DRSort') DRSort: MatSort;
   @ViewChild('DROBT_R_Sort') DROBT_R_Sort: MatSort;
   OBTResellerList : any = [];
+  OBTListWithoutBlank : any = [];
   GetData(){
     this.GDS_Values = [];
     this.gds_apac = [];
@@ -600,8 +601,14 @@ export class DigitalReportComponent implements OnInit {
     })
     this.service.DRRegionWiseOBTReseller(this.SelectedYears,this.SelectedQuarter,this.SelectedStatus,this.SelectedRegion,this.SelectedManager).subscribe(data=>{
       this.OBTResellerList = [];
+      this.OBTListWithoutBlank = [];
+      console.log(data.Data);
       data.Data.forEach(item =>{
         this.OBTResellerList.push(item.OBTReseller);
+        if(item.OBTReseller == "(Blanks)"){
+        }else{
+          this.OBTListWithoutBlank.push(item.OBTReseller);
+        }
       })
       this.OBT_APACTotal = Math.round(data.Data.map(t => t.APAC).reduce((acc,value) => acc + value,0));
       this.OBT_EMEATotal = Math.round(data.Data.map(t => t.EMEA).reduce((acc,value) => acc + value,0));
@@ -610,6 +617,8 @@ export class DigitalReportComponent implements OnInit {
       this.OBT_GrandTotal = Math.round(data.Data.map(t => t.GrandTotal).reduce((acc,value) => acc + value,0));
       this.dataSource = new MatTableDataSource(data.Data);
       this.onFilterValueChange();
+      this.OBTResellerFilter.setValue(this.OBTListWithoutBlank);
+      this.onOBTResellerchange();
       this.isLoading_OR = false;
     },error => (this.isLoading_OR = false))
     this.service.DigitalReportData(this.SelectedYears,this.SelectedQuarter,this.SelectedStatus,this.SelectedRegion,this.SelectedManager).subscribe(data=>{
@@ -687,6 +696,7 @@ export class DigitalReportComponent implements OnInit {
     }else{
       this.masterOBTReseller = false;
     }
+    console.log(this.OBTResellerList,this.masterOBTReseller,this.OBTResellerFilter.value)
   }
   checkUncheckYears() {
     for (var i = 0; i < this.yearList.length; i++) {

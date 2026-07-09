@@ -161,9 +161,22 @@
                     <mat-option value="Deactivate">Deactivate</mat-option>
                 </mat-select>
             </mat-form-field>
+            <mat-form-field class="col-md-3">
+                <mat-label style="font-size: 15px;">Priority</mat-label>
+                <mat-select [(value)]="Priority">
+                    <mat-option value="---">---</mat-option>
+                    <mat-option value="Removed - No Action">Removed - No Action</mat-option>
+                    <mat-option value="Removed - Started">Removed - Started</mat-option>
+                    <mat-option value="Yes">Yes</mat-option>
+                </mat-select>
+            </mat-form-field>
             <mat-form-field class="col-md-6">
                 <mat-label style="font-size: 15px;">Comments</mat-label>
                 <textarea rows="3" style="color: gray;" [(ngModel)]="Comments" name="Comments" matInput></textarea>
+            </mat-form-field>
+            <mat-form-field class="col-md-6">
+                <mat-label style="font-size: 15px;">Pipeline Comments</mat-label>
+                <textarea rows="3" style="color: gray;" [(ngModel)]="PipelineComments" name="PipelineComments" matInput></textarea>
             </mat-form-field>
         </div>
     </div>

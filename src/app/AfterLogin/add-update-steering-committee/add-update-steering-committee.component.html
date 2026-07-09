@@ -6,17 +6,21 @@
     <div class="col-md-12">
         <div *ngIf="ButtonName == 'Save' ? true : false">
             <div class="row" style="margin: 20px 0px 0px 0px;">
-                <label style="font-size: 15px;color: #7a7a7a;padding: 0px 0px 0px 15px;">Get details from CLR by using Opportunity ID in below input field</label>
+                <label style="font-size: 15px;color: #7a7a7a;padding: 0px 0px 0px 15px;">Get details from CLR by using
+                    Opportunity ID in below input field</label>
             </div>
             <div class="row" style="margin: 5px 0px 0px 0px;">
                 <mat-form-field appearance="outline" class="col-md-3">
                     <mat-label style="font-size: 15px;">Opportunity ID </mat-label>
                     <input style="color: gray;" [(ngModel)]="OppID" name="OppID" matInput>
                 </mat-form-field>
-                <button mat-raised-button (click)="OnApplyClick()" style="height: 35px;background-color: #F16950;color: white;margin-left: 20px;margin-top: 10px;"><span class="material-icons">forward</span></button>    
+                <button mat-raised-button (click)="OnApplyClick()"
+                    style="height: 35px;background-color: #F16950;color: white;margin-left: 20px;margin-top: 10px;"><span
+                        class="material-icons">forward</span></button>
             </div>
             <div class="row" style="margin: 0px;">
-                <label style="font-size: 13px;color: rgb(255, 56, 56);padding: 0px 0px 0px 20px;">{{OppIDErrorMessage}}</label>
+                <label
+                    style="font-size: 13px;color: rgb(255, 56, 56);padding: 0px 0px 0px 20px;">{{OppIDErrorMessage}}</label>
             </div>
         </div>
         <div class="row" style="margin : 20px 0px 0px 0px;width: 100%;">
@@ -26,6 +30,7 @@
                 <mat-select [(value)]="Record_Status" required>
                     <mat-option value="Active">Active</mat-option>
                     <mat-option value="Closed">Closed</mat-option>
+                    <mat-option value="On Hold">On Hold</mat-option>
                 </mat-select>
             </mat-form-field>
             <mat-form-field appearance="outline" class="col-md-3">
@@ -44,11 +49,214 @@
             <mat-form-field appearance="outline" class="col-md-3">
                 <mat-icon matSuffix><span class="material-symbols-outlined">person</span></mat-icon>
                 <mat-label style="font-size: 15px;">Project Lead</mat-label>
-                <input style="color: gray;" [(ngModel)]="Project_Lead" type="text" name="Project_Lead" matInput required>
+                <input style="color: gray;" [(ngModel)]="Project_Lead" type="text" name="Project_Lead" matInput
+                    required>
             </mat-form-field>
+            
+            <mat-form-field appearance="outline" class="col-md-3" [options]="tooltipOptions2" [tooltip]="HtmlContentPS" content-type="template">
+                <ng-template #HtmlContentPS style="padding : 10px">
+                    <style>
+                        .tooltip_table,
+                        .tooltip_th,
+                        .tooltip_td {
+                            border: 1px solid rgb(196, 196, 196);
+                            border-collapse: collapse;
+                            text-align: center;
+                            padding: 3px
+                        }
+    
+                        .tooltip_table {
+                            padding: 0px;
+                            margin: 0px;
+                            /* background-color: #FF0000; */
+                        }
+    
+                        .tooltip_th {
+                            /* background-color: #FF0000; */
+                            color: black;
+                            width: 150px;
+                            text-align: center;
+                            font-size: 12px;
+                            font-weight: bold;
+                        }
+    
+                        .tooltip_td {
+                            padding: 5px;
+                            font-size: 12px;
+                            color: black;
+                            background-color: white;
+                        }
+                    </style>
+                    <table class="tooltip_table">
+                        <tr>
+                            <th class="tooltip_th">
+                                <p style="width: 200px;">Overall Project Status (RAG)</p>
+                            </th>
+                            <th class="tooltip_th">
+                                <p style="width: 200px;">Explanation</p>
+                            </th>
+                            <th class="tooltip_th">
+                                <p style="width: 200px;">Clarification</p>
+                            </th>
+                            <th class="tooltip_th">
+                                <p style="width: 200px;">ELT Comments required</p>
+                            </th>
+                        </tr>
+                        <tr>
+                            <td class="tooltip_td" style="background-color: rgb(255,0,0);font-weight: bold;">RED - Issue
+                            </td>
+                            <td class="tooltip_td">The project has an <b>Open Issue</b> that will negatively impact Speed
+                                (schedule), Cost (TX process) Quality (NPS/Client satisfaction) with no known mitigation
+                                plan
+                                Details needs to be noted in ELT comments</td>
+                            <td class="tooltip_td">For Global/Regional projects, If the issue impacts markets that are under
+                                $1M each, note the issue in Global weekly status update, however the overall project status
+                                does not need to be Red.</td>
+                            <td class="tooltip_td">YES always. <b>Short description</b> needs to be noted in ELT comments in
+                                iMeet.
+    
+                                What is the Issue:
+    
+                                What is the impact of the issue (Speed/Cost/Quality) :
+    
+                                What discussions have we had with Client/CWT stakeholders:
+    
+                                What are recommended next steps to take:</td>
+                        </tr>
+                        <tr>
+                            <td class="tooltip_td" style="background-color: rgb(255,192,0);font-weight: bold;">AMBER – Risk
+                            </td>
+                            <td class="tooltip_td">The project has an <b>Open Risk</b> with a mitigation plan in place that
+                                will avoid impacts to Speed (schedule), Cost (TX process) Quality (NPS/Client satisfaction)
+                            </td>
+                            <td class="tooltip_td">For Global/Regional projects, if the risk impacts markets that are under
+                                $1M each, note the risk in Global weekly status update, however the overall project status
+                                does not need to be Amber. </td>
+                            <td class="tooltip_td">YES always. <b>Short description</b> needs to be noted in ELT comments in
+                                iMeet.
+    
+                                What is the Risk:
+    
+                                What is the path to Green (Short description of Mitigation plan):</td>
+                        </tr>
+                        <tr>
+                            <td class="tooltip_td" style="background-color: rgb(146,208,80);font-weight: bold;">GREEN - On
+                                track</td>
+                            <td class="tooltip_td">On Track <b>no risks or issues</b> impacting Speed/Cost/Quality</td>
+                            <td class="tooltip_td">For Global/Regional projects, there can be risks and issues in markets
+                                under $1M as long as they are noted in the overall project status. </td>
+                            <td class="tooltip_td">Not required</td>
+                        </tr>
+                    </table>
+                </ng-template>
+                <mat-icon matSuffix ><span
+                        class="material-symbols-outlined">info</span></mat-icon>
+                <mat-label style="font-size: 15px;">Previous Status</mat-label>
+                <mat-select [(value)]="PreviousStatus" required [disabled]="isNewRecord">
+                    <mat-option value="Green">Green</mat-option>
+                    <mat-option value="Amber">Amber</mat-option>
+                    <mat-option value="Red">Red</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <ng-template #HtmlContentCS style="padding : 10px">
+                <style>
+                    .tooltip_table,
+                    .tooltip_th,
+                    .tooltip_td {
+                        border: 1px solid rgb(196, 196, 196);
+                        border-collapse: collapse;
+                        text-align: center;
+                        padding: 3px
+                    }
+
+                    .tooltip_table {
+                        padding: 0px;
+                        margin: 0px;
+                        /* background-color: #FF0000; */
+                    }
+
+                    .tooltip_th {
+                        /* background-color: #FF0000; */
+                        color: black;
+                        width: 150px;
+                        text-align: center;
+                        font-size: 12px;
+                        font-weight: bold;
+                    }
+
+                    .tooltip_td {
+                        padding: 5px;
+                        font-size: 12px;
+                        color: black;
+                        background-color: white;
+                    }
+                </style>
+                <table class="tooltip_table">
+                    <tr>
+                        <th class="tooltip_th">
+                            <p style="width: 200px;">Overall Project Status (RAG)</p>
+                        </th>
+                        <th class="tooltip_th">
+                            <p style="width: 200px;">Explanation</p>
+                        </th>
+                        <th class="tooltip_th">
+                            <p style="width: 200px;">Clarification</p>
+                        </th>
+                        <th class="tooltip_th">
+                            <p style="width: 200px;">ELT Comments required</p>
+                        </th>
+                    </tr>
+                    <tr>
+                        <td class="tooltip_td" style="background-color: rgb(255,0,0);font-weight: bold;">RED - Issue
+                        </td>
+                        <td class="tooltip_td">The project has an <b>Open Issue</b> that will negatively impact Speed
+                            (schedule), Cost (TX process) Quality (NPS/Client satisfaction) with no known mitigation
+                            plan
+                            Details needs to be noted in ELT comments</td>
+                        <td class="tooltip_td">For Global/Regional projects, If the issue impacts markets that are under
+                            $1M each, note the issue in Global weekly status update, however the overall project status
+                            does not need to be Red.</td>
+                        <td class="tooltip_td">YES always. <b>Short description</b> needs to be noted in ELT comments in
+                            iMeet.
+
+                            What is the Issue:
+
+                            What is the impact of the issue (Speed/Cost/Quality) :
+
+                            What discussions have we had with Client/CWT stakeholders:
+
+                            What are recommended next steps to take:</td>
+                    </tr>
+                    <tr>
+                        <td class="tooltip_td" style="background-color: rgb(255,192,0);font-weight: bold;">AMBER – Risk
+                        </td>
+                        <td class="tooltip_td">The project has an <b>Open Risk</b> with a mitigation plan in place that
+                            will avoid impacts to Speed (schedule), Cost (TX process) Quality (NPS/Client satisfaction)
+                        </td>
+                        <td class="tooltip_td">For Global/Regional projects, if the risk impacts markets that are under
+                            $1M each, note the risk in Global weekly status update, however the overall project status
+                            does not need to be Amber. </td>
+                        <td class="tooltip_td">YES always. <b>Short description</b> needs to be noted in ELT comments in
+                            iMeet.
+
+                            What is the Risk:
+
+                            What is the path to Green (Short description of Mitigation plan):</td>
+                    </tr>
+                    <tr>
+                        <td class="tooltip_td" style="background-color: rgb(146,208,80);font-weight: bold;">GREEN - On
+                            track</td>
+                        <td class="tooltip_td">On Track <b>no risks or issues</b> impacting Speed/Cost/Quality</td>
+                        <td class="tooltip_td">For Global/Regional projects, there can be risks and issues in markets
+                            under $1M as long as they are noted in the overall project status. </td>
+                        <td class="tooltip_td">Not required</td>
+                    </tr>
+                </table>
+            </ng-template>
             <mat-form-field appearance="outline" class="col-md-3">
-                <mat-icon matSuffix><span class="material-symbols-outlined">task_alt</span></mat-icon>
-                <mat-label style="font-size: 15px;">Project Status</mat-label>
+                <mat-icon matSuffix [options]="tooltipOptions" [tooltip]="HtmlContentCS" content-type="template"><span
+                        class="material-symbols-outlined">info</span></mat-icon>
+                <mat-label style="font-size: 15px;">Current Status</mat-label>
                 <mat-select [(value)]="Project_Status" required>
                     <mat-option value="Green">Green</mat-option>
                     <mat-option value="Amber">Amber</mat-option>
@@ -56,23 +264,16 @@
                 </mat-select>
             </mat-form-field>
             <mat-form-field appearance="outline" class="col-md-3">
-                <mat-icon matSuffix><span class="material-symbols-outlined">task_alt</span></mat-icon>
-                <mat-label style="font-size: 15px;">Project Trend</mat-label>
-                <mat-select [(value)]="Project_Trend" required>
-                    <mat-option value="Up">Up</mat-option>
-                    <mat-option value="Stable">Stable</mat-option>
-                    <mat-option value="Down">Down</mat-option>
-                </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="col-md-3">
                 <mat-icon matSuffix><span class="material-symbols-outlined">attach_money</span></mat-icon>
                 <mat-label style="font-size: 15px;">Total Business Volume</mat-label>
-                <input style="color: gray;" [(ngModel)]="TotalBusinessVolume" type="number" name="TotalBusinessVolume" matInput required>
+                <input style="color: gray;" [(ngModel)]="TotalBusinessVolume" type="number" name="TotalBusinessVolume"
+                    matInput required>
             </mat-form-field>
             <mat-form-field appearance="outline" class="col-md-3">
                 <mat-icon matSuffix><span class="material-symbols-outlined">attach_money</span></mat-icon>
                 <mat-label style="font-size: 15px;">New Business Volume</mat-label>
-                <input style="color: gray;" [(ngModel)]="NewBusinessVolume" type="number" name="NewBusinessVolume" matInput required>
+                <input style="color: gray;" [(ngModel)]="NewBusinessVolume" type="number" name="NewBusinessVolume"
+                    matInput required>
             </mat-form-field>
             <!-- <mat-form-field appearance="outline" class="col-md-3">
                 <mat-label style="font-size: 15px;">Region</mat-label>
@@ -86,72 +287,103 @@
             </mat-form-field> -->
             <div class="col-md-3" style="padding: 5px 0px 0px 15px;">
                 <p style="font-size: 14px;">Region</p>
-                <ng-multiselect-dropdown
-                    #multiSelect
-                    [settings]="RegionSettings"
-                    [data]="SC_Region"
-                    [(ngModel)]="Region"
-                    (onSelect)="onRegionChange()" 
-                    (onDeSelect)="onRegionChange()"
-                    (onSelectAll)="onRegionChangeAll($event)"
-                    (onDeSelectAll)="onRegionChangeAll($event)"
+                <ng-multiselect-dropdown #multiSelect [settings]="RegionSettings" [data]="SC_Region"
+                    [(ngModel)]="Region" (onSelect)="onRegionChange()" (onDeSelect)="onRegionChange()"
+                    (onSelectAll)="onRegionChangeAll($event)" (onDeSelectAll)="onRegionChangeAll($event)"
                     [disabled]="false">
                 </ng-multiselect-dropdown>
             </div>
             <div class="col-md-3" style="padding: 5px 0px 0px 15px;">
                 <p style="font-size: 14px;">Country</p>
                 <!-- [placeholder]="'Country'" -->
-                <ng-multiselect-dropdown
-                    #multiSelect
-                    [settings]="CountrySettings"
-                    [data]="SC_Country"
-                    [(ngModel)]="Country"
-                    (onSelect)="onCountryChange()" 
-                    (onDeSelect)="onCountryChange()"
-                    (onSelectAll)="onCountryChangeAll($event)"
-                    (onDeSelectAll)="onCountryChangeAll($event)"
+                <ng-multiselect-dropdown #multiSelect [settings]="CountrySettings" [data]="SC_Country"
+                    [(ngModel)]="Country" (onSelect)="onCountryChange()" (onDeSelect)="onCountryChange()"
+                    (onSelectAll)="onCountryChangeAll($event)" (onDeSelectAll)="onCountryChangeAll($event)"
                     [disabled]="false">
+                </ng-multiselect-dropdown>
+            </div>
+            <div class="col-md-3" style="padding: 5px 0px 0px 15px;">
+                <p style="font-size: 14px;">Key Accomplishments Since Last Update</p>
+                <!-- [placeholder]="'Country'" -->
+                <ng-multiselect-dropdown #multiSelect [settings]="StandardKeyDeliverableSettings"
+                    [data]="SC_StandardKeyDeliverables" [(ngModel)]="KeyAccomplishmentsSinceLastUpdateKeyDeliverables"
+                    (onSelect)="onKeyDeliverablesChange()" (onDeSelect)="onKeyDeliverablesChange()"
+                    (onSelectAll)="onKeyDeliverablesChangeAll($event)"
+                    (onDeSelectAll)="onKeyDeliverablesChangeAll($event)" [disabled]="false">
+                </ng-multiselect-dropdown>
+            </div>
+            <div class="col-md-3" style="padding: 5px 0px 0px 15px;">
+                <p style="font-size: 14px;">Key Upcoming Activities</p>
+                <!-- [placeholder]="'Country'" -->
+                <ng-multiselect-dropdown #multiSelect [settings]="KUAStandardKeyDeliverableSettings"
+                    [data]="KUASC_StandardKeyDeliverables" [(ngModel)]="KeyUpcomingActivitiesKeyDeliverables"
+                    (onSelect)="KUAonKeyDeliverablesChange()" (onDeSelect)="KUAonKeyDeliverablesChange()"
+                    (onSelectAll)="KUAonKeyDeliverablesChangeAll($event)"
+                    (onDeSelectAll)="KUAonKeyDeliverablesChangeAll($event)" [disabled]="false">
                 </ng-multiselect-dropdown>
             </div>
             <div class="col-md-12" style="margin-top: 20px;"></div>
             <mat-form-field appearance="outline" class="col-md-3">
-                <mat-label style="font-size: 15px;">Overall Scope/Current State</mat-label>
+                <mat-label style="font-size: 15px;">Scope of Work/Project Objective</mat-label>
                 <mat-icon matSuffix><span class="material-symbols-outlined">format_align_left</span></mat-icon>
-                <textarea rows="10" style="color: gray;" [(ngModel)]="CurrentState" name="CurrentState" matInput></textarea>
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="col-md-3">
-                <mat-label style="font-size: 15px;">Completed Key Deliverables</mat-label>
-                <mat-icon matSuffix><span class="material-symbols-outlined">format_align_left</span></mat-icon>
-                <textarea rows="10" style="color: gray;" [(ngModel)]="CompletedKeyDeliverables" name="CompletedKeyDeliverables" matInput></textarea>
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="col-md-3">
-                <mat-label style="font-size: 15px;">Scheduled Key Deliverables</mat-label>
-                <mat-icon matSuffix><span class="material-symbols-outlined">format_align_left</span></mat-icon>
-                <textarea rows="10" style="color: gray;" [(ngModel)]="ScheduledKeyDeliverables" name="ScheduledKeyDeliverables" matInput></textarea>
+                <textarea rows="10" style="color: gray;" [(ngModel)]="CurrentState" name="CurrentState"
+                    matInput></textarea>
             </mat-form-field>
             <mat-form-field appearance="outline" class="col-md-3">
                 <mat-label style="font-size: 15px;">Additional Notes</mat-label>
                 <mat-icon matSuffix><span class="material-symbols-outlined">format_align_left</span></mat-icon>
-                <textarea rows="10" style="color: gray;" [(ngModel)]="AdditionalNotes" name="AdditionalNotes" matInput></textarea>
+                <textarea rows="10" style="color: gray;" [(ngModel)]="AdditionalNotes" name="AdditionalNotes"
+                    matInput></textarea>
             </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-3">
+                <!-- <mat-label style="font-size: 15px;">Key Accomplishments Since Last Update</mat-label> -->
+                <mat-icon matSuffix><span class="material-symbols-outlined">format_align_left</span></mat-icon>
+                <textarea rows="10" style="color: gray;" [(ngModel)]="CompletedKeyDeliverables"
+                    name="CompletedKeyDeliverables" matInput></textarea>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="col-md-3">
+                <!-- <mat-label style="font-size: 15px;">Key Upcoming Activities</mat-label> -->
+                <mat-icon matSuffix><span class="material-symbols-outlined">format_align_left</span></mat-icon>
+                <textarea rows="10" style="color: gray" [(ngModel)]="ScheduledKeyDeliverables"
+                    name="ScheduledKeyDeliverables" matInput></textarea>
+            </mat-form-field>
+            <div class="col-md-12" style="margin-top: 20px;"></div>
         </div>
     </div>
     <mat-divider style="width: 100%;"></mat-divider>
     <mat-accordion multi="true" style="margin: 0px;padding: 0px;">
         <div style="width: 100%;height: 60px;">
-            <label class="text_headers">Risks Gap</label>
-            <button [disabled]="DisableAddNewRiskButton" mat-raised-button (click)="addnewriskgap()" style="background-color: #8AB458;color: white;margin-left: 25px;margin-right: 25px;border-radius: 1px;" matTooltip="Add Risks Gap">
-                <mat-icon style="color: white;font-size: 20px;margin-top: 4px;">add</mat-icon>New Risk Gap
+            <label class="text_headers">Risks</label>
+            <button [disabled]="DisableAddNewRiskButton" mat-raised-button (click)="addnewriskgap()"
+                style="background-color: #8AB458;color: white;margin-left: 25px;margin-right: 25px;border-radius: 1px;"
+                matTooltip="Add Risks Gap">
+                <mat-icon style="color: white;font-size: 20px;margin-top: 4px;">add</mat-icon>New Risk
             </button>
         </div>
         <mat-divider style="width: 100%;margin-top: 10px;"></mat-divider>
-        <mat-expansion-panel class="mat-elevation-z0" *ngFor="let risk_gap of RisksGap;let j = index" style="border-radius: 0px;border-bottom: 1px solid rgba(0,0,0,.12);height: auto;" expanded='false' >
-            <mat-expansion-panel-header style="padding: 13px 20px 13px 0px" [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
+        <mat-expansion-panel class="mat-elevation-z0" *ngFor="let risk_gap of RisksGap;let j = index"
+            style="border-radius: 0px;border-bottom: 1px solid rgba(0,0,0,.12);height: auto;" expanded='false'>
+            <mat-expansion-panel-header style="padding: 13px 20px 13px 0px" [collapsedHeight]="'60px'"
+                [expandedHeight]="'60px'">
                 <mat-panel-title>
                     <div class="col-12">
                         <div class="col-12">
-                            <button mat-raised-button style="padding: 0px;background: none;box-shadow: none;background-color: transparent;border: none;font-size: 12px;font-weight: bold;font-family: Arial, Helvetica, sans-serif;">
-                                <mat-icon *ngIf="risk_gap.RGID ? false : true" style="display: inline;cursor: pointer;font-size: 24px;margin-right: 15px;" aria-label="Delete"  (click)="deleteriskgap(j)">delete</mat-icon>Risks/Gaps - {{j+1}}
+                            <button mat-raised-button
+                                style="padding: 0px;background: none;box-shadow: none;background-color: transparent;border: none;font-size: 12px;font-weight: bold;font-family: Arial, Helvetica, sans-serif;">
+                                <!-- <mat-icon *ngIf="risk_gap.RGID ? false : true" style="display: inline;cursor: pointer;font-size: 24px;margin-right: 15px;" aria-label="Delete"  (click)="deleteriskgap(j)">delete</mat-icon>Risk - {{j+1}} <b>Due Date</b> : {{risk_gap.Due_Date}}, &nbsp; <b>Owner</b> : {{risk_gap.Owners}} -->
+                                <!-- [ngStyle]="{'background-color': risk_gap.isDueDateDelayed == true ?  '#FF0000' : '#FFFFFF'}" -->
+                                <div style="display: inline-block;"><mat-icon
+                                        style="display: inline;cursor: pointer;font-size: 24px;margin-right: 15px;vertical-align: middle;"
+                                        aria-label="Delete" (click)="deleteriskgap(j)">delete</mat-icon><b>{{risk_gap.Risks}}</b>, Risk Category :
+                                    {{risk_gap.RiskCategory}}, &nbsp; <b>Status</b> : {{risk_gap.Status}} &nbsp;&nbsp;
+                                </div>
+                                <div *ngIf="risk_gap.isDueDateDelayed" style="display: inline-block;">
+                                    <div style="display: inline-block;color : rgb(255,0,0);"><mat-icon
+                                            style="display: inline;cursor: pointer;font-size: 18px;margin-right: 5px;vertical-align: middle;">report</mat-icon>
+                                    </div>
+                                    <div style="display: inline-block;color: rgb(255,0,0);;vertical-align: middle;">Due
+                                        Date Exceeded</div>
+                                </div>
                             </button>
                             <!-- <span class="spacer"></span>
                             <button mat-icon-button (click)= "DeleteRiskgap()" style="margin-left: 20px;" matTooltip="Delete Risk Gap">
@@ -162,7 +394,7 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <div class="col-md-12" style="margin: 0px;padding: 0px;height: auto">
-                <div class="row" style="margin : 0px;width: 100%;height: auto;" >
+                <div class="row" style="margin : 0px;width: 100%;height: auto;">
                     <!-- <div class="col-md-3" style="padding: 5px 0px 0px 15px;">
                         <ng-multiselect-dropdown
                             #multiSelect
@@ -174,17 +406,41 @@
                         </ng-multiselect-dropdown>
                     </div> -->
                     <mat-form-field appearance="outline" class="col-md-3">
+                        <mat-icon matSuffix><span class="material-symbols-outlined">category</span></mat-icon>
+                        <mat-label style="font-size: 15px;">Risk Category</mat-label>
+                        <mat-select [(value)]="risk_gap.RiskCategory">
+                            <mat-option value="Client Priorities/Responsiveness">Client
+                                Priorities/Responsiveness</mat-option>
+                            <mat-option value="Form of Payment Decision Pending and/or Issue(s)">Form of Payment
+                                Decision Pending and/or Issue(s)</mat-option>
+                            <mat-option value="Contract/Pricing Issues">Contract/Pricing Issues</mat-option>
+                            <mat-option value="Scope Change/Not Confirmed">Scope Change/Not Confirmed</mat-option>
+                            <mat-option value="CWT Service/SLA Issues">CWT Service/SLA Issues</mat-option>
+                            <mat-option value="HR Feed Issue">HR Feed Issue</mat-option>
+                            <mat-option value="Client Requirement(s) cannot be met by CWT">Client Requirement(s) cannot
+                                be met by CWT</mat-option>
+                            <mat-option value="CWT Lack of Resources">CWT Lack of Resources</mat-option>
+                            <mat-option value="Product/Technology Limitation">Product/Technology Limitation</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <div class="col-md-3" style="padding: 5px 0px 0px 15px;">
+                        <ng-multiselect-dropdown #multiSelect [placeholder]="'Region'" [settings]="RegionSettings"
+                            [data]="Region" [(ngModel)]="risk_gap.arr_Region" [disabled]="false"
+                            (onSelect)="onRiskRegionChange(j)" (onDeSelect)="onRiskRegionChange(j)"
+                            (onSelectAll)="onRiskRegionChangeAll($event,j)"
+                            (onDeSelectAll)="onRiskRegionChangeAll($event,j)">
+                        </ng-multiselect-dropdown>
+                    </div>
+                    <div class="col-md-3" style="padding: 5px 0px 0px 15px;">
+                        <ng-multiselect-dropdown #multiSelect [placeholder]="'Country'" [settings]="CountrySettings"
+                            [data]="risk_gap.SC_Country" [(ngModel)]="risk_gap.arr_Country" [disabled]="false">
+                        </ng-multiselect-dropdown>
+                    </div>
+                    <mat-form-field appearance="outline" class="col-md-3">
                         <mat-icon matSuffix><span class="material-symbols-outlined">person</span></mat-icon>
                         <mat-label style="font-size: 15px;">Owner</mat-label>
-                        <input style="color: gray;" [(ngModel)]="risk_gap.Owners" type="text" name="risk_gap.Owners" matInput>
-                    </mat-form-field>
-                    <mat-form-field appearance="outline" class="col-md-3">
-                        <mat-icon matSuffix><span class="material-symbols-outlined">task_alt</span></mat-icon>
-                        <mat-label style="font-size: 15px;">Steering Committee Supp Need?</mat-label>
-                        <mat-select [(value)]="risk_gap.SteeringCommitteeSupportNeed" >
-                            <mat-option value="Yes">Yes</mat-option>
-                            <mat-option value="No">No</mat-option>
-                        </mat-select>
+                        <input style="color: gray;" [(ngModel)]="risk_gap.Owners" type="text" name="risk_gap.Owners"
+                            matInput>
                     </mat-form-field>
                     <!-- style="background-color: #FAF9F8;" -->
                     <mat-form-field appearance="outline" class="col-md-3">
@@ -201,16 +457,261 @@
                             <mat-option value="Closed">Closed</mat-option>
                         </mat-select>
                     </mat-form-field>
+                    <div class="col-md-3">
+                        <div class="row">
+                            <ng-template #HtmlContentImpact style="padding : 10px;">
+                                <style>
+                                    .tooltip_table, .tooltip_th{
+                                        border: 1px solid black;
+                                        border-collapse: collapse;
+                                        text-align : center;
+                                    	letter-spacing : 1px;
+                                    }
+                                    .tooltip_table{
+                                        padding : 0px;
+                                        margin: 15px;
+                                        background-color: white;
+                                    }
+                                    .tooltip_th {
+                                        color: black;
+                                        width: auto;
+                                        border : 1px solid black;
+                                        padding : 0px 10px;
+                                        font-size: 15px;
+                                        font-weight: bold;
+                                    }
+                                    .tooltip_td{
+                                        padding: 5px;
+                                        font-size: 12px;
+                                        color: black;
+                                        background-color: white;
+                                    }
+                                    .rotate{
+                                    	transform: rotate(270deg);
+                                    }
+                                    .main_texts{
+                                        background-color : #d9d9d9;
+                                        font-weight: bold;
+                                    	letter-spacing : 1px;
+                                        width : 10px;
+                                        border: 1px solid black;
+                                    }
+                                    .low_risk{
+                                    	width : 50px;
+                                    	background-color : #92d050;
+									}
+                                    .moderate_risk{
+                                    	width : 110px;
+                                    	background-color : #ffc000;
+									}
+                                    .high_risk{
+                                    	width : 80px;
+                                    	background-color : #ff9933;
+									}
+                                    .critical_risk{
+                                    	width : 100px;
+                                    	background-color : #ea0000;
+									}
+                                </style>
+                                <table class="tooltip_table">
+                                    <tr>
+                                      <td class="main_texts" rowspan="6"><p class="rotate">Likelihood</p></td>
+                                      <td class="tooltip_th"><p style="width : 130px">5-Almost Certain</p></td>
+                                      <td class="tooltip_th low_risk" rowspan="5"><p>Low Risk</p></td>
+                                      <td class="tooltip_th moderate_risk" rowspan="2"><p>Moderate Risk</p></td>
+                                      <td class="tooltip_th high_risk" rowspan="2"><p>High Risk</p></td>
+                                      <td class="tooltip_th critical_risk" rowspan="2"><p>Critical Risk</p></td>
+                                      <td class="tooltip_th critical_risk" rowspan="2"><p>Critical Risk</p></td>
+                                    </tr>
+                                    <tr>
+                                      <td class="tooltip_th"><p>4-Likely</p></td>
+                                    </tr>
+                                    <tr>
+                                      <td class="tooltip_th"><p>3-Moderate</p></td>
+                                      <td class="tooltip_th low_risk" rowspan="3"><p>Low Risk</p></td>
+                                      <td class="tooltip_th moderate_risk"><p>Moderate Risk</p></td>
+                                      <td class="tooltip_th high_risk"><p>High Risk</p></td>
+                                      <td class="tooltip_th high_risk"><p>High Risk</p></td>
+                                    </tr>
+                                    <tr>
+                                      <td class="tooltip_th"><p>2-Unlikely</p></td>
+                                      <td class="tooltip_th low_risk" rowspan="2"><p>Low Risk</p></td>
+                                      <td class="tooltip_th moderate_risk"><p>Moderate Risk</p></td>
+                                      <td class="tooltip_th moderate_risk"><p>Moderate Risk</p></td>
+                                    </tr>
+                                    <tr>
+                                      <td class="tooltip_th"><p>1-Rare</p></td>
+                                      <td class="tooltip_th low_risk"><p>Low Risk</p></td>
+                                      <td class="tooltip_th low_risk"><p>Low Risk</p></td>
+                                    </tr>
+                                    <tr>
+                                      <td class="tooltip_th"><p></p></td>
+                                      <td class="tooltip_th"><p style="width : 95px">1-Insigficant</p></td>
+                                      <td class="tooltip_th"><p>2-Minor</p></td>
+                                      <td class="tooltip_th"><p>3-Significant</p></td>
+                                      <td class="tooltip_th"><p>4-Major</p></td>
+                                      <td class="tooltip_th"><p>5-Severe</p></td>
+                                    </tr>
+                                    <tr>
+                                      <td></td>
+                                      <td class="main_texts" colspan="6"><p>Impact</p></td>
+                                    </tr>
+                                </table>
+                            </ng-template>
+                            <mat-form-field appearance="outline" class="col-md-6">
+                                <mat-icon matSuffix [options]="tooltipOptions3" [tooltip]="HtmlContentImpact"
+                                    content-type="template"><span
+                                        class="material-symbols-outlined">info</span></mat-icon>
+                                <mat-label style="font-size: 15px;">Impact</mat-label>
+                                <mat-select [(ngModel)]="risk_gap.Impact">
+                                    <mat-option [value]="1">1 Insigficant</mat-option>
+                                    <mat-option [value]="2">2 Minor</mat-option>
+                                    <mat-option [value]="3">3 Significant</mat-option>
+                                    <mat-option [value]="4">4 Major</mat-option>
+                                    <mat-option [value]="5">5 Severe</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <ng-template #HtmlContentLikelihood style="padding : 10px;width: 100%;">
+                                <style>
+                                    .tooltip_table, .tooltip_th{
+                                        border: 1px solid black;
+                                        border-collapse: collapse;
+                                        text-align : center;
+                                    	letter-spacing : 1px;
+                                    }
+                                    .tooltip_table{
+                                        padding : 0px;
+                                        margin: 15px;
+                                        background-color: white;
+                                    }
+                                    .tooltip_th {
+                                        color: black;
+                                        width: auto;
+                                        border : 1px solid black;
+                                        padding : 0px 10px;
+                                        font-size: 15px;
+                                        font-weight: bold;
+                                    }
+                                    .tooltip_td{
+                                        padding: 5px;
+                                        font-size: 12px;
+                                        color: black;
+                                        background-color: white;
+                                    }
+                                    .rotate{
+                                    	transform: rotate(270deg);
+                                    }
+                                    .main_texts{
+                                        background-color : #d9d9d9;
+                                        font-weight: bold;
+                                    	letter-spacing : 1px;
+                                        width : 10px;
+                                        border: 1px solid black;
+                                    }
+                                    .low_risk{
+                                    	width : 50px;
+                                    	background-color : #92d050;
+									}
+                                    .moderate_risk{
+                                    	width : 110px;
+                                    	background-color : #ffc000;
+									}
+                                    .high_risk{
+                                    	width : 80px;
+                                    	background-color : #ff9933;
+									}
+                                    .critical_risk{
+                                    	width : 100px;
+                                    	background-color : #ea0000;
+									}
+                                </style>
+                                <table class="tooltip_table">
+                                    <tr>
+                                      <td class="main_texts" rowspan="6"><p class="rotate">Likelihood</p></td>
+                                      <td class="tooltip_th"><p style="width : 130px">5-Almost Certain</p></td>
+                                      <td class="tooltip_th low_risk" rowspan="5"><p>Low Risk</p></td>
+                                      <td class="tooltip_th moderate_risk" rowspan="2"><p>Moderate Risk</p></td>
+                                      <td class="tooltip_th high_risk" rowspan="2"><p>High Risk</p></td>
+                                      <td class="tooltip_th critical_risk" rowspan="2"><p>Critical Risk</p></td>
+                                      <td class="tooltip_th critical_risk" rowspan="2"><p>Critical Risk</p></td>
+                                    </tr>
+                                    <tr>
+                                      <td class="tooltip_th"><p>4-Likely</p></td>
+                                    </tr>
+                                    <tr>
+                                      <td class="tooltip_th"><p>3-Moderate</p></td>
+                                      <td class="tooltip_th low_risk" rowspan="3"><p>Low Risk</p></td>
+                                      <td class="tooltip_th moderate_risk"><p>Moderate Risk</p></td>
+                                      <td class="tooltip_th high_risk"><p>High Risk</p></td>
+                                      <td class="tooltip_th high_risk"><p>High Risk</p></td>
+                                    </tr>
+                                    <tr>
+                                      <td class="tooltip_th"><p>2-Unlikely</p></td>
+                                      <td class="tooltip_th low_risk" rowspan="2"><p>Low Risk</p></td>
+                                      <td class="tooltip_th moderate_risk"><p>Moderate Risk</p></td>
+                                      <td class="tooltip_th moderate_risk"><p>Moderate Risk</p></td>
+                                    </tr>
+                                    <tr>
+                                      <td class="tooltip_th"><p>1-Rare</p></td>
+                                      <td class="tooltip_th low_risk"><p>Low Risk</p></td>
+                                      <td class="tooltip_th low_risk"><p>Low Risk</p></td>
+                                    </tr>
+                                    <tr>
+                                      <td class="tooltip_th"><p></p></td>
+                                      <td class="tooltip_th"><p style="width : 95px">1-Insigficant</p></td>
+                                      <td class="tooltip_th"><p>2-Minor</p></td>
+                                      <td class="tooltip_th"><p>3-Significant</p></td>
+                                      <td class="tooltip_th"><p>4-Major</p></td>
+                                      <td class="tooltip_th"><p>5-Severe</p></td>
+                                    </tr>
+                                    <tr>
+                                      <td></td>
+                                      <td class="main_texts" colspan="6"><p>Impact</p></td>
+                                    </tr>
+                                </table>
+                            </ng-template>
+                            <mat-form-field appearance="outline" class="col-md-6">
+                                <mat-icon matSuffix [options]="tooltipOptions4" [tooltip]="HtmlContentLikelihood"
+                                    content-type="template"><span
+                                        class="material-symbols-outlined">info</span></mat-icon>
+                                <mat-label style="font-size: 15px;">Likelihood</mat-label>
+                                <mat-select [(ngModel)]="risk_gap.Likelihood">
+                                    <mat-option [value]="1">1 Rare</mat-option>
+                                    <mat-option [value]="2">2 Unlikely</mat-option>
+                                    <mat-option [value]="3">3 Moderate</mat-option>
+                                    <mat-option [value]="4">4 Likely</mat-option>
+                                    <mat-option [value]="5">5 Almost Certain</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <mat-form-field appearance="outline" class="col-md-3">
+                        <mat-icon matSuffix><span class="material-symbols-outlined">task_alt</span></mat-icon>
+                        <mat-label style="font-size: 15px;">Steering Committee Supp Need?</mat-label>
+                        <mat-select [(value)]="risk_gap.SteeringCommitteeSupportNeed">
+                            <mat-option value="Yes">Yes</mat-option>
+                            <mat-option value="No">No</mat-option>
+                        </mat-select>
+                    </mat-form-field>
                     <div class="col-md-12"></div>
                     <mat-form-field appearance="outline" class="col-md-4">
-                        <mat-label style="font-size: 15px;">Risks/Gaps - {{j+1}}</mat-label>
+                        <mat-label style="font-size: 15px;">Risk Details - {{j+1}}</mat-label>
                         <mat-icon matSuffix><span class="material-symbols-outlined">format_align_left</span></mat-icon>
-                        <textarea rows="10" style="color: gray;" [(ngModel)]="risk_gap.RisksGaps" name="risk_gap.RisksGaps" matInput></textarea>
+                        <textarea rows="10" style="color: gray;" [(ngModel)]="risk_gap.RisksGaps"
+                            name="risk_gap.RisksGaps" matInput></textarea>
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="col-md-4">
                         <mat-label style="font-size: 15px;">Mitigation Plan - {{j+1}}</mat-label>
                         <mat-icon matSuffix><span class="material-symbols-outlined">format_align_left</span></mat-icon>
-                        <textarea rows="10" style="color: gray;" [(ngModel)]="risk_gap.MitigationPlan" name="risk_gap.MitigationPlan" matInput></textarea>
+                        <textarea rows="10" style="color: gray;" [(ngModel)]="risk_gap.MitigationPlan"
+                            name="risk_gap.MitigationPlan" matInput></textarea>
+                    </mat-form-field>
+                    <mat-form-field *ngIf="risk_gap.SteeringCommitteeSupportNeed == 'Yes' ? true : false"
+                        appearance="outline" class="col-md-4">
+                        <mat-label style="font-size: 15px;">Support Needed</mat-label>
+                        <mat-icon matSuffix><span class="material-symbols-outlined">help</span></mat-icon>
+                        <textarea rows="10" style="color: gray;" [(ngModel)]="risk_gap.SupportNeededDetails"
+                            name="risk_gap.SupportNeededDetails" matInput></textarea>
                     </mat-form-field>
                 </div>
             </div>
@@ -219,47 +720,44 @@
     <mat-accordion multi="true" style="margin: 0px;padding: 0px;">
         <div style="width: 100%;height: 60px;">
             <label class="text_headers">Waves</label>
-            <button [disabled]="DisableAddNewWaveButton" mat-raised-button (click)="addnewWave()" style="background-color: #8AB458;color: white;margin-left: 25px;margin-right: 25px;border-radius: 1px;" matTooltip="Add New Wave">
+            <button [disabled]="DisableAddNewWaveButton" mat-raised-button (click)="addnewWave()"
+                style="background-color: #8AB458;color: white;margin-left: 25px;margin-right: 25px;border-radius: 1px;"
+                matTooltip="Add New Wave">
                 <mat-icon style="color: white;font-size: 20px;margin-top: 4px;">add</mat-icon>New Wave
             </button>
         </div>
         <mat-divider style="width: 100%;margin-top: 10px;"></mat-divider>
-        <mat-expansion-panel class="mat-elevation-z0" *ngFor="let wave_list of waves;let k = index" style="border-radius: 0px;border-bottom: 1px solid rgba(0,0,0,.12);" expanded='false' >
-            <mat-expansion-panel-header style="padding: 13px 20px 13px 0px" [collapsedHeight]="'60px'" [expandedHeight]="'60px'">
+        <mat-expansion-panel class="mat-elevation-z0" *ngFor="let wave_list of waves;let k = index"
+            style="border-radius: 0px;border-bottom: 1px solid rgba(0,0,0,.12);" expanded='false'>
+            <mat-expansion-panel-header style="padding: 13px 20px 13px 0px" [collapsedHeight]="'60px'"
+                [expandedHeight]="'60px'">
                 <mat-panel-title>
                     <div class="col-12">
                         <div class="col-12">
-                            <button mat-raised-button style="padding: 0px;background: none;box-shadow: none;background-color: transparent;border: none;font-size: 12px;font-weight: bold;font-family: Arial, Helvetica, sans-serif;">
-                                <mat-icon *ngIf="wave_list.WaveID ? false : true" style="display: inline;cursor: pointer;font-size: 24px;margin-right: 15px;" (click)="deleteWave(k)" aria-label="Delete">delete</mat-icon>Wave - {{k+1}}
+                            <button mat-raised-button
+                                style="padding: 0px;background: none;box-shadow: none;background-color: transparent;border: none;font-size: 12px;font-weight: bold;font-family: Arial, Helvetica, sans-serif;">
+                                <!-- <mat-icon *ngIf="wave_list.WaveID ? false : true" style="display: inline;cursor: pointer;font-size: 24px;margin-right: 15px;" (click)="deleteWave(k)" aria-label="Delete">delete</mat-icon>Wave - {{k+1}} -->
+                                <mat-icon style="display: inline;cursor: pointer;font-size: 24px;margin-right: 15px;"
+                                    (click)="deleteWave(k)" aria-label="Delete">delete</mat-icon><!--Wave - {{k+1}} &nbsp;--> <b>{{wave_list.Waves}}</b>,
+                                <b>Go-Live Date</b> : {{wave_list.GoLive}}, &nbsp; <b>Status</b> : {{wave_list.Status}}
                             </button>
                         </div>
                     </div>
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <div class="col-md-12" style="margin: 0px;padding: 0px;">
-                <div class="row" style="margin : 0px;width: 100%;" >
+                <div class="row" style="margin : 0px;width: 100%;">
                     <div class="col-md-3" style="padding: 5px 0px 0px 15px;">
-                        <ng-multiselect-dropdown
-                            #multiSelect 
-                            [placeholder]="'Region'"
-                            [settings]="RegionSettings"
-                            [data]="SC_Region"
-                            [(ngModel)]="wave_list.arr_Region"
-                            [disabled]="false"
-                            (onSelect)="onWaveRegionChange(k)" 
-                            (onDeSelect)="onWaveRegionChange(k)"
+                        <ng-multiselect-dropdown #multiSelect [placeholder]="'Region'" [settings]="RegionSettings"
+                            [data]="Region" [(ngModel)]="wave_list.arr_Region" [disabled]="false"
+                            (onSelect)="onWaveRegionChange(k)" (onDeSelect)="onWaveRegionChange(k)"
                             (onSelectAll)="onWaveRegionChangeAll($event,k)"
                             (onDeSelectAll)="onWaveRegionChangeAll($event,k)">
                         </ng-multiselect-dropdown>
                     </div>
                     <div class="col-md-3" style="padding: 5px 0px 0px 15px;">
-                        <ng-multiselect-dropdown
-                            #multiSelect 
-                            [placeholder]="'Country'"
-                            [settings]="CountrySettings"
-                            [data]="wave_list.SC_Country"
-                            [(ngModel)]="wave_list.arr_Country"
-                            [disabled]="false">
+                        <ng-multiselect-dropdown #multiSelect [placeholder]="'Country'" [settings]="CountrySettings"
+                            [data]="wave_list.SC_Country" [(ngModel)]="wave_list.arr_Country" [disabled]="false">
                         </ng-multiselect-dropdown>
                     </div>
                     <mat-form-field appearance="outline" class="col-md-3">
@@ -283,14 +781,17 @@
                     <mat-form-field appearance="outline" class="col-md-4">
                         <mat-label style="font-size: 15px;">Scope</mat-label>
                         <mat-icon matSuffix><span class="material-symbols-outlined">format_align_left</span></mat-icon>
-                        <textarea rows="10" style="color: gray;" [(ngModel)]="wave_list.Scope" name="wave_list.Scope" matInput></textarea>
+                        <textarea rows="10" style="color: gray;" [(ngModel)]="wave_list.Scope" name="wave_list.Scope"
+                            matInput></textarea>
                     </mat-form-field>
                 </div>
             </div>
         </mat-expansion-panel>
     </mat-accordion>
     <div class="col-md-12" style="margin: 0px;padding: 0px 0px 0px 20px;text-align: left">
-        <button mat-raised-button style="background-color: #F16950;color: white;margin : 25px 0px;" (click)="onSaveClick()">{{ButtonName}}</button>
-        <button mat-raised-button style="background-color: #F16950;color: white;margin : 25px 0px 25px 25px" (click)="onCancelClick()">Cancel</button>
+        <button mat-raised-button style="background-color: #F16950;color: white;margin : 25px 0px;"
+            (click)="onSaveClick()">{{ButtonName}}</button>
+        <button mat-raised-button style="background-color: #F16950;color: white;margin : 25px 0px 25px 25px"
+            (click)="onCancelClick()">Cancel</button>
     </div>
 </div>

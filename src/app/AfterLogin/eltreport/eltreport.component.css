@@ -68,7 +68,7 @@
 .Hyperlink{
   text-overflow: ellipsis;
   overflow: hidden;
-  width: 180px;
+  width: 90%;
   cursor: pointer;
   padding-top: 3px;
   margin: 0px;

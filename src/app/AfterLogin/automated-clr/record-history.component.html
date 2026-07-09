@@ -15,13 +15,66 @@
         </mat-form-field>
     </div> -->
     <div class="col-12">
-        
+        <div class="example_container_audit" style="border: 1px solid rgb(196, 196, 196);">
+            <table mat-table [dataSource]="SalesStagedataSource" style="text-align: left;">
+                <ng-container matColumnDef="RevenueID">
+                    <th mat-header-cell *matHeaderCellDef class="maintextSizes" style="text-align: center;"> Revenue ID </th>
+                    <td mat-cell *matCellDef="let element" class="texttd"> {{element.RevenueID}} </td>
+                </ng-container>
+                <ng-container matColumnDef="Withdrawn">
+                    <th mat-header-cell *matHeaderCellDef class="maintextSizes" style="text-align: center;">Withdrawn</th>
+                    <td mat-cell *matCellDef="let element" class="texttd"> {{element.Withdrawn}} </td>
+                </ng-container>
+                <ng-container matColumnDef="NoGo">
+                    <th mat-header-cell *matHeaderCellDef class="maintextSizes" style="text-align: center;">NoGo</th>
+                    <td mat-cell *matCellDef="let element" class="texttd"> {{element.NoGo}} </td>
+                </ng-container>
+                <ng-container matColumnDef="ClosedLost">
+                    <th mat-header-cell *matHeaderCellDef class="maintextSizes" style="text-align: center;"> ClosedLost </th>
+                    <td mat-cell *matCellDef="let element" class="texttd"> {{element.ClosedLost}} </td>
+                </ng-container>
+                <ng-container matColumnDef="PresentationStage">
+                    <th mat-header-cell *matHeaderCellDef class="maintextSizes" style="text-align: center;"> Presentation Stage</th>
+                    <td mat-cell *matCellDef="let element" class="texttd" style="max-width: 150px;"> {{element.PresentationStage}} </td>
+                </ng-container>
+                <ng-container matColumnDef="VerbalAward">
+                    <th mat-header-cell *matHeaderCellDef class="maintextSizes" style="text-align: center;"> Verbal Award</th>
+                    <td mat-cell *matCellDef="let element" class="texttd" style="max-width: 150px;"> {{element.VerbalAward}} </td>
+                </ng-container>
+                <ng-container matColumnDef="Negotiations">
+                    <th mat-header-cell *matHeaderCellDef class="maintextSizes" style="text-align: center;"> Negotiations</th>
+                    <td mat-cell *matCellDef="let element" class="texttd" style="max-width: 150px;"> {{element.Negotiations}} </td>
+                </ng-container>
+                <ng-container matColumnDef="Shortlisted">
+                    <th mat-header-cell *matHeaderCellDef class="maintextSizes" style="text-align: center;"> Shortlisted</th>
+                    <td mat-cell *matCellDef="let element" class="texttd"> {{element.Shortlisted}} </td>
+                </ng-container>
+                <ng-container matColumnDef="Sold">
+                    <th mat-header-cell *matHeaderCellDef class="maintextSizes" style="text-align: center;">Sold</th>
+                    <td mat-cell *matCellDef="let element" class="texttd"> {{element.Sold}} </td>
+                </ng-container>
+                <ng-container matColumnDef="ProposalSubmitted">
+                    <th mat-header-cell *matHeaderCellDef class="maintextSizes" style="text-align: center;">Proposal Submitted</th>
+                    <td mat-cell *matCellDef="let element" class="texttd"> {{element.ProposalSubmitted}} </td>
+                </ng-container>
+                <ng-container matColumnDef="NeedsAreIdentified">
+                    <th mat-header-cell *matHeaderCellDef class="maintextSizes" style="text-align: center;">Needs Are Identified</th>
+                    <td mat-cell *matCellDef="let element" class="texttd"> {{element.NeedsAreIdentified}} </td>
+                </ng-container>
+                <ng-container matColumnDef="ContractSigned">
+                    <th mat-header-cell *matHeaderCellDef class="maintextSizes" style="text-align: center;border-right: none;">Contract Signed</th>
+                    <td mat-cell *matCellDef="let element" class="texttd" style="border-right: none;"> {{element.ContractSigned}} </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="SalesStagedisplayedColumns;"></tr>
+                <tr mat-row *matRowDef="let row; columns: SalesStagedisplayedColumns;"></tr>
+            </table>
+        </div>
         <!-- <button mat-raised-button (click)="exportData()" style="background-color: white;color: red;">export</button> -->
-        <div class="example_container_audit" [ngStyle]="{'height' : (screenHeight-220)+'px'}" style="border: 1px solid rgb(196, 196, 196);">
+        <div class="example_container_audit" style="border: 1px solid rgb(196, 196, 196);">
             <table mat-table [dataSource]="dataSource" style="text-align: left;">
                 <ng-container matColumnDef="RevenueID">
-                    <th mat-header-cell *matHeaderCellDef class="maintextSizes" style="padding-left: 10px;text-align: center;"> Revenue ID </th>
-                    <td mat-cell *matCellDef="let element" class="texttd" style="padding-left: 10px;"> {{element.RevenueID}} </td>
+                    <th mat-header-cell *matHeaderCellDef class="maintextSizes" style="text-align: center;"> Revenue ID </th>
+                    <td mat-cell *matCellDef="let element" class="texttd"> {{element.RevenueID}} </td>
                 </ng-container>
                 <ng-container matColumnDef="EPDate">
                     <th mat-header-cell *matHeaderCellDef class="maintextSizes" style="text-align: center;">Early Potential</th>
@@ -56,8 +109,8 @@
                     <td mat-cell *matCellDef="let element" class="texttd"> {{element.GoLive}} </td>
                 </ng-container>
                 <ng-container matColumnDef="CycleTime">
-                    <th mat-header-cell *matHeaderCellDef class="maintextSizes" style="text-align: center;padding-right: 10px;border-right: none;">Cycle Time</th>
-                    <td mat-cell *matCellDef="let element" class="texttd" style="padding-right: 10px;border-right: none;"> {{element.CycleTime}} </td>
+                    <th mat-header-cell *matHeaderCellDef class="maintextSizes" style="text-align: center;border-right: none;">Cycle Time</th>
+                    <td mat-cell *matCellDef="let element" class="texttd" style="border-right: none;"> {{element.CycleTime}} </td>
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="displayedColumns;"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

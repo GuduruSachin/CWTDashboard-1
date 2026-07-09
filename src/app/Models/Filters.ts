@@ -74,6 +74,14 @@ export interface Ownership{
     OwnerShip: string;
     isSelected: boolean;
 }
+export interface FilterOpportunity_Type {
+    Opportunity_Type: string
+    isSelected: boolean
+}
+export interface FilterPriority {
+    Priority: string
+    isSelected: boolean
+}
 export interface Filters {
     message: string;
     code: number;
@@ -95,4 +103,6 @@ export interface Filters {
     c_ImplementationType: c_ImplementationType[];
     rp_ProjectStatus : rp_ProjectStatus[];
     Country : Country[];
+    FilterOpportunity_Type: FilterOpportunity_Type[]
+    FilterPriority: FilterPriority[]
 }

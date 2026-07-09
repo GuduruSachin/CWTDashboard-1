@@ -10,7 +10,15 @@ import { SC_Data } from 'src/app/Models/SteeringCommittee';
 import { CLRCommentdailog } from '../automated-clr/automated-clr.component';
 import { LivedashboardComponent } from '../livedashboard/livedashboard.component';
 import { DashboardComponent } from '../dashboard/dashboard.component';
-
+export class MyFilter {
+  ClientName: string;
+  // RecordStatus : string;
+  // ClientType: string;
+  // ProjectLead: string;
+  // PreviousStatus: string;
+  // ProjectStatus: string;
+  // LastUpdatedDate: string;
+}
 @Component({
   selector: 'app-steering-committee',
   templateUrl: './steering-committee.component.html',
@@ -24,7 +32,7 @@ import { DashboardComponent } from '../dashboard/dashboard.component';
   ],
 })
 export class SteeringCommitteeComponent implements OnInit {
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild(MatSort) sort: MatSort;
   constructor(public dashboard : LivedashboardComponent,public service : DashboardServiceService,public dialog: MatDialog,public datepipe : DatePipe,private router : Router) {
     //set screenWidth on page load
     this.screenWidth = window.innerWidth;
@@ -35,17 +43,39 @@ export class SteeringCommitteeComponent implements OnInit {
       this.screenHeight = window.innerHeight;
     };
   }
+  filteredValues : MyFilter = { ClientName: ''
+    // RecordStatus : '',
+    // ClientType: '',
+    // ProjectLead: '',
+    // PreviousStatus: '',
+    // ProjectStatus: '',
+    // LastUpdatedDate: ''
+  };
   SteeringCommitteeSelectedData : SC_Data[];
   SC_Data : SC_Data[];
-  sc_datasource;
+  sc_datasource;searchbar;
   screenWidth : number;
   screenHeight : number;
   expandedElement: Data | null;
   matSortActiveColumn : string = "LastUpdatedDate";
-  displaycolumns = ["expand","RecordStatus","ClientName","ClientType","ProjectLead","ProjectStatus","ProjectTrend","TotalBusineesVolume","NewBusinessVolume","Region","Country","CurrentState","CompletedKeyDeliverables","ScheduledKeyDeliverables","AdditionalNotes","InsertedBy","InsertedDate","LastUpdatedDate","actions"]
+  displaycolumns = ["RecordStatus","ClientName","ClientType","ProjectLead","PreviousStatus","ProjectStatus","LastUpdatedDate","actions"] //"expand","TotalBusineesVolume","NewBusinessVolume","Region","Country","CurrentState","CompletedKeyDeliverables","ScheduledKeyDeliverables","AdditionalNotes","InsertedBy","InsertedDate","LastUpdatedDate",
   wavescolumns = ["Waves","Region","Country","Scope","GoLiveDate","Status","InsertedBy","InsertedDate","LastUpdatedDate","actions"];
   RiskGapColumns = ["Risks","RisksGaps","MitigationPlan","SteeringCommitteeSupportNeed","DueDate","Owner","Status","InsertedBy","InsertedDate","LastUpdatedDate","actions"];
   displayeditButton : boolean = false;
+  customFilterPredicate() {
+    return (data: SC_Data, filter: string): boolean => {
+      let searchString = JSON.parse(filter) as MyFilter;
+      return (
+        data.ClientName.toString().trim().toLowerCase().indexOf(searchString.ClientName.toLowerCase()) !== -1
+        // data.RecordStatus.toString().trim().toLowerCase().indexOf(searchString.RecordStatus.toLowerCase()) !== -1 &&
+        // data.ClientType.toString().trim().toLowerCase().indexOf(searchString.ClientType.toLowerCase()) !== -1 &&
+        // data.ProjectLead.toString().trim().toLowerCase().indexOf(searchString.ProjectLead.toLowerCase()) !== -1 &&
+        // data.PreviousStatus.toString().trim().toLowerCase().indexOf(searchString.PreviousStatus.toLowerCase()) !== -1 &&
+        // data.ProjectStatus.toString().trim().toLowerCase().indexOf(searchString.ProjectStatus.toLowerCase()) !== -1 &&
+        // data.LastUpdatedDate.toString().trim().toLowerCase().indexOf(searchString.LastUpdatedDate.toLowerCase()) !== -1
+      )
+    }
+  }
   ngOnInit(): void {
     this.dashboard.ShowSpinnerHandler(true);
     this.service.UserReportAccess(localStorage.getItem("UID")).subscribe(data=>{
@@ -149,8 +179,18 @@ export class SteeringCommitteeComponent implements OnInit {
       }
       this.SC_Data = data.Data;
       this.sc_datasource = new MatTableDataSource(data.Data);
+      this.searchbar = "";
+      this.sc_datasource.filter = this.searchbar.trim().toLowerCase();
       this.sc_datasource.sort = this.sort;
     })
+  }
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    // this.sc_datasource.filter = filterValue.trim().toLowerCase();
+    // this.FilteredCount = this.dataSource.filteredData.length;
+      this.filteredValues["ClientName"] = filterValue.trim().toLowerCase();
+      this.sc_datasource.filter = JSON.stringify(this.filteredValues);
+    this.sc_datasource.filterPredicate = this.customFilterPredicate();
   }
   openDialog(): void {
     const dialogRef = this.dialog.open(CLRCommentdailog, {
@@ -182,7 +222,7 @@ export class SteeringCommitteeComponent implements OnInit {
       ClientType : "",
       ProjectLead : "",
       ProjectStatus : "",
-      ProjectTrend : "",
+      PreviousStatus : "",
       TotalBusineesVolume : 0,
       NewBusinessVolume : 0,
       Region : "",
@@ -191,6 +231,8 @@ export class SteeringCommitteeComponent implements OnInit {
       CompletedKeyDeliverables : "",
       ScheduledKeyDeliverables : "",
       AdditionalNotes : "",
+      KeyAccomplishmentsSinceLastUpdateKeyDeliverables : "",
+      KeyUpcomingActivitiesKeyDeliverables : "",
       Waves : [],
       RiskGaps : [],
     }
@@ -295,26 +337,26 @@ export class DeleteWaveOrRiskGapDailog {
       this.service.DeleteWave(this.ID,localStorage.getItem("UID")).subscribe(data=>{
         if(data.code == 200){
           alert(data.message);
-          this.dialogRef.close();
+          this.dialogRef.close({SelectionType : 'Delete'});
         }else{
           alert(data.message);
-          this.dialogRef.close();
+          this.dialogRef.close({SelectionType : 'Cancel'});
         }
       })
     }else{
       this.service.DeleteRiskGap(this.ID,localStorage.getItem("UID")).subscribe(data=>{
         if(data.code == 200){
           alert(data.message);
-          this.dialogRef.close();
+          this.dialogRef.close({SelectionType : 'Delete'});
         }else{
           alert(data.message);
-          this.dialogRef.close();
+          this.dialogRef.close({SelectionType : 'Cancel'});
         }
       })
     }
     
   }
   onNoClick(){
-    this.dialogRef.close();
+    this.dialogRef.close({SelectionType : 'Cancel'});
   }
 }

@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./loading-spinner.component.css']
 })
 export class LoadingSpinnerComponent implements OnInit {
-  imageUrl : string = "assets/images/cwtloader.png";
+  imageUrl : string = "assets/images/CWTlogo.png";
   constructor() { }
 
   ngOnInit() {

@@ -9,12 +9,12 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatTableFilter } from "mat-table-filter";
 import { Year, Month, Quarter, ProjectLevel, Region, Status, MarketLeader,Country, ImplementationType, MilestoneStatus, c_Year, c_Month, c_ProjectLevel, c_MilestoneStatus, rp_ProjectStatus, rp_Year, c_ImplementationType, Ownership } from '../../Models/Filters';
 import { DashboardComponent } from '../dashboard/dashboard.component';
-import { ExcelService } from '../../excel.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
 import { ClrData } from '../../Models/ClrResponse';
 import { MatPaginator } from '@angular/material/paginator';
 import { LivedashboardComponent } from '../livedashboard/livedashboard.component';
+import { ExcelSXService } from '../../excelsx.service';
 //import { ChartModule } from 'angular2-chartjs';
 //import 'chartjs-plugin-labels';
 export interface ImeetMilestoneProjectStatus {
@@ -61,7 +61,7 @@ export class ImplementationMarketReportComponent implements OnInit {
   implementationtypes = new FormControl();
   projectstatuses = new FormControl();
   dataSource;
-  dataSource2;
+  dataSource_delta;
   dataSource_VCtPc;
   screenWidth : number;
   screenHeight : number;
@@ -118,7 +118,7 @@ export class ImplementationMarketReportComponent implements OnInit {
   displayedColumns_h: string[] = ['Client_h', 'GoLiveDate_c_h','iMeet_Project_Level_h','Region__Opportunity__h','Country_h','Implementation_Type_h','iMeet_Milestone___Project_Status_h','Revenue_Total_Volume_h'];
   displayedColumns_VCTPC: string[] = ['GoLiveMonth', 'Revenue_Total_Volume','ProjectsCount','AvgCycleTime'];
   // displayedColumns_VCTPCheader: string[] = ['GoLiveMonthh', 'Revenue_Total_Volumeh','ProjectsCounth','AvgCycleTimeh'];
-  MonthlydisplayedColumns: any[] = ['Leftheaders', 'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Total'];
+  MonthlyTotaldisplayedColumns : any[] = ['Leftheaders', 'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Total'];
   displayedColumnsrw : any[] = ['Region__Opportunity_','ProjectsCount','RevenueVolume_string'];
   displayedColumnsplw : any[] = ['iMeet_Project_Level','ProjectsCount','RevenueVolume_string'];
   // isExpansionDetailRow = (index, row) => row.hasOwnProperty('detailRow');
@@ -136,14 +136,6 @@ export class ImplementationMarketReportComponent implements OnInit {
   CurrentYears : number;
   StatusSelectedList = [];
   StatusSelected : string;
-  JanTotal : string;FebTotal : string;MarTotal : string;AprTotal : string;MayTotal : string;JunTotal : string;
-  JulTotal : string;AugTotal : string;SepTotal : string;OctTotal : string;NovTotal : string;DecTotal : string;MonthsTotal : string;
-  JanTotal_f : string;FebTotal_f : string;MarTotal_f : string;AprTotal_f : string;MayTotal_f : string;JunTotal_f : string;
-  JulTotal_f : string;AugTotal_f : string;SepTotal_f : string;OctTotal_f : string;NovTotal_f : string;DecTotal_f : string;MonthsTotal_f : string;
-  JanTotal_v : string;FebTotal_v : string;MarTotal_v : string;AprTotal_v : string;MayTotal_v : string;JunTotal_v : string;
-  JulTotal_v : string;AugTotal_v : string;SepTotal_v : string;OctTotal_v : string;NovTotal_v : string;DecTotal_v : string;Total_v : string
-  Jan_Comments : string;Feb_Comments : string;Mar_Comments : string;Apr_Comments : string;May_Comments : string;Jun_Comments : string;
-  Jul_Comments : string;Aug_Comments : string;Sep_Comments : string;Oct_Comments : string;Nov_Comments : string;Dec_Comments : string;
   SelectedProjectCount;
   @ViewChild(MatSort) sort: MatSort;
   Apply_disable : boolean;
@@ -158,7 +150,7 @@ export class ImplementationMarketReportComponent implements OnInit {
   DeltaValue;
   // filterEntity: VolumeCountCycleTime;
   // filterType: MatTableFilter;
-  constructor(public service : DashboardServiceService, public dialog: MatDialog,public datepipe : DatePipe, public dashboard : LivedashboardComponent, private excelService:ExcelService) 
+  constructor(public service : DashboardServiceService, public dialog: MatDialog,public datepipe : DatePipe, public dashboard : LivedashboardComponent, private excelxsService : ExcelSXService) 
   {
     //set screenWidth on page load
     this.screenWidth = window.innerWidth;
@@ -211,15 +203,15 @@ export class ImplementationMarketReportComponent implements OnInit {
       // this.c_mastermonth = true;
       // this.c_getSelectedMonth();
       this.OwnerShipList = data.OwnerShip;
-      this.masterownerShip = false;
-      for (var i = 0; i < this.OwnerShipList.length; i++) {
-        if(this.OwnerShipList[i].OwnerShip == "Partner"){
-          this.OwnerShipList[i].isSelected = false;
-        }
-        else{
-          this.OwnerShipList[i].isSelected = true;
-        }
-      }
+      this.masterownerShip = true;
+      // for (var i = 0; i < this.OwnerShipList.length; i++) {
+      //   if(this.OwnerShipList[i].OwnerShip == "Partner"){
+      //     this.OwnerShipList[i].isSelected = false;
+      //   }
+      //   else{
+      //     this.OwnerShipList[i].isSelected = true;
+      //   }
+      // }
       this.getSelectedOwnerships();
       this.levelList = data.ProjectLevel;
       this.masterlevel = true;
@@ -1344,7 +1336,6 @@ export class ImplementationMarketReportComponent implements OnInit {
       this.filterEntity = null;
       this.filterType = null;
       this.dataSource = null;
-      console.log(this.SelectedYears,this.SelectedMonths,this.SelectedLevels,this.SelectedRegions,this.SelectedMilestonestatus,this.SelectedImplementation,this.SelectedCountry,this.SelectedOwnership)
       this.service.ImeetMilestoneProjectStatus(this.SelectedYears,this.SelectedMonths,this.SelectedLevels,this.SelectedRegions,this.SelectedMilestonestatus,this.SelectedImplementation,this.SelectedCountry,this.SelectedOwnership).subscribe(data =>{
         if(data.code == 200){
           this.SelectedProjectCount = data.Data.length;
@@ -1400,7 +1391,8 @@ export class ImplementationMarketReportComponent implements OnInit {
         this.dashboard.ShowSpinnerHandler(false);
       });
     }
-    this.LoadingMonthlyTotalRevenue();
+    // this.LoadingMonthlyTotalRevenue();
+    this.LoadingMonthlyTotalVolumeWithDelta();
     this.Apply_disable = true;
     if(this.yearList.length > 1){
       if(this.SelectedYears.includes(this.CurrentYears)){
@@ -1443,157 +1435,64 @@ export class ImplementationMarketReportComponent implements OnInit {
     }
   }
   LastUpdatedOn;
-  LoadingMonthlyTotalRevenue(){
+  LoadingMonthlyTotalVolumeWithDelta(){
     this.dashboard.ShowSpinnerHandler(true);
-    this.service.MonthlyTotalRevenue().subscribe(data => {
+    this.service.MonthlyTotalRevenueWithDelta().subscribe(data => {
       if(data.code == 200){
         this.LastUpdatedOn = this.datepipe.transform(data.LastUpdatedOn,"MMM-d-y, h:mm a") +" IST";
-        if(data.Data != null && data.Data.length > 0){
-          this.MonthlyTotalRevenueData = data.Data;
-          this.DeltaID = this.MonthlyTotalRevenueData[0].DeltaID;
-          this.JanTotal = Math.round(this.MonthlyTotalRevenueData[0].CWJanuary).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3);
-          this.FebTotal = Math.round(this.MonthlyTotalRevenueData[0].CWFebruary).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3);
-          this.MarTotal = Math.round(this.MonthlyTotalRevenueData[0].CWMarch).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3);
-          this.AprTotal = Math.round(this.MonthlyTotalRevenueData[0].CWApril).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3);
-          this.MayTotal = Math.round(this.MonthlyTotalRevenueData[0].CWMay).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3);
-          this.JunTotal = Math.round(this.MonthlyTotalRevenueData[0].CWJune).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3);
-          this.JulTotal = Math.round(this.MonthlyTotalRevenueData[0].CWJuly).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3);
-          this.AugTotal = Math.round(this.MonthlyTotalRevenueData[0].CWAugust).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3);
-          this.SepTotal = Math.round(this.MonthlyTotalRevenueData[0].CWSeptember).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3);
-          this.OctTotal = Math.round(this.MonthlyTotalRevenueData[0].CWOctober).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3);
-          this.NovTotal = Math.round(this.MonthlyTotalRevenueData[0].CWNovember).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3);
-          this.DecTotal = Math.round(this.MonthlyTotalRevenueData[0].CWDecember).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3);
-          this.MonthsTotal = Math.round(this.MonthlyTotalRevenueData[0].CWTotal).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3);
-          this.JanTotal_f = Math.round(this.MonthlyTotalRevenueData[0].CWJanuary-this.MonthlyTotalRevenueData[0].LWJanuary).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-          this.FebTotal_f = Math.round(this.MonthlyTotalRevenueData[0].CWFebruary-this.MonthlyTotalRevenueData[0].LWFebruary).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
-          this.MarTotal_f = Math.round(this.MonthlyTotalRevenueData[0].CWMarch-this.MonthlyTotalRevenueData[0].LWMarch).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-          this.AprTotal_f = Math.round(this.MonthlyTotalRevenueData[0].CWApril-this.MonthlyTotalRevenueData[0].LWApril).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
-          this.MayTotal_f = Math.round(this.MonthlyTotalRevenueData[0].CWMay-this.MonthlyTotalRevenueData[0].LWMay).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-          this.JunTotal_f = Math.round(this.MonthlyTotalRevenueData[0].CWJune-this.MonthlyTotalRevenueData[0].LWJune).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-          this.JulTotal_f = Math.round(this.MonthlyTotalRevenueData[0].CWJuly-this.MonthlyTotalRevenueData[0].LWJuly).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-          this.AugTotal_f = Math.round(this.MonthlyTotalRevenueData[0].CWAugust-this.MonthlyTotalRevenueData[0].LWAugust).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-          this.SepTotal_f = Math.round(this.MonthlyTotalRevenueData[0].CWSeptember-this.MonthlyTotalRevenueData[0].LWSeptember).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-          this.OctTotal_f = Math.round(this.MonthlyTotalRevenueData[0].CWOctober-this.MonthlyTotalRevenueData[0].LWOctober).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-          this.NovTotal_f = Math.round(this.MonthlyTotalRevenueData[0].CWNovember-this.MonthlyTotalRevenueData[0].LWNovember).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-          this.DecTotal_f = Math.round(this.MonthlyTotalRevenueData[0].CWDecember-this.MonthlyTotalRevenueData[0].LWDecember).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3)
-          this.MonthsTotal_f = Math.round(this.MonthlyTotalRevenueData[0].CWTotal-this.MonthlyTotalRevenueData[0].LWTotal).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3)
-          if((this.MonthlyTotalRevenueData[0].CWJanuary-this.MonthlyTotalRevenueData[0].LWJanuary) >= 0){
-            this.JanTotal_v = "true";
-          }else{
-            this.JanTotal_v = "false";
+        let Monthly_Total_Revenue : MonthlyTotalRevenue[] = [
+          {
+            Leftheaders: 'Current Total Volume',
+            Jan : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMJan).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Feb : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMFeb).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Mar : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMMar).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Apr : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMApr).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            May : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMMay).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Jun : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMJun).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Jul : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMJul).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Aug : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMAug).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Sep : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMSep).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Oct : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMOct).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Nov : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMNov).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Dec : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMDec).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Total : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMTot).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3)
+          },
+          {
+            Leftheaders: 'Previous Total Volume',
+            Jan : Math.round(data.MonthlyTotalRevenueWithDelta[0].LMJan).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Feb : Math.round(data.MonthlyTotalRevenueWithDelta[0].LMFeb).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Mar : Math.round(data.MonthlyTotalRevenueWithDelta[0].LMMar).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Apr : Math.round(data.MonthlyTotalRevenueWithDelta[0].LMApr).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            May : Math.round(data.MonthlyTotalRevenueWithDelta[0].LMMay).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Jun : Math.round(data.MonthlyTotalRevenueWithDelta[0].LMJun).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Jul : Math.round(data.MonthlyTotalRevenueWithDelta[0].LMJul).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Aug : Math.round(data.MonthlyTotalRevenueWithDelta[0].LMAug).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Sep : Math.round(data.MonthlyTotalRevenueWithDelta[0].LMSep).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Oct : Math.round(data.MonthlyTotalRevenueWithDelta[0].LMOct).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Nov : Math.round(data.MonthlyTotalRevenueWithDelta[0].LMNov).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Dec : Math.round(data.MonthlyTotalRevenueWithDelta[0].LMDec).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Total : Math.round(data.MonthlyTotalRevenueWithDelta[0].LMTot).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3)
+          },
+          {
+            Leftheaders: 'Delta',
+            Jan : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMJan - data.MonthlyTotalRevenueWithDelta[0].LMJan).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Feb : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMFeb - data.MonthlyTotalRevenueWithDelta[0].LMFeb).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Mar : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMMar - data.MonthlyTotalRevenueWithDelta[0].LMMar).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Apr : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMApr - data.MonthlyTotalRevenueWithDelta[0].LMApr).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            May : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMMay - data.MonthlyTotalRevenueWithDelta[0].LMMay).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Jun : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMJun - data.MonthlyTotalRevenueWithDelta[0].LMJun).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Jul : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMJul - data.MonthlyTotalRevenueWithDelta[0].LMJul).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Aug : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMAug - data.MonthlyTotalRevenueWithDelta[0].LMAug).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Sep : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMSep - data.MonthlyTotalRevenueWithDelta[0].LMSep).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Oct : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMOct - data.MonthlyTotalRevenueWithDelta[0].LMOct).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Nov : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMNov - data.MonthlyTotalRevenueWithDelta[0].LMNov).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Dec : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMDec - data.MonthlyTotalRevenueWithDelta[0].LMDec).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
+            Total : Math.round(data.MonthlyTotalRevenueWithDelta[0].CMTot - data.MonthlyTotalRevenueWithDelta[0].LMTot).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3)
           }
-          if((this.MonthlyTotalRevenueData[0].CWFebruary-this.MonthlyTotalRevenueData[0].LWFebruary) >= 0){
-            this.FebTotal_v = "true";
-          }else{
-            this.FebTotal_v = "false";
-          }
-          if((this.MonthlyTotalRevenueData[0].CWMarch-this.MonthlyTotalRevenueData[0].LWMarch) >= 0){
-            this.MarTotal_v = "true";
-          }else{
-            this.MarTotal_v = "false";
-          }
-          if((this.MonthlyTotalRevenueData[0].CWApril-this.MonthlyTotalRevenueData[0].LWApril) >= 0){
-            this.AprTotal_v = "true";
-          }else{
-            this.AprTotal_v = "false";
-          }
-          if((this.MonthlyTotalRevenueData[0].CWMay-this.MonthlyTotalRevenueData[0].LWMay) >= 0){
-            this.MayTotal_v = "true";
-          }else{
-            this.MayTotal_v = "false";
-          }
-          if((this.MonthlyTotalRevenueData[0].CWJune-this.MonthlyTotalRevenueData[0].LWJune) >= 0){
-            this.JunTotal_v = "true";
-          }else{
-            this.JunTotal_v = "false";
-          }
-          if((this.MonthlyTotalRevenueData[0].CWJuly-this.MonthlyTotalRevenueData[0].LWJuly) >= 0){
-            this.JulTotal_v = "true";
-          }else{
-            this.JulTotal_v = "false";
-          }
-          if((this.MonthlyTotalRevenueData[0].CWAugust-this.MonthlyTotalRevenueData[0].LWAugust) >= 0){
-            this.AugTotal_v = "true";
-          }else{
-            this.AugTotal_v = "false";
-          }
-          if((this.MonthlyTotalRevenueData[0].CWSeptember-this.MonthlyTotalRevenueData[0].LWSeptember) >= 0){
-            this.SepTotal_v = "true";
-          }else{
-            this.SepTotal_v = "false";
-          }
-          if((this.MonthlyTotalRevenueData[0].CWOctober-this.MonthlyTotalRevenueData[0].LWOctober) >= 0){
-            this.OctTotal_v = "true";
-          }else{
-            this.OctTotal_v = "false";
-          }
-          if((this.MonthlyTotalRevenueData[0].CWNovember-this.MonthlyTotalRevenueData[0].LWNovember) >= 0){
-            this.NovTotal_v = "true";
-          }else{
-            this.NovTotal_v = "false";
-          }
-          if((this.MonthlyTotalRevenueData[0].CWDecember-this.MonthlyTotalRevenueData[0].LWDecember) >= 0){
-            this.DecTotal_v = "true";
-          }else{
-            this.DecTotal_v = "false";
-          }
-          if((this.MonthlyTotalRevenueData[0].CWTotal-this.MonthlyTotalRevenueData[0].LWTotal) >= 0){
-            this.Total_v = "true";
-          }else{
-            this.Total_v = "false";
-          }
-          this.Jan_Comments = this.MonthlyTotalRevenueData[0].JanComments;
-          this.Feb_Comments = this.MonthlyTotalRevenueData[0].FebComments;
-          this.Mar_Comments = this.MonthlyTotalRevenueData[0].MarComments;
-          this.Apr_Comments = this.MonthlyTotalRevenueData[0].AprComments;
-          this.May_Comments = this.MonthlyTotalRevenueData[0].MayComments;
-          this.Jun_Comments = this.MonthlyTotalRevenueData[0].JunComments;
-          this.Jul_Comments = this.MonthlyTotalRevenueData[0].JulComments;
-          this.Aug_Comments = this.MonthlyTotalRevenueData[0].AugComments;
-          this.Sep_Comments = this.MonthlyTotalRevenueData[0].SepComments;
-          this.Oct_Comments = this.MonthlyTotalRevenueData[0].OctComments;
-          this.Nov_Comments = this.MonthlyTotalRevenueData[0].NovComments;
-          this.Dec_Comments = this.MonthlyTotalRevenueData[0].DecComments;
-          let Monthly_Total_Revenue : MonthlyTotalRevenue[] = [
-            {
-              Leftheaders: 'Previous Total Volume',
-              Jan : Math.round(this.MonthlyTotalRevenueData[0].LWJanuary).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
-              Feb : Math.round(this.MonthlyTotalRevenueData[0].LWFebruary).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
-              Mar : Math.round(this.MonthlyTotalRevenueData[0].LWMarch).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-              Apr : Math.round(this.MonthlyTotalRevenueData[0].LWApril).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
-              May : Math.round(this.MonthlyTotalRevenueData[0].LWMay).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-              Jun : Math.round(this.MonthlyTotalRevenueData[0].LWJune).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-              Jul : Math.round(this.MonthlyTotalRevenueData[0].LWJuly).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-              Aug : Math.round(this.MonthlyTotalRevenueData[0].LWAugust).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-              Sep : Math.round(this.MonthlyTotalRevenueData[0].LWSeptember).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-              Oct : Math.round(this.MonthlyTotalRevenueData[0].LWOctober).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-              Nov : Math.round(this.MonthlyTotalRevenueData[0].LWNovember).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-              Dec : Math.round(this.MonthlyTotalRevenueData[0].LWDecember).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-              Total : Math.round(this.MonthlyTotalRevenueData[0].LWTotal).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3)
-            }
-            // {
-            //   Leftheaders: 'Variations',
-            //   Jan :Math.round(this.MonthlyTotalRevenueData[0].CWJanuary-this.MonthlyTotalRevenueData[0].LWJanuary).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-            //   Feb :Math.round(this.MonthlyTotalRevenueData[0].CWFebruary-this.MonthlyTotalRevenueData[0].LWFebruary).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
-            //   Mar :Math.round(this.MonthlyTotalRevenueData[0].CWMarch-this.MonthlyTotalRevenueData[0].LWMarch).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-            //   Apr :Math.round(this.MonthlyTotalRevenueData[0].CWApril-this.MonthlyTotalRevenueData[0].LWApril).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3), 
-            //   May :Math.round(this.MonthlyTotalRevenueData[0].CWMay-this.MonthlyTotalRevenueData[0].LWMay).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-            //   Jun :Math.round(this.MonthlyTotalRevenueData[0].CWJune-this.MonthlyTotalRevenueData[0].LWJune).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-            //   Jul :Math.round(this.MonthlyTotalRevenueData[0].CWJuly-this.MonthlyTotalRevenueData[0].LWJuly).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-            //   Aug :Math.round(this.MonthlyTotalRevenueData[0].CWAugust-this.MonthlyTotalRevenueData[0].LWAugust).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-            //   Sep :Math.round(this.MonthlyTotalRevenueData[0].CWSeptember-this.MonthlyTotalRevenueData[0].LWSeptember).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-            //   Oct :Math.round(this.MonthlyTotalRevenueData[0].CWOctober-this.MonthlyTotalRevenueData[0].LWOctober).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-            //   Nov :Math.round(this.MonthlyTotalRevenueData[0].CWNovember-this.MonthlyTotalRevenueData[0].LWNovember).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3),
-            //   Dec :Math.round(this.MonthlyTotalRevenueData[0].CWDecember-this.MonthlyTotalRevenueData[0].LWDecember).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3)
-            // }
-          ];
-          this.CurrentYear = data.GlobalManager;
-          this.dataSource2 = Monthly_Total_Revenue;
-          this.dashboard.ShowSpinnerHandler(false);
-        }else{
-          this.dashboard.ShowSpinnerHandler(false);
-          alert("There is No data to display");
-        }
+        ];
+        this.CurrentYear = data.GlobalManager;
+        this.dataSource_delta = Monthly_Total_Revenue;
+        this.dashboard.ShowSpinnerHandler(false);
       }else{
         this.dashboard.ShowSpinnerHandler(false);
         alert("Something Went Wrong!Unable to load Data");
@@ -1602,12 +1501,7 @@ export class ImplementationMarketReportComponent implements OnInit {
   }
   // PevSelectedDeltaMonth : string;
   // PevMonthDeltaValue : string;
-  PevDataDialog(Monthvolume : number, MonthName : string){
-    // this.PevSelectedDeltaMonth = MonthName;
-    // this.PevMonthDeltaValue = Monthvolume;
-    // alert(this.PevMonthDeltaValue + " " + this.PevSelectedDeltaMonth);
-    this.openDialog2(Monthvolume,MonthName,"Previous Week || ");
-  }
+
   SetGraphChart(){
     this.dashboard.ShowSpinnerHandler(true);
     var years = [];
@@ -2030,70 +1924,6 @@ export class ImplementationMarketReportComponent implements OnInit {
       }
     }
   }
-  openDialog(MonthNumber: number,MonthName : string,Comment : string): void {
-    const dialogRef = this.dialog.open(CommentsDialog, {
-      width: '600px',
-      data: {
-        SelectedDeltaMonthNumber : MonthNumber,
-        SelectedDeltaMonth : MonthName,
-        SelectedDeltaComment : Comment,
-        SelectedVolume : '',
-        Jan_comment : this.Jan_Comments,
-        Feb_comment : this.Feb_Comments,
-        Mar_comment : this.Mar_Comments,
-        Apr_comment : this.Apr_Comments,
-        May_comment : this.May_Comments,
-        Jun_comment : this.Jun_Comments,
-        Jul_comment : this.Jul_Comments,
-        Aug_comment : this.Aug_Comments,
-        Sep_comment : this.Sep_Comments,
-        Oct_comment : this.Oct_Comments,
-        Nov_comment : this.Nov_Comments,
-        Dec_comment : this.Dec_Comments,
-        DeltaID : this.DeltaID}
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      this.LoadingMonthlyTotalRevenue();
-    });
-  }
-  CommentsDialog(MonthNumber : number,MonthName : string,sel_Comment : string){
-    // this.SelectedDeltaMonthNumber = MonthNumber;
-    // this.SelectedDeltaMonth = MonthName;
-    // this.SelectedDeltaComment = sel_Comment;
-    this.openDialog(MonthNumber,MonthName,sel_Comment);
-  }
-  openDialog2(Volume : number,Name : string,Comment : string) : void{
-    const dialogRef = this.dialog.open(DataDialog, {
-      // width: '600px',
-      data: {
-        SelectedDeltaMonthNumber : '',
-        SelectedDeltaMonth : Name,
-        SelectedDeltaComment : Comment,
-        SelectedVolume : Volume,
-        Jan_comment : '',
-        Feb_comment : '',
-        Mar_comment : '',
-        Apr_comment : '',
-        May_comment : '',
-        Jun_comment : '',
-        Jul_comment : '',
-        Aug_comment : '',
-        Sep_comment : '',
-        Oct_comment : '',
-        Nov_comment : '',
-        Dec_comment : '',
-        DeltaID : 0
-      }
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      //this.LoadingMonthlyTotalRevenue();
-    });
-  }
-  DataDialog(Monthvolume : number, MonthName : string){
-    // this.SelectedDeltaMonth = MonthName;
-    // this.DeltaValue = Monthvolume;
-    this.openDialog2(Monthvolume,MonthName,"Current Week || ");
-  }
   exportAsXLSX(){
     this.dashboard.ShowSpinnerHandler(true);
     // this.service.ChartVolumeCycleTimeCount(this.c_SelectedMilestonestatus,this.c_SelectedLevels,this.c_SelectedYears,this.c_SelectedMonths,this.c_SelectedRegions,this.c_SelectedImplementation).subscribe(data => {
@@ -2124,7 +1954,7 @@ export class ImplementationMarketReportComponent implements OnInit {
         const CustomizedData = data.Data.map(o => {
           return { 
             "Client": o.Client,
-            "Go-live Date" : o.GoLiveDate,
+            "Go Live Date" : o.GoLiveDate,
             "iMeet Project Level" : o.iMeet_Project_Level,
             "Region Opportunity" : o.Region__Opportunity_,
             "Country" : o.Country,
@@ -2133,7 +1963,21 @@ export class ImplementationMarketReportComponent implements OnInit {
             "Revenue Volume USD" : o.RevenueVolumeUSD,
           };
         });
-        this.excelService.exportAsExcelFile(CustomizedData, 'Market Report');
+        this.excelxsService.exportAsExcelFile(
+          [
+            {
+              sheetName: 'Market Report',
+              data: CustomizedData,
+              defaultBackgroundColor : 'FF34495E',
+              defaultTextColor : 'FFFFFFFF',
+              columnFormats: {
+                'dd/MMM/yyyy' : ['Go Live Date'], 
+                '$#,##0.00;-$#,##0.00;0.00' : ['Revenue Volume USD']
+              },
+            },
+          ],
+          'Market Report'
+        );
       }else{
         alert("Something Went wrong, Please Try again later");
       }
@@ -2588,188 +2432,4 @@ export class ImplementationMarketReportComponent implements OnInit {
   //   this.projectstatusSelected();
   // }
   //End of Status Methods
-}
-export interface DialogData {
-  SelectedDeltaMonthNumber : number;
-  SelectedDeltaMonth : string;
-  SelectedDeltaComment : string;
-  SelectedVolume : string;
-  Jan_comment : string;
-  Feb_comment : string;
-  Mar_comment : string;
-  Apr_comment : string;
-  May_comment : string;
-  Jun_comment : string;
-  Jul_comment : string;
-  Aug_comment : string;
-  Sep_comment : string;
-  Oct_comment : string;
-  Nov_comment : string;
-  Dec_comment : string;
-  DeltaID : number;
-}
-@Component({
-  selector: 'app-commentsdailog',
-  templateUrl: './commentsdailog.component.html',
-  styleUrls: ['./commentsdailog.component.css']
-})
-export class CommentsDialog {
-  constructor(
-    public datepipe : DatePipe,
-    public service : DashboardServiceService,
-    public dialogRef: MatDialogRef<CommentsDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
-  MonthComment : string;
-  MarketCommentEditOption : boolean = false;
-  ngOnInit() {
-    this.service.UserReportAccess(localStorage.getItem("UID")).subscribe(data=>{
-      if(data.code == 200){
-        if(data.Data[0].MarketCommentsEdit == true){
-          this.MarketCommentEditOption = true;
-        }else{
-          this.MarketCommentEditOption = false;
-        }
-      }
-    })
-    this.MonthComment = this.data.SelectedDeltaComment;
-  }
-  SaveComment(){
-    if(this.MarketCommentEditOption == false){
-      alert("You dont have the access to update the Comments, if you want to edit you can request it from your Profile Page.")
-    }else{
-      if(this.MonthComment == null || this.MonthComment == ""){
-        alert("Please enter the comments");
-      }else{
-        if(this.data.SelectedDeltaMonthNumber == 1){
-          this.data.Jan_comment = this.MonthComment;
-        }
-        if(this.data.SelectedDeltaMonthNumber == 2){
-          this.data.Feb_comment = this.MonthComment;
-        }
-        if(this.data.SelectedDeltaMonthNumber == 3){
-          this.data.Mar_comment = this.MonthComment;
-        }
-        if(this.data.SelectedDeltaMonthNumber == 4){
-          this.data.Apr_comment = this.MonthComment;
-        }
-        if(this.data.SelectedDeltaMonthNumber == 5){  
-          this.data.May_comment = this.MonthComment;
-        }
-        if(this.data.SelectedDeltaMonthNumber == 6){
-          this.data.Jun_comment = this.MonthComment;
-        }
-        if(this.data.SelectedDeltaMonthNumber == 7){
-          this.data.Jul_comment = this.MonthComment;
-        }
-        if(this.data.SelectedDeltaMonthNumber == 8){
-          this.data.Aug_comment = this.MonthComment;
-        }
-        if(this.data.SelectedDeltaMonthNumber == 9){
-          this.data.Sep_comment = this.MonthComment;
-        }
-        if(this.data.SelectedDeltaMonthNumber == 10){
-          this.data.Oct_comment = this.MonthComment;
-        }
-        if(this.data.SelectedDeltaMonthNumber == 11){
-          this.data.Nov_comment = this.MonthComment;
-        }
-        if(this.data.SelectedDeltaMonthNumber == 12){
-          this.data.Dec_comment = this.MonthComment;
-        }
-        this.service.UpdateMWDeltaComments(this.data.DeltaID,this.data.Jan_comment,this.data.Feb_comment,this.data.Mar_comment,this.data.Apr_comment,this.data.May_comment,this.data.Jun_comment,this.data.Jul_comment,this.data.Aug_comment,this.data.Sep_comment,this.data.Oct_comment,this.data.Nov_comment,this.data.Dec_comment).subscribe(data =>{
-          if(data.code == 200){
-            alert(""+data.message);
-            this.dialogRef.close();
-          }else{
-            alert("Something went wrong! Please try again later.");
-            this.dialogRef.close();
-          }
-        })
-      }
-    }
-  }
-}
-
-@Component({
-  selector: 'app-datadailog',
-  templateUrl: './datadailog.component.html',
-  styleUrls: ['./datadailog.component.css']
-})
-
-export class DataDialog {
-  constructor(
-    public datepipe : DatePipe,
-    public service : DashboardServiceService,
-    public dialogRef: MatDialogRef<DataDialog>,
-    private excelService:ExcelService,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
-
-    // @ViewChild(MatSort, {static: true}) sort: MatSort;
-    // @ViewChild(MatSort, {static: true}) tablesort: MatSort;
-    @ViewChild(MatSort) sort: MatSort;
-    dataSource;
-    displayedColumns: any[] = ['iMeet_Workspace_Title','Implementation_Type','Revenue_Total_Volume_USD','Region__Opportunity_','Country','Revenue_ID','Task__Go_Live_Date','iMeet_Milestone___Project_Status','iMeet_Project_Level','Workspace__ELT_Overall_Status','Customer_Row_ID','Opportunity_ID','Go_Live_Year','DataSourceType'];
-    ClrData;
-    Data : ClrData[];
-    ngAfterViewInit() {
-      this.dataSource.sort = this.sort;
-      // this.GetData();
-    }
-  ngOnInit() {
-    if(this.data.SelectedDeltaComment == "Current Week || "){
-      this.service.MonthWiseClrData(this.data.SelectedDeltaMonth).subscribe(data =>{
-        if(data.code == 200){
-          this.Data = data.Data;
-          this.ClrData = data.Data;
-          for(let i = 0;i<this.Data.length;i++){
-            if(this.Data[i].Revenue_Total_Volume_USD == null){
-              this.Data[i].Revenue_Total_Volume = "$0";
-            }else{
-              // this.Data[i].Revenue_Total_Volume = Math.round(this.Data[i].Revenue_Total_Volume_USD).toLocaleString("en-US",{style : "currency",currency:"USD"}).slice(0,-3);
-              this.Data[i].Revenue_Total_Volume = Math.round(this.Data[i].Revenue_Total_Volume_USD).toLocaleString("en-US",{style : "currency",currency:"USD"}).slice(0,-3);
-            }
-            if(this.Data[i].Task__Go_Live_Date == null){
-            }else{
-              this.Data[i].Task__Go_Live_Date = this.datepipe.transform(this.Data[i].Task__Go_Live_Date, "yyyy-MM-dd");
-            }
-          }
-          this.dataSource = new MatTableDataSource(this.Data);
-          this.dataSource.sort = this.sort;
-        }else{
-          alert(data.message);
-          this.dialogRef.close();
-        }
-      })
-    }else{
-      this.service.MonthWiseOldClrData(this.data.SelectedDeltaMonth).subscribe(data =>{
-        if(data.code == 200){
-          this.Data = data.Data;
-          this.ClrData = data.Data;
-          for(let i = 0;i<this.Data.length;i++){
-            if(this.Data[i].Revenue_Total_Volume_USD == null){
-              this.Data[i].Revenue_Total_Volume = "$0";
-            }else{
-              // this.Data[i].Revenue_Total_Volume = Math.round(this.Data[i].Revenue_Total_Volume_USD).toLocaleString("en-US",{style : "currency",currency:"USD"}).slice(0,-3);
-              this.Data[i].Revenue_Total_Volume = Math.round(this.Data[i].Revenue_Total_Volume_USD).toLocaleString("en-US",{style : "currency",currency:"USD"}).slice(0,-3);
-            }
-            if(this.Data[i].Task__Go_Live_Date == null){
-            }else{
-              this.Data[i].Task__Go_Live_Date = this.datepipe.transform(this.Data[i].Task__Go_Live_Date, "yyyy-MM-dd");
-            }
-          }
-          this.dataSource = new MatTableDataSource(this.Data);
-          this.dataSource.sort = this.sort;
-          // this.dataSource = data.Data;
-        }else{
-          alert(data.message);
-          this.dialogRef.close();
-        }
-      })
-    }
-  }
-  ExportClick(){
-    if(this.ClrData != null){
-      this.excelService.exportAsExcelFile(this.ClrData, this.data.SelectedDeltaMonth+' Data');
-    }
-  }
 }

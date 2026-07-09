@@ -3,7 +3,7 @@ import { DashboardServiceService } from '../../dashboard-service.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
 import { DashboardComponent } from '../dashboard/dashboard.component';
-import { ExcelService } from '../../excel.service';
+import { ExcelSXService } from '../../excelsx.service';
 
 export interface ParsingData {
   Status : string;
@@ -37,7 +37,7 @@ export class HierarchyComponent implements OnInit {
   displayedColumns : string[] = ['HierarchyID', 'User_ID','Name','LeaderTwo','LeaderOne','Sr_Leader','VP','Email_Address','Region','Location','Role','Title','UserStatus','actions'];
   screenWidth: number;
   screenHeight : number;
-  constructor(public dashboard : DashboardComponent,public service : DashboardServiceService,public dialog: MatDialog,private excelService:ExcelService) {
+  constructor(public dashboard : DashboardComponent,public service : DashboardServiceService,public dialog: MatDialog,public excelxsService : ExcelSXService) {
     // set screenWidth on page load
     this.screenWidth = window.innerWidth;
     this.screenHeight = window.innerHeight;
@@ -127,7 +127,22 @@ export class HierarchyComponent implements OnInit {
     this.dashboard.ShowSpinnerHandler(true);
     this.service.HierarchyData().subscribe(data =>{
       if(data.code == 200){
-        this.excelService.exportAsExcelFile(data.Data, 'Hierarchy Data');
+        this.excelxsService.exportAsExcelFile(
+          [
+            {
+              sheetName: 'Hierarchy Data',
+              data: data.Data,
+              defaultBackgroundColor : 'FF34495E',
+              defaultTextColor : 'FFFFFFFF',
+              columnFormats: {
+                'dd/MMM/yyyy' : ['Expected Decision Date','Assignment Date'], // Negative and Positive Numbers with 2 decimals with Dolor Symbol
+                '0' : ['Countries','Line Win Probability'],
+                '$#,##0.00;-$#,##0.00;0.00' : ['Opportunity Total Volume','Revenue Volume USD']
+              },
+            },
+          ],
+          'Hierarchy Data'
+        );
       }else{
         alert("Something Went wrong, Please Try again later");
       }

@@ -19,11 +19,12 @@ import { Injectable } from '@angular/core';
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import * as Excel from 'exceljs/dist/exceljs.min.js';
-import { Subscription, Observable, ReplaySubject, Subject } from 'rxjs';
+import { Subscription, Observable, ReplaySubject, Subject, pipe } from 'rxjs';
 import { timer } from 'rxjs';
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import { FilterDigitalTeam, FilterGlobalProjectManager, FilterOpportunityType, FilterProjectLevel, FilterRegionWiseCountry } from 'src/app/Models/AutomatedCLRFilters';
-import { Data } from 'src/app/Models/Responce';
+import { ProjectStatusActivityData, Data, SalesStageNameActivityData } from '../../Models/Responce';
+import { CLRColumns } from '../../Models/CLRColumns';
 const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 const EXCEL_EXTENSION = '.xlsx';
 // @Injectable()
@@ -56,10 +57,12 @@ export interface ParsingData {
   CLRID : string,
   //iMeet_Workspace_Title : string,
   //Date_added_to_the_CLR : Date,
+  Priority : string;
   Implementation_Type : string,
   //CLR_Country : string,
   Pipeline_status : string,
   Pipeline_comments : string,
+  TXResourcing : string;
   // Service_configuration : string,
   ExpectedDecisionDate : Date;
   Assignment_date : Date,
@@ -85,6 +88,8 @@ export class MyFilter {
   Implementation_Type : string[];
   Pipeline_status : string[];
   Pipeline_comments : string;
+  TXResourcing : string;
+  Priority : string;
   Service_configuration : string;
   Service_location : string;
   GlobalCISDQSLead : string;
@@ -157,7 +162,7 @@ export class MyFilter {
   // RecordStatus : string[];
   DataSourceType : string[];
   Date_added_to_the_CLR_c : string;
-  CheckComments : string[];
+  DataQuality : string[];
   AccountCategory : string;
   SOWStatus : string;
   OBTAdoptionRate : string;
@@ -185,6 +190,8 @@ export class AdhocData {
   ComplexityScore : string;
   ActivityType : string;
   Status : string;
+  Priority : string;
+  Pipeline_comments : string;
 }
 @Component({
   selector: 'app-automated-clr',
@@ -232,8 +239,8 @@ export class AutomatedCLRComponent implements OnInit {
   screenHeight  : number;
   Region_F;SelectedRegion;
   //OwnerShip_F;ProjectStatus_F;ProjectLevel_F;Opportunity_Type_F;Revenue_Status_F;Revenue_Opportunity_Type_F;Opportunity_Category_F;RecordStatus_F;DataSourceType_F;
-  displayedColumns : string[] = ['Select_Row','Client','RevenueID','Country','iMeet_Workspace_Title','Implementation_Type','Pipeline_status','Pipeline_comments','Service_location','Service_configuration','OBT_Reseller___Direct','OBTAdoptionRate','ExpectedDecisionDate_c','Assignment_date_c','ResourseRequestedDate_c','UpdateOn_c','OppVolume','RevenueVolumeUSD','Region','OwnerShip','ProjectStart_ForCycleTime_c','GoLiveDate_c','CycleTime','CycleTimeCategories','CycleTimeDelayCode','EltClientDelayDescription','ProjectStatus','Milestone__Reason_Code','PerCompleted','CountryStatus','ProjectLevel','CompletedDate_c','GlobalProjectManager','RegionalProjectManager','AssigneeFullName','GlobalCISDQSLead','GlobalCISOBTLead','RegionalCISOBTLead','LocalDigitalOBTLead','GlobalCISPortraitLead','RegionalCISPortraitLead','GlobalCISHRFeedSpecialist','GDS','ActivityType','ComplexityScore','MilestoneTitle','Group_Name','Milestone__Project_Notes','Milestone__Closed_Loop_Owner','Workspace__ELT_Overall_Status','Workspace__ELT_Overall_Comments','NpsScore','Customer_Row_ID','Opportunity_ID','AccountOwner','Opportunity_Type','Revenue_Status','Revenue_Opportunity_Type','Opportunity_Owner','Opportunity_Category','Revenue_Total_Transactions','Line_Win_Probability','Implementation_Fee__PSD_','Next_Step','AwardedDate_c','DataDescription','Date_added_to_the_CLR_c','CreatedDate_c','Project_Effort','Sales_Stage_Name','AccountCategory','SOWStatus','ImplementationReady','RecordHistory_C','DataSourceType','CheckComments','RecordStatus','GoLiveYear','actions'];
-  displayedColumns_h : string[] = ['Select_Row_h','Client_h','RevenueID_h','Country_h','iMeet_Workspace_Title_h','Implementation_Type_h','Pipeline_status_h','Pipeline_comments_h','Service_location_h','Service_configuration_h','OBT_Reseller___Direct_h','OBTAdoptionRate_h','ExpectedDecisionDate_c_h','Assignment_date_c_h','ResourseRequestedDate_c_h','UpdateOn_c_h','OppVolume_c_h','RevenueVolumeUSD_c_h','Region_h','OwnerShip_h','ProjectStartDate_c_h','GoLiveDate_c_h','CycleTime_h','CycleTimeCategories_h','CycleTimeDelayCode_h','EltClientDelayDescription_h','ProjectStatus_h','Milestone__Reason_Code_h','PerCompleted_h','CountryStatus_h','ProjectLevel_h','CompletedDate_c_h','GlobalProjectManager_h','RegionalProjectManager_h','AssigneeFullName_h','GlobalCISDQSLead_h','GlobalCISOBTLead_h','RegionalCISOBTLead_h','LocalDigitalOBTLead_h','GlobalCISPortraitLead_h','RegionalCISPortraitLead_h','GlobalCISHRFeedSpecialist_h','GDS_h','ActivityType_h','ComplexityScore_h','MilestoneTitle_h','Group_Name_h','Milestone__Project_Notes_h','Milestone__Closed_Loop_Owner_h','Workspace__ELT_Overall_Status_h','Workspace__ELT_Overall_Comments_h','NpsScore_h','Customer_Row_ID_h','Opportunity_ID_h','AccountOwner_h','Opportunity_Type_h','Revenue_Status_h','Revenue_Opportunity_Type_h','Opportunity_Owner_h','Opportunity_Category_h','Revenue_Total_Transactions_h','Line_Win_Probability_h','Implementation_Fee__PSD_c_h','Next_Step_h','AwardedDate_h','DataDescription_h','Date_added_to_the_CLR_c_h','CreatedDate_c_h','Project_Effort_h','Sales_Stage_Name_h','AccountCategory_h','SOWStatus_h','ImplementationReady_h','RecordHistory_h','DataSourceType_h','CheckComments_h','RecordStatus_h','GoLiveYear_h','actions_h'];
+  displayedColumns : string[] = ['Select_Row','Client','RevenueID','Country','iMeet_Workspace_Title','Priority','Implementation_Type','Pipeline_status','Pipeline_comments','TXResourcing','Service_location','Service_configuration','OBT_Reseller___Direct','OBTAdoptionRate','ExpectedDecisionDate_c','Assignment_date_c','ResourseRequestedDate_c','UpdateOn_c','OppVolume','RevenueVolumeUSD','Region','OwnerShip','ProjectStart_ForCycleTime_c','GoLiveDate_c','PerCompleted','CycleTime','CycleTimeCategories','CycleTimeDelayCode','EltClientDelayDescription','ProjectStatus','Milestone__Reason_Code','CountryStatus','ProjectLevel','CompletedDate_c','GlobalProjectManager','RegionalProjectManager','AssigneeFullName','GlobalCISDQSLead','GlobalCISOBTLead','RegionalCISOBTLead','LocalDigitalOBTLead','GlobalCISPortraitLead','RegionalCISPortraitLead','GlobalCISHRFeedSpecialist','GDS','ActivityType','ComplexityScore','MilestoneTitle','Group_Name','Milestone__Project_Notes','Milestone__Closed_Loop_Owner','Workspace__ELT_Overall_Status','Workspace__ELT_Overall_Comments','NpsScore','Customer_Row_ID','Opportunity_ID','AccountOwner','Opportunity_Type','Revenue_Status','Revenue_Opportunity_Type','Opportunity_Owner','Opportunity_Category','Revenue_Total_Transactions','Line_Win_Probability','Implementation_Fee__PSD_','Next_Step','AwardedDate_c','DataDescription','Date_added_to_the_CLR_c','CreatedDate_c','Project_Effort','Sales_Stage_Name','AccountCategory','SOWStatus','ImplementationReady','RecordHistory_C','DataSourceType','DataQuality','RecordStatus','GoLiveYear','actions'];
+  displayedColumns_h : string[] = ['Select_Row_h','Client_h','RevenueID_h','Country_h','iMeet_Workspace_Title_h','Priority_h','Implementation_Type_h','Pipeline_status_h','Pipeline_comments_h','TXResourcing_h','Service_location_h','Service_configuration_h','OBT_Reseller___Direct_h','OBTAdoptionRate_h','ExpectedDecisionDate_c_h','Assignment_date_c_h','ResourseRequestedDate_c_h','UpdateOn_c_h','OppVolume_h','RevenueVolumeUSD_h','Region_h','OwnerShip_h','ProjectStart_ForCycleTime_c_h','GoLiveDate_c_h','PerCompleted_h','CycleTime_h','CycleTimeCategories_h','CycleTimeDelayCode_h','EltClientDelayDescription_h','ProjectStatus_h','Milestone__Reason_Code_h','CountryStatus_h','ProjectLevel_h','CompletedDate_c_h','GlobalProjectManager_h','RegionalProjectManager_h','AssigneeFullName_h','GlobalCISDQSLead_h','GlobalCISOBTLead_h','RegionalCISOBTLead_h','LocalDigitalOBTLead_h','GlobalCISPortraitLead_h','RegionalCISPortraitLead_h','GlobalCISHRFeedSpecialist_h','GDS_h','ActivityType_h','ComplexityScore_h','MilestoneTitle_h','Group_Name_h','Milestone__Project_Notes_h','Milestone__Closed_Loop_Owner_h','Workspace__ELT_Overall_Status_h','Workspace__ELT_Overall_Comments_h','NpsScore_h','Customer_Row_ID_h','Opportunity_ID_h','AccountOwner_h','Opportunity_Type_h','Revenue_Status_h','Revenue_Opportunity_Type_h','Opportunity_Owner_h','Opportunity_Category_h','Revenue_Total_Transactions_h','Line_Win_Probability_h','Implementation_Fee__PSD__h','Next_Step_h','AwardedDate_c_h','DataDescription_h','Date_added_to_the_CLR_c_h','CreatedDate_c_h','Project_Effort_h','Sales_Stage_Name_h','AccountCategory_h','SOWStatus_h','ImplementationReady_h','RecordHistory_C_h','DataSourceType_h','DataQuality_h','RecordStatus_h','GoLiveYear_h','actions_h'];
   // displayedColumns : string[] = ['Select_Row','Client','RevenueID','iMeet_Workspace_Title','CreatedDate_c','Implementation_Type','actions'];
   // displayedColumns_h : string[] = ['Select_Row_h','Client_h','RevenueID_h','iMeet_Workspace_Title_h','CreatedDate_c_h','Implementation_Type_h','actions_h']
 
@@ -251,19 +258,19 @@ export class AutomatedCLRComponent implements OnInit {
   displayReplicate : boolean = false;
   masterImplementationType : boolean;masterCycleTimeCategory : boolean;masterCycleTimeRange : boolean
   masterPipelineStatus : boolean;masterOBTType : boolean;masterDataQuality : boolean;
-  masterGDS : boolean;masterActivityType : boolean;masterRegion : boolean;masterOwnership : boolean;masterCountryStatus : boolean;
+  masterGDS : boolean;masterActivityType : boolean;masterRegion : boolean;masterPriority : boolean;masterOwnership : boolean;masterCountryStatus : boolean;
   masterProjectStatus : boolean;masterProjectLevel : boolean;masterGroupName : boolean;masterWorkspaceEltOverallStatus : boolean;
   masterSalesStageName : boolean;masterOpportunityType : boolean;masterRevenueStatus : boolean;masterRevenueOpportunityType : boolean;
   masterOpportunityCategory : boolean;masterLineWin : boolean;masterRecordStatus : boolean;masterDatasourceType : boolean;
   masterGoLiveYear : boolean;
   masterAccountCategory : boolean;masterServiceConfiguration : boolean;mastereSowStatus : boolean;
   filteredValues : MyFilter = { Client: '', RevenueID: '', iMeet_Workspace_Title: '', CreatedDate_c: '',
-    Implementation_Type : [],Pipeline_status : [],Pipeline_comments : '',Service_configuration : '',Service_location : '',
+    Implementation_Type : [],Pipeline_status : [],Pipeline_comments : '',TXResourcing : '',Priority : '',Service_configuration : '',Service_location : '',
     GlobalCISDQSLead : '',APAC_DQS : '',DQS_Import : '',DQS_Support : '',LATAM_DQS : '',NORAM_DQS : '',DQS_Operations : '',
     OBT_Reseller___Direct : [],ExpectedDecisionDate_c : '',Assignment_date_c : '',RecordHistory_C : '',ResourseRequestedDate_c : '',UpdateOn_c : '',OppVolume : '',
-    RevenueVolumeUSD : '',Region : [],Country : '', OwnerShip : [], GoLiveDate_c : null,GoLiveDate_cE : null,
+    RevenueVolumeUSD : '',Region : [],Country : '', OwnerShip : [], GoLiveDate_c : null,GoLiveDate_cE : null,PerCompleted : '',
     ProjectStart_ForCycleTime_c : '',CycleTime : [],CycleTimeCategories : [],CycleTimeDelayCode : '',EltClientDelayDescription : '',
-    ProjectStatus : [],Milestone__Reason_Code : '', PerCompleted : '',CountryStatus : [],
+    ProjectStatus : [],Milestone__Reason_Code : '', CountryStatus : [],
     ProjectLevel : [],CompletedDate_c : '',GlobalProjectManager : '',
     RegionalProjectManager : '',AssigneeFullName : '',GlobalCISOBTLead : '',
     RegionalCISOBTLead : '',LocalDigitalOBTLead : '',LocalDigitalAdHocSupport : '',GlobalCISPortraitLead : '',
@@ -277,7 +284,7 @@ export class AutomatedCLRComponent implements OnInit {
     Project_Effort : '',ComplexityScore : '',
     // RecordStatus : [],
     DataSourceType : [],
-    Date_added_to_the_CLR_c : '',CheckComments : [],AccountCategory : '',SOWStatus : '',OBTAdoptionRate : '',
+    Date_added_to_the_CLR_c : '',DataQuality : [],AccountCategory : '',SOWStatus : '',OBTAdoptionRate : '',
     ImplementationReady : '',
   };
 
@@ -286,7 +293,8 @@ export class AutomatedCLRComponent implements OnInit {
   // ProjectLevelList: string[] = ["Local", "Global","Regional","---"];
   Pipeline_statusList : any = [];
   RegionList : any = [];
-  DatQualityIssueList : any = ["---","PM = Email ID","N-Active to be Updated","H-Hold/Reason Code Empty","Go-Live > today","Milestone Reason Code","Go-Live > 50 days","Start Date > Go-Live Date","Cycle Time Delay Code","Complexity Score"]
+  PriorityList : any = [];
+  DatQualityIssueList : any = ["---","PM = Email ID","N-Active to be Updated","H-Hold/Reason Code Empty","Go-Live > today","Milestone Reason Code","Go-Live > 50 days","Start Date > Go-Live Date","Cycle Time Delay Code"]
   ActivityTypeList : any = [];
   GDSList : any = [];
   OwnerShipList : any = [];
@@ -318,6 +326,8 @@ export class AutomatedCLRComponent implements OnInit {
   CycleTimeCategoriesFilter = new FormControl();
   Pipeline_statusFilter = new FormControl();
   Pipeline_commentsFilter = new FormControl();
+  TXResourcingFilter = new FormControl();
+  PriorityFilter = new FormControl();
   Service_configurationFilter = new FormControl();
   Service_locationFilter = new FormControl();
   GlobalCISDQSLeadFilter = new FormControl();
@@ -395,7 +405,7 @@ export class AutomatedCLRComponent implements OnInit {
   GoLiveYearFilter = new FormControl();
   DataSourceTypeFilter = new FormControl();
   Date_added_to_the_CLR_cFilter = new FormControl();
-  CheckCommentsFilter = new FormControl();
+  DataQualityFilter = new FormControl();
   @ViewChild(MatSort) sort: MatSort;
   // actualPaginator: MatPaginator;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -445,6 +455,8 @@ export class AutomatedCLRComponent implements OnInit {
       ComplexityScore : null,
       ActivityType : null,
       Status : null,
+      Priority : null,
+      Pipeline_comments : null
     }
     this.AdhocData = data;
   }
@@ -531,6 +543,14 @@ export class AutomatedCLRComponent implements OnInit {
           }else{
             this.dataSource.data[i].RecordStatus = value[0].Record_Status;
           }
+          if(value[0].Priority == null || value[0].Priority == undefined){
+          }else{
+            this.dataSource.data[i].Priority = value[0].Priority;
+          }
+          if(value[0].Pipeline_comments == null || value[0].Pipeline_comments == undefined){
+          }else{
+            this.dataSource.data[i].Pipeline_comments = value[0].Pipeline_comments;
+          }
         }
       }
       this.GenerateTracker();
@@ -551,12 +571,47 @@ export class AutomatedCLRComponent implements OnInit {
     this.Passive = Passive;
     this.NpsTotal = NpsTotal;
   }
-
+  CLRColumns : CLRColumns[];
+  CLR_ColumnsData : any[] = [];
+  CLR_Column : any[] = [];
   ngOnInit(): void {
+    this.service.GetCLRSelectedColumns(localStorage.getItem("UID")+"").subscribe(data => {
+      if(data.code == 200){
+        this.CLRColumns = data.CLRColumns;
+        this.CLR_Column = [];
+        this.CLR_ColumnsData = [];
+        var Column_keys = Object.keys(this.CLRColumns[0]);
+        Column_keys.forEach(item =>{
+          this.CLR_ColumnsData.push({CLR_Column : item});
+          if(this.CLRColumns[0][item] == true){
+            this.CLR_Column.push({CLR_Column : item});
+          }
+        })
+        this.SettingCLRColumns();
+      }else{
+      }
+    })
+    this.CLRColumnSettings = {
+      singleSelection: false,
+      idField: 'CLR_Column',
+      textField: 'CLR_Column',
+      enableCheckAll: true,
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      allowSearchFilter: true,
+      limitSelection: -1,
+      clearSearchFilter: true,
+      maxHeight: 200,
+      itemsShowLimit: 1,
+      searchPlaceholderText: 'Search Here',
+      noDataAvailablePlaceholderText: 'No Columns Found',
+      closeDropDownOnSelection: false,
+      showSelectedItemsAtTop: false,
+      defaultOpen: true,
+    }
     this.CurrentYear = (new Date()).getFullYear();
     this.dashboard.ShowSpinnerHandler(true);
-    
-    this.service.UserReportAccess(localStorage.getItem("UID")).subscribe(data=>{
+    this.service.UserReportAccess(localStorage.getItem("UID")+"").subscribe(data=>{
       if(data.code == 200){
         if(data.Data[0].CLREdits == true){
           this.displayReplicateButton = "true";
@@ -569,6 +624,138 @@ export class AutomatedCLRComponent implements OnInit {
       this.dashboard.ShowSpinnerHandler(false);
     })
     this.GetAutomatedCLRFilters();
+  }
+  SaveColumns(){
+    this.service.CLRColumnsUpdate(
+      localStorage.getItem("UID")+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Priority") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Implementation_Type") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Pipeline_status") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Pipeline_comments") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "TXResourcing") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Service_location") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Service_configuration") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "OBT_Reseller___Direct") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "OBTAdoptionRate") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "ExpectedDecisionDate_c") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Assignment_date_c") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "ResourseRequestedDate_c") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "UpdateOn_c") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "OppVolume") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "RevenueVolumeUSD") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Region") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "OwnerShip") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "ProjectStart_ForCycleTime_c") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "GoLiveDate_c") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "PerCompleted") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "CycleTime") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "CycleTimeCategories") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "CycleTimeDelayCode") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "EltClientDelayDescription") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "ProjectStatus") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Milestone__Reason_Code") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "CountryStatus") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "ProjectLevel") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "CompletedDate_c") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "GlobalProjectManager") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "RegionalProjectManager") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "AssigneeFullName") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "GlobalCISDQSLead") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "APAC_DQS") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "DQS_Import") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "DQS_Support") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "LATAM_DQS") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "NORAM_DQS") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "DQS_Operations") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "GlobalCISOBTLead") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "RegionalCISOBTLead") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "LocalDigitalOBTLead") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "GlobalCISPortraitLead") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "RegionalCISPortraitLead") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "GlobalCISHRFeedSpecialist") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "GDS") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "ActivityType") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "ComplexityScore") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "MilestoneTitle") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Group_Name") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Milestone__Project_Notes") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Milestone__Closed_Loop_Owner") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Workspace__ELT_Overall_Status") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Workspace__ELT_Overall_Comments") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "NpsScore") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Customer_Row_ID") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Opportunity_ID") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "AccountOwner") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Opportunity_Type") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Revenue_Status") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Revenue_Opportunity_Type") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Opportunity_Owner") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Opportunity_Category") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Revenue_Total_Transactions") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Line_Win_Probability") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Implementation_Fee__PSD_") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Next_Step") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "AwardedDate_c") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "DataDescription") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Date_added_to_the_CLR_c") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "CreatedDate_c") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Project_Effort") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "Sales_Stage_Name") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "AccountCategory") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "SOWStatus") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "ImplementationReady") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "RecordHistory_C") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "DataSourceType") == undefined ? false+"" : true+"",
+      this.CLR_Column.find((x) => x.CLR_Column === "DataQuality") == undefined ? false+"" : true+""
+    ).subscribe(data => {
+      if(data.code = 200){
+        alert("View Updated");
+      }else{
+        alert("Something went wrong,Please try again later");
+      }
+      console.log(data)
+    })
+  }
+
+  CLRColumnSettings: IDropdownSettings;
+  onCLRColumnChange(){
+    this.CLRColumnSettings.defaultOpen = true;
+    this.SettingCLRColumns();
+  }
+  onCLRColumnChangeAll(item :any){
+    this.CLRColumnSettings.defaultOpen = true;
+    this.CLR_Column = item
+    this.SettingCLRColumns();
+  }
+  SettingCLRColumns(){
+    var clr_columns : string[] = [];
+    let clr_columns_h : string[] = [];
+    clr_columns.push("Select_Row");
+    clr_columns.push("Client");
+    clr_columns.push("RevenueID");
+    clr_columns.push("Country");
+    clr_columns.push("iMeet_Workspace_Title");
+    clr_columns_h.push("Select_Row_h");
+    clr_columns_h.push("Client_h");
+    clr_columns_h.push("RevenueID_h");
+    clr_columns_h.push("Country_h");
+    clr_columns_h.push("iMeet_Workspace_Title_h");
+    this.CLR_ColumnsData.forEach(item => {
+      if(this.CLR_Column.length > 0){
+        if(this.CLR_Column.find((x) => x.CLR_Column === item.CLR_Column)){
+          clr_columns.push(item.CLR_Column)
+          clr_columns_h.push(item.CLR_Column+"_h");
+        }
+      }
+    })
+    clr_columns.push("RecordStatus");
+    clr_columns.push("GoLiveYear");
+    clr_columns.push("actions");
+    clr_columns_h.push("RecordStatus_h");
+    clr_columns_h.push("GoLiveYear_h");
+    clr_columns_h.push("actions_h");
+    this.columnsToDisplay = clr_columns;
+    this.columnsToDisplay_h = clr_columns_h;
   }
   GetAutomatedCLRFilters(){
     this.service.AutomatedCLRFilters().subscribe(data =>{
@@ -587,6 +774,10 @@ export class AutomatedCLRComponent implements OnInit {
       this.RegionList = [];
       data.FilterRegion.forEach(item =>{
         this.RegionList.push(item.Region);
+      })
+      this.PriorityList = [];
+      data.FilterPriority.forEach(item =>{
+        this.PriorityList.push(item.Priority);
       })
       this.ActivityTypeList = [];
       data.FilterActivityType.forEach(item =>{
@@ -725,23 +916,23 @@ export class AutomatedCLRComponent implements OnInit {
   HideColumns(){
     if(this.displayReplicateButton == "true"){
       if(this.HideColumnsButtonName == "P"){
-        this.columnsToDisplay = ['Select_Row','Client','RevenueID','Country','iMeet_Workspace_Title','Implementation_Type','Pipeline_status','Pipeline_comments','Service_location','Service_configuration','OBT_Reseller___Direct','OBTAdoptionRate','ExpectedDecisionDate_c','Assignment_date_c','ResourseRequestedDate_c','UpdateOn_c','OppVolume','RevenueVolumeUSD','Region','OwnerShip','ProjectStart_ForCycleTime_c','GoLiveDate_c','CycleTime','CycleTimeCategories','CycleTimeDelayCode','EltClientDelayDescription','ProjectStatus','Milestone__Reason_Code','PerCompleted','CountryStatus','ProjectLevel','CompletedDate_c','GlobalProjectManager','RegionalProjectManager','AssigneeFullName','GlobalCISDQSLead','GlobalCISOBTLead','RegionalCISOBTLead','LocalDigitalOBTLead','GlobalCISPortraitLead','RegionalCISPortraitLead','GlobalCISHRFeedSpecialist','GDS','ActivityType','ComplexityScore','MilestoneTitle','Group_Name','Milestone__Project_Notes','Milestone__Closed_Loop_Owner','Workspace__ELT_Overall_Status','Workspace__ELT_Overall_Comments','NpsScore','Customer_Row_ID','Opportunity_ID','AccountOwner','Opportunity_Type','Revenue_Status','Revenue_Opportunity_Type','Opportunity_Owner','Opportunity_Category','Revenue_Total_Transactions','Line_Win_Probability','Implementation_Fee__PSD_','Next_Step','AwardedDate_c','DataDescription','Date_added_to_the_CLR_c','CreatedDate_c','Project_Effort','Sales_Stage_Name','AccountCategory','SOWStatus','ImplementationReady','RecordHistory_C','DataSourceType','CheckComments','RecordStatus','GoLiveYear','actions'];
-        this.columnsToDisplay_h = ['Select_Row_h','Client_h','RevenueID_h','Country_h','iMeet_Workspace_Title_h','Implementation_Type_h','Pipeline_status_h','Pipeline_comments_h','Service_location_h','Service_configuration_h','OBT_Reseller___Direct_h','OBTAdoptionRate_h','ExpectedDecisionDate_c_h','Assignment_date_c_h','ResourseRequestedDate_c_h','UpdateOn_c_h','OppVolume_c_h','RevenueVolumeUSD_c_h','Region_h','OwnerShip_h','ProjectStartDate_c_h','GoLiveDate_c_h','CycleTime_h','CycleTimeCategories_h','CycleTimeDelayCode_h','EltClientDelayDescription_h','ProjectStatus_h','Milestone__Reason_Code_h','PerCompleted_h','CountryStatus_h','ProjectLevel_h','CompletedDate_c_h','GlobalProjectManager_h','RegionalProjectManager_h','AssigneeFullName_h','GlobalCISDQSLead_h','GlobalCISOBTLead_h','RegionalCISOBTLead_h','LocalDigitalOBTLead_h','GlobalCISPortraitLead_h','RegionalCISPortraitLead_h','GlobalCISHRFeedSpecialist_h','GDS_h','ActivityType_h','ComplexityScore_h','MilestoneTitle_h','Group_Name_h','Milestone__Project_Notes_h','Milestone__Closed_Loop_Owner_h','Workspace__ELT_Overall_Status_h','Workspace__ELT_Overall_Comments_h','NpsScore_h','Customer_Row_ID_h','Opportunity_ID_h','AccountOwner_h','Opportunity_Type_h','Revenue_Status_h','Revenue_Opportunity_Type_h','Opportunity_Owner_h','Opportunity_Category_h','Revenue_Total_Transactions_h','Line_Win_Probability_h','Implementation_Fee__PSD_c_h','Next_Step_h','AwardedDate_h','DataDescription_h','Date_added_to_the_CLR_c_h','CreatedDate_c_h','Project_Effort_h','Sales_Stage_Name_h','AccountCategory_h','SOWStatus_h','ImplementationReady_h','RecordHistory_h','DataSourceType_h','CheckComments_h','RecordStatus_h','GoLiveYear_h','actions_h'];
+        this.columnsToDisplay = ['Select_Row','Client','RevenueID','Country','iMeet_Workspace_Title','Priority','Implementation_Type','Pipeline_status','Pipeline_comments','TXResourcing','Service_location','Service_configuration','OBT_Reseller___Direct','OBTAdoptionRate','ExpectedDecisionDate_c','Assignment_date_c','ResourseRequestedDate_c','UpdateOn_c','OppVolume','RevenueVolumeUSD','Region','OwnerShip','ProjectStart_ForCycleTime_c','GoLiveDate_c','PerCompleted','CycleTime','CycleTimeCategories','CycleTimeDelayCode','EltClientDelayDescription','ProjectStatus','Milestone__Reason_Code','CountryStatus','ProjectLevel','CompletedDate_c','GlobalProjectManager','RegionalProjectManager','AssigneeFullName','GlobalCISDQSLead','GlobalCISOBTLead','RegionalCISOBTLead','LocalDigitalOBTLead','GlobalCISPortraitLead','RegionalCISPortraitLead','GlobalCISHRFeedSpecialist','GDS','ActivityType','ComplexityScore','MilestoneTitle','Group_Name','Milestone__Project_Notes','Milestone__Closed_Loop_Owner','Workspace__ELT_Overall_Status','Workspace__ELT_Overall_Comments','NpsScore','Customer_Row_ID','Opportunity_ID','AccountOwner','Opportunity_Type','Revenue_Status','Revenue_Opportunity_Type','Opportunity_Owner','Opportunity_Category','Revenue_Total_Transactions','Line_Win_Probability','Implementation_Fee__PSD_','Next_Step','AwardedDate_c','DataDescription','Date_added_to_the_CLR_c','CreatedDate_c','Project_Effort','Sales_Stage_Name','AccountCategory','SOWStatus','ImplementationReady','RecordHistory_C','DataSourceType','DataQuality','RecordStatus','GoLiveYear','actions'];
+        this.columnsToDisplay_h = ['Select_Row_h','Client_h','RevenueID_h','Country_h','iMeet_Workspace_Title_h','Priority_h','Implementation_Type_h','Pipeline_status_h','Pipeline_comments_h','TXResourcing_h','Service_location_h','Service_configuration_h','OBT_Reseller___Direct_h','OBTAdoptionRate_h','ExpectedDecisionDate_c_h','Assignment_date_c_h','ResourseRequestedDate_c_h','UpdateOn_c_h','OppVolume_h','RevenueVolumeUSD_h','Region_h','OwnerShip_h','ProjectStart_ForCycleTime_c_h','GoLiveDate_c_h','PerCompleted_h','CycleTime_h','CycleTimeCategories_h','CycleTimeDelayCode_h','EltClientDelayDescription_h','ProjectStatus_h','Milestone__Reason_Code_h','CountryStatus_h','ProjectLevel_h','CompletedDate_c_h','GlobalProjectManager_h','RegionalProjectManager_h','AssigneeFullName_h','GlobalCISDQSLead_h','GlobalCISOBTLead_h','RegionalCISOBTLead_h','LocalDigitalOBTLead_h','GlobalCISPortraitLead_h','RegionalCISPortraitLead_h','GlobalCISHRFeedSpecialist_h','GDS_h','ActivityType_h','ComplexityScore_h','MilestoneTitle_h','Group_Name_h','Milestone__Project_Notes_h','Milestone__Closed_Loop_Owner_h','Workspace__ELT_Overall_Status_h','Workspace__ELT_Overall_Comments_h','NpsScore_h','Customer_Row_ID_h','Opportunity_ID_h','AccountOwner_h','Opportunity_Type_h','Revenue_Status_h','Revenue_Opportunity_Type_h','Opportunity_Owner_h','Opportunity_Category_h','Revenue_Total_Transactions_h','Line_Win_Probability_h','Implementation_Fee__PSD__h','Next_Step_h','AwardedDate_c_h','DataDescription_h','Date_added_to_the_CLR_c_h','CreatedDate_c_h','Project_Effort_h','Sales_Stage_Name_h','AccountCategory_h','SOWStatus_h','ImplementationReady_h','RecordHistory_C_h','DataSourceType_h','DataQuality_h','RecordStatus_h','GoLiveYear_h','actions_h'];
       }else{
         // this.columnsToDisplay = ['Select_Row','Client','RevenueID','Country','iMeet_Workspace_Title','Region','ProjectStatus','GlobalCISDQSLead','APAC_DQS','DQS_Import','DQS_Support','LATAM_DQS','NORAM_DQS','DQS_Operations','GlobalCISOBTLead','RegionalCISOBTLead','LocalDigitalOBTLead','GlobalCISPortraitLead','RegionalCISPortraitLead','LocalDigitalOBTLead','GlobalCISHRFeedSpecialist','GDS','ActivityType','ComplexityScore','RecordHistory_C','DataSourceType','RecordStatus','GoLiveYear','actions'];
         // this.columnsToDisplay_h = ['Select_Row_h','Client_h','RevenueID_h','Country_h','iMeet_Workspace_Title_h','Region_h','ProjectStatus_h','GlobalCISDQSLead_h','APAC_DQS_h','DQS_Import_h','DQS_Support_h','LATAM_DQS_h','NORAM_DQS_h','DQS_Operations_h','GlobalCISOBTLead_h','RegionalCISOBTLead_h','LocalDigitalOBTLead_h','GlobalCISPortraitLead_h','RegionalCISPortraitLead_h','LocalDigitalOBTLead_h','GlobalCISHRFeedSpecialist_h','GDS_h','ActivityType_h','ComplexityScore_h','RecordHistory_h','DataSourceType_h','RecordStatus_h','GoLiveYear_h','actions_h'];
         this.columnsToDisplay = ['Select_Row','Client','RevenueID','Country','iMeet_Workspace_Title','Region','ProjectStatus','GlobalCISDQSLead','APAC_DQS','DQS_Import','DQS_Support','LATAM_DQS','NORAM_DQS','DQS_Operations','GlobalCISOBTLead','RegionalCISOBTLead','LocalDigitalOBTLead','GlobalCISPortraitLead','RegionalCISPortraitLead','GlobalCISHRFeedSpecialist','GDS','ActivityType','ComplexityScore','RecordHistory_C','DataSourceType','RecordStatus','GoLiveYear','actions'];
-        this.columnsToDisplay_h = ['Select_Row_h','Client_h','RevenueID_h','Country_h','iMeet_Workspace_Title_h','Region_h','ProjectStatus_h','GlobalCISDQSLead_h','APAC_DQS_h','DQS_Import_h','DQS_Support_h','LATAM_DQS_h','NORAM_DQS_h','DQS_Operations_h','GlobalCISOBTLead_h','RegionalCISOBTLead_h','LocalDigitalOBTLead_h','GlobalCISPortraitLead_h','RegionalCISPortraitLead_h','GlobalCISHRFeedSpecialist_h','GDS_h','ActivityType_h','ComplexityScore_h','RecordHistory_h','DataSourceType_h','RecordStatus_h','GoLiveYear_h','actions_h'];
+        this.columnsToDisplay_h = ['Select_Row_h','Client_h','RevenueID_h','Country_h','iMeet_Workspace_Title_h','Region_h','ProjectStatus_h','GlobalCISDQSLead_h','APAC_DQS_h','DQS_Import_h','DQS_Support_h','LATAM_DQS_h','NORAM_DQS_h','DQS_Operations_h','GlobalCISOBTLead_h','RegionalCISOBTLead_h','LocalDigitalOBTLead_h','GlobalCISPortraitLead_h','RegionalCISPortraitLead_h','GlobalCISHRFeedSpecialist_h','GDS_h','ActivityType_h','ComplexityScore_h','RecordHistory_C_h','DataSourceType_h','RecordStatus_h','GoLiveYear_h','actions_h'];
       }
     }else{
       if(this.HideColumnsButtonName == "P"){
-        this.columnsToDisplay = ['Select_Row','Client','RevenueID','Country','iMeet_Workspace_Title','Implementation_Type','Pipeline_status','Pipeline_comments','Service_location','Service_configuration','OBT_Reseller___Direct','OBTAdoptionRate','ExpectedDecisionDate_c','Assignment_date_c','ResourseRequestedDate_c','UpdateOn_c','OppVolume','RevenueVolumeUSD','Region','OwnerShip','ProjectStart_ForCycleTime_c','GoLiveDate_c','CycleTime','CycleTimeCategories','CycleTimeDelayCode','EltClientDelayDescription','ProjectStatus','Milestone__Reason_Code','PerCompleted','CountryStatus','ProjectLevel','CompletedDate_c','GlobalProjectManager','RegionalProjectManager','AssigneeFullName','GlobalCISDQSLead','GlobalCISOBTLead','RegionalCISOBTLead','LocalDigitalOBTLead','GlobalCISPortraitLead','RegionalCISPortraitLead','GlobalCISHRFeedSpecialist','GDS','ActivityType','ComplexityScore','MilestoneTitle','Group_Name','Milestone__Project_Notes','Milestone__Closed_Loop_Owner','Workspace__ELT_Overall_Status','Workspace__ELT_Overall_Comments','NpsScore','Customer_Row_ID','Opportunity_ID','AccountOwner','Opportunity_Type','Revenue_Status','Revenue_Opportunity_Type','Opportunity_Owner','Opportunity_Category','Revenue_Total_Transactions','Line_Win_Probability','Implementation_Fee__PSD_','Next_Step','AwardedDate_c','DataDescription','Date_added_to_the_CLR_c','CreatedDate_c','Project_Effort','Sales_Stage_Name','AccountCategory','SOWStatus','ImplementationReady','RecordHistory_C','DataSourceType','CheckComments','RecordStatus','GoLiveYear'];
-        this.columnsToDisplay_h = ['Select_Row_h','Client_h','RevenueID_h','Country_h','iMeet_Workspace_Title_h','Implementation_Type_h','Pipeline_status_h','Pipeline_comments_h','Service_location_h','Service_configuration_h','OBT_Reseller___Direct_h','OBTAdoptionRate_h','ExpectedDecisionDate_c_h','Assignment_date_c_h','ResourseRequestedDate_c_h','UpdateOn_c_h','OppVolume_c_h','RevenueVolumeUSD_c_h','Region_h','OwnerShip_h','ProjectStartDate_c_h','GoLiveDate_c_h','CycleTime_h','CycleTimeCategories_h','CycleTimeDelayCode_h','EltClientDelayDescription_h','ProjectStatus_h','Milestone__Reason_Code_h','PerCompleted_h','CountryStatus_h','ProjectLevel_h','CompletedDate_c_h','GlobalProjectManager_h','RegionalProjectManager_h','AssigneeFullName_h','GlobalCISDQSLead_h','GlobalCISOBTLead_h','RegionalCISOBTLead_h','LocalDigitalOBTLead_h','GlobalCISPortraitLead_h','RegionalCISPortraitLead_h','GlobalCISHRFeedSpecialist_h','GDS_h','ActivityType_h','ComplexityScore_h','MilestoneTitle_h','Group_Name_h','Milestone__Project_Notes_h','Milestone__Closed_Loop_Owner_h','Workspace__ELT_Overall_Status_h','Workspace__ELT_Overall_Comments_h','NpsScore_h','Customer_Row_ID_h','Opportunity_ID_h','AccountOwner_h','Opportunity_Type_h','Revenue_Status_h','Revenue_Opportunity_Type_h','Opportunity_Owner_h','Opportunity_Category_h','Revenue_Total_Transactions_h','Line_Win_Probability_h','Implementation_Fee__PSD_c_h','Next_Step_h','AwardedDate_h','DataDescription_h','Date_added_to_the_CLR_c_h','CreatedDate_c_h','Project_Effort_h','Sales_Stage_Name_h','AccountCategory_h','SOWStatus_h','ImplementationReady_h','RecordHistory_h','DataSourceType_h','CheckComments_h','RecordStatus_h','GoLiveYear_h'];
+        this.columnsToDisplay = ['Select_Row','Client','RevenueID','Country','iMeet_Workspace_Title','Priority','Implementation_Type','Pipeline_status','Pipeline_comments','TXResourcing','Service_location','Service_configuration','OBT_Reseller___Direct','OBTAdoptionRate','ExpectedDecisionDate_c','Assignment_date_c','ResourseRequestedDate_c','UpdateOn_c','OppVolume','RevenueVolumeUSD','Region','OwnerShip','ProjectStart_ForCycleTime_c','GoLiveDate_c','PerCompleted','CycleTime','CycleTimeCategories','CycleTimeDelayCode','EltClientDelayDescription','ProjectStatus','Milestone__Reason_Code','CountryStatus','ProjectLevel','CompletedDate_c','GlobalProjectManager','RegionalProjectManager','AssigneeFullName','GlobalCISDQSLead','GlobalCISOBTLead','RegionalCISOBTLead','LocalDigitalOBTLead','GlobalCISPortraitLead','RegionalCISPortraitLead','GlobalCISHRFeedSpecialist','GDS','ActivityType','ComplexityScore','MilestoneTitle','Group_Name','Milestone__Project_Notes','Milestone__Closed_Loop_Owner','Workspace__ELT_Overall_Status','Workspace__ELT_Overall_Comments','NpsScore','Customer_Row_ID','Opportunity_ID','AccountOwner','Opportunity_Type','Revenue_Status','Revenue_Opportunity_Type','Opportunity_Owner','Opportunity_Category','Revenue_Total_Transactions','Line_Win_Probability','Implementation_Fee__PSD_','Next_Step','AwardedDate_c','DataDescription','Date_added_to_the_CLR_c','CreatedDate_c','Project_Effort','Sales_Stage_Name','AccountCategory','SOWStatus','ImplementationReady','RecordHistory_C','DataSourceType','DataQuality','RecordStatus','GoLiveYear'];
+        this.columnsToDisplay_h = ['Select_Row_h','Client_h','RevenueID_h','Country_h','iMeet_Workspace_Title_h','Priority_h','Implementation_Type_h','Pipeline_status_h','Pipeline_comments_h','TXResourcing_h','Service_location_h','Service_configuration_h','OBT_Reseller___Direct_h','OBTAdoptionRate_h','ExpectedDecisionDate_c_h','Assignment_date_c_h','ResourseRequestedDate_c_h','UpdateOn_c_h','OppVolume_h','RevenueVolumeUSD_h','Region_h','OwnerShip_h','ProjectStart_ForCycleTime_c_h','GoLiveDate_c_h','PerCompleted_h','CycleTime_h','CycleTimeCategories_h','CycleTimeDelayCode_h','EltClientDelayDescription_h','ProjectStatus_h','Milestone__Reason_Code_h','CountryStatus_h','ProjectLevel_h','CompletedDate_c_h','GlobalProjectManager_h','RegionalProjectManager_h','AssigneeFullName_h','GlobalCISDQSLead_h','GlobalCISOBTLead_h','RegionalCISOBTLead_h','LocalDigitalOBTLead_h','GlobalCISPortraitLead_h','RegionalCISPortraitLead_h','GlobalCISHRFeedSpecialist_h','GDS_h','ActivityType_h','ComplexityScore_h','MilestoneTitle_h','Group_Name_h','Milestone__Project_Notes_h','Milestone__Closed_Loop_Owner_h','Workspace__ELT_Overall_Status_h','Workspace__ELT_Overall_Comments_h','NpsScore_h','Customer_Row_ID_h','Opportunity_ID_h','AccountOwner_h','Opportunity_Type_h','Revenue_Status_h','Revenue_Opportunity_Type_h','Opportunity_Owner_h','Opportunity_Category_h','Revenue_Total_Transactions_h','Line_Win_Probability_h','Implementation_Fee__PSD__h','Next_Step_h','AwardedDate_c_h','DataDescription_h','Date_added_to_the_CLR_c_h','CreatedDate_c_h','Project_Effort_h','Sales_Stage_Name_h','AccountCategory_h','SOWStatus_h','ImplementationReady_h','RecordHistory_C_h','DataSourceType_h','DataQuality_h','RecordStatus_h','GoLiveYear_h'];
       }else{
         // this.columnsToDisplay = ['Select_Row','Client','RevenueID','Country','iMeet_Workspace_Title','Region','ProjectStatus','GlobalCISDQSLead','APAC_DQS','DQS_Import','DQS_Support','LATAM_DQS','NORAM_DQS','DQS_Operations','GlobalCISOBTLead','RegionalCISOBTLead','LocalDigitalOBTLead','GlobalCISPortraitLead','RegionalCISPortraitLead','LocalDigitalOBTLead','GlobalCISHRFeedSpecialist','GDS','ActivityType','ComplexityScore','RecordHistory_C','DataSourceType','RecordStatus','GoLiveYear'];
         // this.columnsToDisplay_h = ['Select_Row_h','Client_h','RevenueID_h','Country_h','iMeet_Workspace_Title_h','Region_h','ProjectStatus_h','GlobalCISDQSLead_h','APAC_DQS_h','DQS_Import_h','DQS_Support_h','LATAM_DQS_h','NORAM_DQS_h','DQS_Operations_h','GlobalCISOBTLead_h','RegionalCISOBTLead_h','LocalDigitalOBTLead_h','GlobalCISPortraitLead_h','RegionalCISPortraitLead_h','LocalDigitalOBTLead_h','GlobalCISHRFeedSpecialist_h','GDS_h','ActivityType_h','ComplexityScore_h','RecordHistory_h','DataSourceType_h','RecordStatus_h','GoLiveYear_h'];
         this.columnsToDisplay = ['Select_Row','Client','RevenueID','Country','iMeet_Workspace_Title','Region','ProjectStatus','GlobalCISDQSLead','APAC_DQS','DQS_Import','DQS_Support','LATAM_DQS','NORAM_DQS','DQS_Operations','GlobalCISOBTLead','RegionalCISOBTLead','LocalDigitalOBTLead','GlobalCISPortraitLead','RegionalCISPortraitLead','GlobalCISHRFeedSpecialist','GDS','ActivityType','ComplexityScore','RecordHistory_C','DataSourceType','RecordStatus','GoLiveYear'];
-        this.columnsToDisplay_h = ['Select_Row_h','Client_h','RevenueID_h','Country_h','iMeet_Workspace_Title_h','Region_h','ProjectStatus_h','GlobalCISDQSLead_h','APAC_DQS_h','DQS_Import_h','DQS_Support_h','LATAM_DQS_h','NORAM_DQS_h','DQS_Operations_h','GlobalCISOBTLead_h','RegionalCISOBTLead_h','LocalDigitalOBTLead_h','GlobalCISPortraitLead_h','RegionalCISPortraitLead_h','GlobalCISHRFeedSpecialist_h','GDS_h','ActivityType_h','ComplexityScore_h','RecordHistory_h','DataSourceType_h','RecordStatus_h','GoLiveYear_h'];
+        this.columnsToDisplay_h = ['Select_Row_h','Client_h','RevenueID_h','Country_h','iMeet_Workspace_Title_h','Region_h','ProjectStatus_h','GlobalCISDQSLead_h','APAC_DQS_h','DQS_Import_h','DQS_Support_h','LATAM_DQS_h','NORAM_DQS_h','DQS_Operations_h','GlobalCISOBTLead_h','RegionalCISOBTLead_h','LocalDigitalOBTLead_h','GlobalCISPortraitLead_h','RegionalCISPortraitLead_h','GlobalCISHRFeedSpecialist_h','GDS_h','ActivityType_h','ComplexityScore_h','RecordHistory_C_h','DataSourceType_h','RecordStatus_h','GoLiveYear_h'];
       }
     }
     if(this.HideColumnsButtonName == "P"){
@@ -766,6 +957,7 @@ export class AutomatedCLRComponent implements OnInit {
       let isPipeline_statusAvailable = false;
       let isObtTypeAvailable = false;
       let isRegionAvailable = false;
+      let isPriorityAvailable = false;
       let isGDSAvailable = false;
       let isActivityTypeAvailable = false;
       let isOwnerShipAvailable = false;
@@ -853,6 +1045,16 @@ export class AutomatedCLRComponent implements OnInit {
       } else {
         isRegionAvailable = true;
       }
+      if (searchString.Priority.length) {
+        for (const d of searchString.Priority) {
+          if (data.Priority.toString().trim() == d) {
+            isPriorityAvailable = true;
+          }
+        }
+      } else {
+        isPriorityAvailable = true;
+      }
+      isPriorityAvailable
       if (searchString.GDS.length) {
         for (const d of searchString.GDS) {
           if (data.GDS.toString().trim() == d) {
@@ -1036,9 +1238,9 @@ export class AutomatedCLRComponent implements OnInit {
       } else {
         iseSowStatusAvailable = true;
       }
-      if (searchString.CheckComments.length) {
-        for (const d of searchString.CheckComments) {
-          if (data.CheckComments.toString().trim().includes(d)) {
+      if (searchString.DataQuality.length) {
+        for (const d of searchString.DataQuality) {
+          if (data.DataQuality.toString().trim().includes(d)) {
             isCheckComment_Available = true;
           }
         }
@@ -1059,6 +1261,7 @@ export class AutomatedCLRComponent implements OnInit {
         isServiceConfigurationAvailable &&
         isAccountCategoryAvailable &&
         isRegionAvailable &&
+        isPriorityAvailable &&
         isGDSAvailable &&
         isActivityTypeAvailable &&
         isOwnerShipAvailable &&
@@ -1079,6 +1282,7 @@ export class AutomatedCLRComponent implements OnInit {
         data.iMeet_Workspace_Title.toString().trim().toLowerCase().indexOf(searchString.iMeet_Workspace_Title.toLowerCase()) !== -1 &&
         data.CreatedDate_c.toString().trim().toLowerCase().indexOf(searchString.CreatedDate_c.toLowerCase()) !== -1 &&
         data.Pipeline_comments.toString().trim().toLowerCase().indexOf(searchString.Pipeline_comments.toLowerCase()) !== -1 &&
+        data.TXResourcing.toString().trim().toLowerCase().indexOf(searchString.TXResourcing.toLowerCase()) !== -1 &&
         data.Service_location.toString().trim().toLowerCase().indexOf(searchString.Service_location.toLowerCase()) !== -1 &&
         data.GlobalCISDQSLead.toString().trim().toLowerCase().indexOf(searchString.GlobalCISDQSLead.toLowerCase()) !== -1 &&
         data.APAC_DQS.toString().trim().toLowerCase().indexOf(searchString.APAC_DQS.toLowerCase()) !== -1 &&
@@ -1131,7 +1335,7 @@ export class AutomatedCLRComponent implements OnInit {
         data.RecordHistory_C.toString().trim().toLowerCase().indexOf(searchString.RecordHistory_C.toLowerCase()) !== -1 &&
         data.ComplexityScore.toString().trim().toLowerCase().indexOf(searchString.ComplexityScore.toLowerCase()) !== -1 &&
         data.Date_added_to_the_CLR_c.toString().trim().toLowerCase().indexOf(searchString.Date_added_to_the_CLR_c.toLowerCase()) !== -1
-        // data.CheckComments.toString().trim().toLowerCase().indexOf(searchString.CheckComments.toLowerCase()) !== -1
+        // data.DataQuality.toString().trim().toLowerCase().indexOf(searchString.DataQuality.toLowerCase()) !== -1
       )
     }
   }
@@ -1192,6 +1396,13 @@ export class AutomatedCLRComponent implements OnInit {
       this.FilteredVolume = this.dataSource.filteredData.map(t => t.RevenueVolumeUSD).reduce((acc,value) => acc + value,0).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3);
       this.FilteredCount = this.dataSource.filteredData.length;
     });
+    this.TXResourcingFilter.valueChanges.subscribe(value => {
+      this.UnselectallIDS();
+      this.filteredValues["TXResourcing"] = value;
+      this.dataSource.filter = JSON.stringify(this.filteredValues);
+      this.FilteredVolume = this.dataSource.filteredData.map(t => t.RevenueVolumeUSD).reduce((acc,value) => acc + value,0).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3);
+      this.FilteredCount = this.dataSource.filteredData.length;
+    })
     this.Service_configurationFilter.valueChanges.subscribe(value => {
       this.UnselectallIDS();
       this.filteredValues["Service_configuration"] = value;
@@ -1740,9 +1951,16 @@ export class AutomatedCLRComponent implements OnInit {
       this.FilteredVolume = this.dataSource.filteredData.map(t => t.RevenueVolumeUSD).reduce((acc,value) => acc + value,0).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3);
       this.FilteredCount = this.dataSource.filteredData.length;
     });
-    this.CheckCommentsFilter.valueChanges.subscribe(value => {
+    this.DataQualityFilter.valueChanges.subscribe(value => {
       this.UnselectallIDS();
-      this.filteredValues["CheckComments"] = value;
+      this.filteredValues["DataQuality"] = value;
+      this.dataSource.filter = JSON.stringify(this.filteredValues);
+      this.FilteredVolume = this.dataSource.filteredData.map(t => t.RevenueVolumeUSD).reduce((acc,value) => acc + value,0).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3);
+      this.FilteredCount = this.dataSource.filteredData.length;
+    });
+    this.PriorityFilter.valueChanges.subscribe(value => {
+      this.UnselectallIDS();
+      this.filteredValues["Priority"] = value;
       this.dataSource.filter = JSON.stringify(this.filteredValues);
       this.FilteredVolume = this.dataSource.filteredData.map(t => t.RevenueVolumeUSD).reduce((acc,value) => acc + value,0).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3);
       this.FilteredCount = this.dataSource.filteredData.length;
@@ -1762,6 +1980,7 @@ export class AutomatedCLRComponent implements OnInit {
       this.Implementation_TypeFilter.setValue("");
       this.Pipeline_statusFilter.setValue("");
       this.Pipeline_commentsFilter.setValue("");
+      this.TXResourcingFilter.setValue("");
       this.Service_configurationFilter.setValue("");
       this.Service_locationFilter.setValue("");
       this.GlobalCISDQSLeadFilter.setValue("");
@@ -1779,6 +1998,7 @@ export class AutomatedCLRComponent implements OnInit {
       this.OppVolume_cFilter.setValue("");
       this.RevenueVolumeUSDFilter.setValue("");
       this.RegionFilter.setValue("");
+      this.PriorityFilter.setValue("");
       this.CountryFilter.setValue("");
       this.OwnerShipFilter.setValue("");
       // this.GoLiveDate_cFilter.setValue("");
@@ -1839,7 +2059,7 @@ export class AutomatedCLRComponent implements OnInit {
       // this.RecordStatusFilter.setValue(["Active"]);
       this.DataSourceTypeFilter.setValue("");
       this.Date_added_to_the_CLR_cFilter.setValue("");
-      this.CheckCommentsFilter.setValue(["PM = Email ID","N-Active to be Updated","H-Hold/Reason Code Empty","Go-Live > today","Milestone Reason Code","Go-Live > 50 days","Start Date > Go-Live Date","Cycle Time Delay Code","Complexity Score"]);
+      this.DataQualityFilter.setValue(["PM = Email ID","N-Active to be Updated","H-Hold/Reason Code Empty","Go-Live > today","Milestone Reason Code","Go-Live > 50 days","Start Date > Go-Live Date","Cycle Time Delay Code"]);
       this.isLoading = false;
     })
   }
@@ -1877,69 +2097,69 @@ export class AutomatedCLRComponent implements OnInit {
           for(let i = 0;i<data.Data.length;i++){
             this.DataCLR[i].Select_Row = false;
             if(this.DataCLR[i].DataSourceType != "OldData" && (this.DataCLR[i].GlobalProjectManager.includes('@') || this.DataCLR[i].RegionalProjectManager.includes('@') || this.DataCLR[i].AssigneeFullName.includes('@'))){
-              this.DataCLR[i].CheckComments = "PM = Email ID Data Quality:-"+ '\n'+ '\n';
+              this.DataCLR[i].DataQuality = "PM = Email ID Data Quality:-"+ '\n'+ '\n';
               if(this.DataCLR[i].GlobalProjectManager.includes('@')){
-                this.DataCLR[i].CheckComments += "Global Project Manager name is an e-mail id. Please change in iMeet"+ '\n';
+                this.DataCLR[i].DataQuality += "Global Project Manager name is an e-mail id. Please change in iMeet"+ '\n';
               }else if(this.DataCLR[i].RegionalProjectManager.includes('@')){
-                this.DataCLR[i].CheckComments += "Regional Project Manager name is an e-mail id. Please change in iMeet"+ '\n';
+                this.DataCLR[i].DataQuality += "Regional Project Manager name is an e-mail id. Please change in iMeet"+ '\n';
               }else{
-                this.DataCLR[i].CheckComments += "Local Project Manager name is an e-mail id. Please change in iMeet"+ '\n';
+                this.DataCLR[i].DataQuality += "Local Project Manager name is an e-mail id. Please change in iMeet"+ '\n';
               }
             }else{
-              this.DataCLR[i].CheckComments = "---";
+              this.DataCLR[i].DataQuality = "---";
             }
             if(this.DataCLR[i].DataSourceType != "OldData" && this.DataCLR[i].ProjectStatus == "N-Active/No Date Confirmed" && new Date(this.DataCLR[i].GoLiveDate) < check2Date){
-              if(this.DataCLR[i].CheckComments == "---"){
-                this.DataCLR[i].CheckComments = "N-Active to be Updated Data Quality:-"+ '\n'+ '\n';
-                this.DataCLR[i].CheckComments += "Project Status is N-Active/No Date Confirmed and Go-Live is in the next 15 days"+ '\n';
+              if(this.DataCLR[i].DataQuality == "---"){
+                this.DataCLR[i].DataQuality = "N-Active to be Updated Data Quality:-"+ '\n'+ '\n';
+                this.DataCLR[i].DataQuality += "Project Status is N-Active/No Date Confirmed and Go-Live is in the next 15 days"+ '\n';
               }else{
-                this.DataCLR[i].CheckComments += "Project Status is N-Active/No Date Confirmed and Go-Live is in the next 15 days"+ '\n';
+                this.DataCLR[i].DataQuality += "Project Status is N-Active/No Date Confirmed and Go-Live is in the next 15 days"+ '\n';
               }
             }else{
             }
             if(this.DataCLR[i].DataSourceType != "OldData" && this.DataCLR[i].DataSourceType != "Ad-Hoc Digital Data" && this.DataCLR[i].ProjectStatus == "H-Hold" && this.DataCLR[i].Milestone__Reason_Code == "---"){
-              if(this.DataCLR[i].CheckComments == "---"){
-                this.DataCLR[i].CheckComments = "H-Hold/Reason Code Empty Data Quality:-"+ '\n'+ '\n';
-                this.DataCLR[i].CheckComments += "Project Status is H-Hold and Milestone Reason code is Blank"+ '\n';
+              if(this.DataCLR[i].DataQuality == "---"){
+                this.DataCLR[i].DataQuality = "H-Hold/Reason Code Empty Data Quality:-"+ '\n'+ '\n';
+                this.DataCLR[i].DataQuality += "Project Status is H-Hold and Milestone Reason code is Blank"+ '\n';
               }else{
-                this.DataCLR[i].CheckComments += "Project Status is H-Hold and Milestone Reason code is Blank"+ '\n';
+                this.DataCLR[i].DataQuality += "Project Status is H-Hold and Milestone Reason code is Blank"+ '\n';
               }
             }else{
             }
             if(this.DataCLR[i].DataSourceType != "OldData" && this.DataCLR[i].ProjectStatus == "C-Closed" && new Date(this.DataCLR[i].GoLiveDate) > new Date()){
-              if(this.DataCLR[i].CheckComments == "---"){
-                this.DataCLR[i].CheckComments = "Go-Live > today Data Quality:-"+ '\n'+ '\n';
-                this.DataCLR[i].CheckComments += "Project Status is C-Closed and Go-Live is greater than today"+ '\n';
+              if(this.DataCLR[i].DataQuality == "---"){
+                this.DataCLR[i].DataQuality = "Go-Live > today Data Quality:-"+ '\n'+ '\n';
+                this.DataCLR[i].DataQuality += "Project Status is C-Closed and Go-Live is greater than today"+ '\n';
               }else{
-                this.DataCLR[i].CheckComments += "Project Status is C-Closed and Go-Live is greater than today"+ '\n';
+                this.DataCLR[i].DataQuality += "Project Status is C-Closed and Go-Live is greater than today"+ '\n';
               }
             }else{
             }
             if(this.DataCLR[i].DataSourceType != "OldData" && this.DataCLR[i].ProjectStatus == "A-Active/Date Confirmed" && this.DataCLR[i].Milestone__Reason_Code != "---"){
-              if(this.DataCLR[i].CheckComments == "---"){
-                this.DataCLR[i].CheckComments = "Milestone Reason Code Data Quality:-"+ '\n'+ '\n';
-                this.DataCLR[i].CheckComments += "Project Status is A-Active/Date Confirmed and Milestone Reason code is not Blank"+ '\n';
+              if(this.DataCLR[i].DataQuality == "---"){
+                this.DataCLR[i].DataQuality = "Milestone Reason Code Data Quality:-"+ '\n'+ '\n';
+                this.DataCLR[i].DataQuality += "Project Status is A-Active/Date Confirmed and Milestone Reason code is not Blank"+ '\n';
               }else{
-                this.DataCLR[i].CheckComments += "Project Status is A-Active/Date Confirmed and Milestone Reason code is not Blank"+ '\n';
+                this.DataCLR[i].DataQuality += "Project Status is A-Active/Date Confirmed and Milestone Reason code is not Blank"+ '\n';
               }
             }else{
             }
             if(this.DataCLR[i].DataSourceType != "OldData" && this.DataCLR[i].ProjectStatus == "A-Active/Date Confirmed" && new Date(this.DataCLR[i].GoLiveDate) < check6Date){
-              if(this.DataCLR[i].CheckComments == "---"){
-                this.DataCLR[i].CheckComments = "Go-Live > 50 days Data Quality:-"+ '\n'+ '\n';
-                this.DataCLR[i].CheckComments += "Project Status is A-Active/Date Confirmed and Go-Live is more than 50 days in the past"+ '\n';
+              if(this.DataCLR[i].DataQuality == "---"){
+                this.DataCLR[i].DataQuality = "Go-Live > 50 days Data Quality:-"+ '\n'+ '\n';
+                this.DataCLR[i].DataQuality += "Project Status is A-Active/Date Confirmed and Go-Live is more than 50 days in the past"+ '\n';
               }else{
-                this.DataCLR[i].CheckComments += "Project Status is A-Active/Date Confirmed and Go-Live is more than 50 days in the past"+ '\n';
+                this.DataCLR[i].DataQuality += "Project Status is A-Active/Date Confirmed and Go-Live is more than 50 days in the past"+ '\n';
               }
             }else{
             }
             if(this.DataCLR[i].ProjectStart_ForCycleTime != null){
               if(this.DataCLR[i].ProjectStatus != "X-Cancelled" && this.DataCLR[i].DataSourceType != "OldData" && new Date(this.DataCLR[i].GoLiveDate) < new Date(this.DataCLR[i].ProjectStart_ForCycleTime)){
-                if(this.DataCLR[i].CheckComments == "---"){
-                  this.DataCLR[i].CheckComments = "Start Date > Go-Live Date Data Quality:-"+ '\n'+ '\n';
-                  this.DataCLR[i].CheckComments += "Project Start Date is greater than Go-Live Date"+ '\n';
+                if(this.DataCLR[i].DataQuality == "---"){
+                  this.DataCLR[i].DataQuality = "Start Date > Go-Live Date Data Quality:-"+ '\n'+ '\n';
+                  this.DataCLR[i].DataQuality += "Project Start Date is greater than Go-Live Date"+ '\n';
                 }else{
-                  this.DataCLR[i].CheckComments += "Project Start Date is greater than Go-Live Date"+ '\n';
+                  this.DataCLR[i].DataQuality += "Project Start Date is greater than Go-Live Date"+ '\n';
                 }
               }else{
               }
@@ -1947,33 +2167,32 @@ export class AutomatedCLRComponent implements OnInit {
             }
             if(this.DataCLR[i].DataSourceType != "OldData" && this.DataCLR[i].OwnerShip == "WO" && (this.DataCLR[i].ProjectStatus == "C-Closed" || this.DataCLR[i].ProjectStatus == "A-Active/Date Confirmed") && this.DataCLR[i].GoLiveYear == ((new Date()).getFullYear()+"")){
               if(this.DataCLR[i].CycleTimeCategories != "0" && this.DataCLR[i].CycleTimeCategories != "New Global/regional/local" && (this.DataCLR[i].Cycletimetarget < this.DataCLR[i].CycleTime) && (this.DataCLR[i].CycleTimeDelayCode == "---" || this.DataCLR[i].EltClientDelayDescription == "---")){
-                if(this.DataCLR[i].CheckComments == "---"){
-                  this.DataCLR[i].CheckComments = "Cycle Time Delay Code Data Quality:-"+ '\n'+ '\n';
-                  this.DataCLR[i].CheckComments += "Cycle Time is greater than Cycle time target. Please update the Delay code and Elt Client Delay Description"+ '\n';
+                if(this.DataCLR[i].DataQuality == "---"){
+                  this.DataCLR[i].DataQuality = "Cycle Time Delay Code Data Quality:-"+ '\n'+ '\n';
+                  this.DataCLR[i].DataQuality += "Cycle Time is greater than Cycle time target. Please update the Delay code and Elt Client Delay Description"+ '\n';
                 }else{
-                  this.DataCLR[i].CheckComments += "Cycle Time is greater than Cycle time target. Please update the Delay code and Elt Client Delay Description"+ '\n';
+                  this.DataCLR[i].DataQuality += "Cycle Time is greater than Cycle time target. Please update the Delay code and Elt Client Delay Description"+ '\n';
                 }
               }else{
               }
             }else{
             }
-            if(this.DataCLR[i].ActivityType == "---" && this.DataCLR[i].ComplexityScore > 0){
-              if(this.DataCLR[i].CheckComments == "---"){
-                this.DataCLR[i].CheckComments = "Complexity Score Data Quality:-"+ '\n'+ '\n';
-                this.DataCLR[i].CheckComments += "Complexity Score is greater than 0 when Activity Type is Not Assigned"+ '\n';
-              }else{
-                this.DataCLR[i].CheckComments += "Complexity Score is greater than 0 when Activity Type is Not Assigned"+ '\n';
-              }
-            }else{
-
-            }
+            // if(this.DataCLR[i].ActivityType == "---" && this.DataCLR[i].ComplexityScore > 0){
+            //   if(this.DataCLR[i].DataQuality == "---"){
+            //     this.DataCLR[i].DataQuality = "Complexity Score Data Quality:-"+ '\n'+ '\n';
+            //     this.DataCLR[i].DataQuality += "Complexity Score is greater than 0 when Activity Type is Not Assigned"+ '\n';
+            //   }else{
+            //     this.DataCLR[i].DataQuality += "Complexity Score is greater than 0 when Activity Type is Not Assigned"+ '\n';
+            //   }
+            // }else{
+            // }
             // if(this.DataCLR[i].TaskStatus == "todo" && this.DataCLR[i].ProjectStart_ForCycleTime != null){
             //   if(new Date(this.DataCLR[i].ProjectStart_ForCycleTime) > new Date() && check10Date > new Date(this.DataCLR[i].ProjectStart_ForCycleTime)){
-            //     if(this.DataCLR[i].CheckComments == "---"){
-            //       this.DataCLR[i].CheckComments = "Data Quality :-"+ '\n'+ '\n';
-            //       this.DataCLR[i].CheckComments += "Project Start Task Status is To-Do and Project Due Date is greater than today and less than today plus 10 days"+ '\n';
+            //     if(this.DataCLR[i].DataQuality == "---"){
+            //       this.DataCLR[i].DataQuality = "Data Quality :-"+ '\n'+ '\n';
+            //       this.DataCLR[i].DataQuality += "Project Start Task Status is To-Do and Project Due Date is greater than today and less than today plus 10 days"+ '\n';
             //     }else{
-            //       this.DataCLR[i].CheckComments += "Project Start Task Status is To-Do and Project Due Date is greater than today and less than today plus 10 days"+ '\n';
+            //       this.DataCLR[i].DataQuality += "Project Start Task Status is To-Do and Project Due Date is greater than today and less than today plus 10 days"+ '\n';
             //     }
             //   }else{
             //   }
@@ -2019,7 +2238,6 @@ export class AutomatedCLRComponent implements OnInit {
             }else{
               this.DataCLR[i].New_Business_volume__US___c = this.DataCLR[i].New_Business_volume__US__.toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3)
             }
-            
             if(this.DataCLR[i].RecordHistory == null || (this.DataCLR[i].ProjectStatus != "EP-Early Potential" && this.DataCLR[i].ProjectStatus != "HP-High Potential" && this.DataCLR[i].ProjectStatus != "P-Pipeline")){
               this.DataCLR[i].RecordHistory_C =  "---";
             }else{
@@ -2093,6 +2311,7 @@ export class AutomatedCLRComponent implements OnInit {
             this.Implementation_TypeFilter.setValue(this.SavedFilters.Implementation_Type);
             this.Pipeline_statusFilter.setValue(this.SavedFilters.Pipeline_status);
             this.Pipeline_commentsFilter.setValue(this.SavedFilters.Pipeline_comments);
+            this.TXResourcingFilter.setValue(this.SavedFilters.TXResourcing);
             this.Service_configurationFilter.setValue(this.SavedFilters.Service_configuration);
             this.Service_locationFilter.setValue(this.SavedFilters.Service_location);
             this.GlobalCISDQSLeadFilter.setValue(this.SavedFilters.GlobalCISDQSLead);
@@ -2110,6 +2329,7 @@ export class AutomatedCLRComponent implements OnInit {
             this.OppVolume_cFilter.setValue(this.SavedFilters.OppVolume);
             this.RevenueVolumeUSDFilter.setValue(this.SavedFilters.RevenueVolumeUSD);
             this.RegionFilter.setValue(this.SavedFilters.Region);
+            this.PriorityFilter.setValue(this.SavedFilters.Priority);
             this.CountryFilter.setValue(this.SavedFilters.Country);
             this.OwnerShipFilter.setValue(this.SavedFilters.OwnerShip);
             // this.GoLiveDate_cFilter.setValue(this.SavedFilters.GoLiveDate_c);
@@ -2170,18 +2390,22 @@ export class AutomatedCLRComponent implements OnInit {
             // this.RecordStatusFilter.setValue(this.SavedFilters.RecordStatus);
             this.DataSourceTypeFilter.setValue(this.SavedFilters.DataSourceType);
             this.Date_added_to_the_CLR_cFilter.setValue(this.SavedFilters.Date_added_to_the_CLR_c);
-            this.CheckCommentsFilter.setValue(this.SavedFilters.CheckComments);
+            this.DataQualityFilter.setValue(this.SavedFilters.DataQuality);
           }
           this.FilteredVolume = this.dataSource.filteredData.map(t => t.RevenueVolumeUSD).reduce((acc,value) => acc + value,0).toLocaleString("en-US",{style:"currency", currency:"USD"}).slice(0,-3);
           this.FilteredCount = this.dataSource.filteredData.length;
           this.isLoading = false;
           this.dashboard.ShowSpinnerHandler(false);
-        }else{
+        }else
+        {
           this.isLoading = false;
           alert("Something went wrong,Please try again later");
           this.dashboard.ShowSpinnerHandler(false);
         }
-      },error => (this.isLoading = false))
+      },error => {
+        console.log(error),
+        this.isLoading = false
+      })
     }
   }
   ResetFilter(){
@@ -2199,6 +2423,7 @@ export class AutomatedCLRComponent implements OnInit {
       this.Implementation_TypeFilter.setValue("");
       this.Pipeline_statusFilter.setValue("");
       this.Pipeline_commentsFilter.setValue("");
+      this.TXResourcingFilter.setValue("");
       this.Service_configurationFilter.setValue("");
       this.GlobalCISDQSLeadFilter.setValue("");
       this.APAC_DQSFilter.setValue("");
@@ -2215,6 +2440,7 @@ export class AutomatedCLRComponent implements OnInit {
       this.UpdateOn_cFilter.setValue("");
       this.OppVolume_cFilter.setValue("");
       this.RegionFilter.setValue("");
+      this.PriorityFilter.setValue("");
       this.CountryFilter.setValue("");
       this.OwnerShipFilter.setValue("");
       // this.GoLiveDate_cFilter.setValue("");
@@ -2275,12 +2501,12 @@ export class AutomatedCLRComponent implements OnInit {
       // this.RecordStatusFilter.setValue(["Active"]);
       this.DataSourceTypeFilter.setValue("");
       this.Date_added_to_the_CLR_cFilter.setValue("");
-      this.CheckCommentsFilter.setValue("");
+      this.DataQualityFilter.setValue("");
       // set showloader to false to hide loading div from view after 5 seconds
       this.isLoading = false;
     });
     // this.isLoading = false;
-  }     
+  }
   private subscription: Subscription;
   private timer: Observable<any>;
   openDialog(): void {
@@ -2441,7 +2667,6 @@ export class AutomatedCLRComponent implements OnInit {
   }
   exportCLR(){
     this.dashboard.ShowSpinnerHandler(true);
-
     var options = {
       filename: './streamed-workbook.xlsx',
       useStyles: true,
@@ -2457,10 +2682,12 @@ export class AutomatedCLRComponent implements OnInit {
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}, numFmt: '0'}, header: 'Revenue ID', key: 'RevenueID'},
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'Country', key: 'Country'},
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'iMeet Workspace Title', key: 'iMeet_Workspace_Title'},
+      { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'Priority', key: 'Priority'},
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'Implementation Type', key: 'Implementation_Type'},
       // { width: 20, header: 'Country Code', key: 'CountryCode'},
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'Pipeline Status', key: 'Pipeline_status'},
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'Pipeline Comments', key: 'Pipeline_comments'},
+      { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'TX Resourcing', key: 'TXResourcing'},
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'Service Location', key: 'Service_location'},
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'Service Configuration', key: 'Service_configuration'},
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'OBT Type', key: 'OBT_Reseller___Direct'},
@@ -2475,13 +2702,13 @@ export class AutomatedCLRComponent implements OnInit {
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'Ownership (Revenue)', key: 'OwnerShip'},
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}, numFmt: 'dd/MMM/yyyy'}, header: 'Project Start Date', key: 'ProjectStart_ForCycleTime'},
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}, numFmt: 'dd/MMM/yyyy'}, header: 'Go Live Date', key: 'GoLiveDate'},
+      { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}, numFmt: '0'}, header: '% Completed', key: 'PerCompleted'},
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}, numFmt: '0'}, header: 'Cycle Time', key: 'CycleTime'},
       { width: 20, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'Cycle Time Categories', key: 'CycleTimeCategories'},
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'Cycle Time Delay Code', key: 'CycleTimeDelayCode'},
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'Elt Client Delay Description', key: 'EltClientDelayDescription'},
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'Project Status', key: 'ProjectStatus'},
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'Milestone Reason Code', key: 'Milestone__Reason_Code'},
-      { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}, numFmt: '0'}, header: '% Completed', key: 'PerCompleted'},
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'Country Status', key: 'CountryStatus'},
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'Project Level', key: 'ProjectLevel'},
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}, numFmt: 'dd/MMM/yyyy'}, header: 'Completed Date', key: 'CompletedDate'},
@@ -2538,7 +2765,7 @@ export class AutomatedCLRComponent implements OnInit {
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'Record Status', key: 'RecordStatus'},
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'Record History', key: 'RecordHistory'},
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'Datasource Type', key: 'DataSourceType'},
-      { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'Data Quality', key: 'CheckComments'},  
+      { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'Data Quality', key: 'DataQuality'},  
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'Go Live Month', key: 'GoLiveMonth'},
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}}, header: 'Quarter', key: 'Quarter'},
       { width: 30, style : {alignment : { vertical: 'middle', horizontal: 'center'}, numFmt: '0'}, header: 'Go Live Year', key: 'GoLiveYear'},
@@ -2546,8 +2773,8 @@ export class AutomatedCLRComponent implements OnInit {
     ]
     worksheet.properties.defaultRowHeight = 20;
     var eSowColumns = ['Service_location','Service_configuration','OBT_Reseller___Direct','OBTAdoptionRate','GDS','AccountCategory','SOWStatus','ImplementationReady'];
-    var ManualEntryColumns = ['Implementation_Type','Pipeline_status','Pipeline_comments','ExpectedDecisionDate','Assignment_date','ResourseRequestedDate','UpdateOn','Project_Effort'];
-    var DashboardColumns = ['CLRID','RecordStatus','RecordHistory_C','DataSourceType','CheckComments','GoLiveMonth','Quarter','GoLiveYear','YearMonth'];
+    var ManualEntryColumns = ['Priority','Implementation_Type','Pipeline_status','Pipeline_comments','TXResourcing','ExpectedDecisionDate','Assignment_date','ResourseRequestedDate','UpdateOn','Project_Effort'];
+    var DashboardColumns = ['CLRID','RecordStatus','RecordHistory_C','DataSourceType','DataQuality','GoLiveMonth','Quarter','GoLiveYear','YearMonth'];
     var iMeetDigitalColumns = ['GlobalCISDQSLead','GlobalCISOBTLead','RegionalCISOBTLead','LocalDigitalOBTLead','GlobalCISPortraitLead','RegionalCISPortraitLead','GlobalCISHRFeedSpecialist','ActivityType','ComplexityScore','APAC_DQS','DQS_Import','DQS_Support','LATAM_DQS','NORAM_DQS','DQS_Operations'];
     // var iMeetP = ['iMeet_Workspace_Title','ProjectStart_ForCycleTime','GoLiveDate','CycleTime','CycleTimeCategories','ProjectStatus','Milestone__Reason_Code','PerCompleted','CountryStatus','ProjectLevel','CompletedDate','GlobalProjectManager','RegionalProjectManager','GlobalCISDQSLead','MilestoneTitle','Group_Name','Milestone__Project_Notes','Milestone__Closed_Loop_Owner','Workspace__ELT_Overall_Status','Workspace__ELT_Overall_Comments'];
     var CRMPSDColumns = ['Client','RevenueID','Country','OppVolume','RevenueVolumeUSD','Region','OwnerShip','Customer_Row_ID','Opportunity_ID','AccountOwner','Opportunity_Type','Revenue_Status','Revenue_Opportunity_Type','Opportunity_Owner','Opportunity_Category','Revenue_Total_Transactions','Line_Win_Probability','Implementation_Fee__PSD_','Next_Step','AwardedDate','DataDescription','Date_added_to_the_CLR','CreatedDate','Sales_Stage_Name'];
@@ -2636,9 +2863,11 @@ export class AutomatedCLRComponent implements OnInit {
         RevenueID: o.RevenueID,
         Country : o.Country == "---" ? "" : o.Country,
         iMeet_Workspace_Title : o.iMeet_Workspace_Title == "---" ? "" : o.iMeet_Workspace_Title,
+        Priority : o.Priority == "---" ? "" : o.Priority,
         Implementation_Type : o.Implementation_Type == "---" ? "" : o.Implementation_Type,
         Pipeline_status : o.Pipeline_status == "---" ? "" : o.Pipeline_status,
         Pipeline_comments : o.Pipeline_comments == "---" ? "" : o.Pipeline_comments,
+        TXResourcing : o.TXResourcing == "---" ? "" : o.TXResourcing,
         Service_location : o.Service_location == "---" ? "" : o.Service_location,
         Service_configuration : o.Service_configuration == "---" ? "" : o.Service_configuration,
         OBT_Reseller___Direct : o.OBT_Reseller___Direct == "---" ? "" : o.OBT_Reseller___Direct,
@@ -2713,7 +2942,7 @@ export class AutomatedCLRComponent implements OnInit {
         ImplementationReady : o.ImplementationReady == "---" ? "" : o.ImplementationReady,
         RecordStatus : o.RecordStatus,
         DataSourceType : o.DataSourceType == "---" ? "" : o.DataSourceType,
-        CheckComments : o.CheckComments == "---" ? "" : o.CheckComments,
+        DataQuality : o.DataQuality == "---" ? "" : o.DataQuality,
         GoLiveMonth :  o.GoLiveMonth == "---" ? "" : o.GoLiveMonth,
         Quarter :  o.Quarter == "---" ? "" : o.Quarter,
         GoLiveYear : o.GoLiveYear == "---" ? "" : o.GoLiveYear,
@@ -2777,10 +3006,12 @@ export class AutomatedCLRComponent implements OnInit {
         CLRID : this.dataSource.data.filter(x => x.Select_Row == true).length,
         //iMeet_Workspace_Title : "",
         //Date_added_to_the_CLR : null,
+        Priority : "",
         Implementation_Type : "",
         //CLR_Country : "",
         Pipeline_status : "",
         Pipeline_comments : "",
+        TXResourcing : "",
         // Service_configuration : "",
         // OBT_Reseller___Direct : "",
         //Servicing_location : "",
@@ -2814,7 +3045,7 @@ export class AutomatedCLRComponent implements OnInit {
       });
     }
   }
-  RowSelected(j,CLRID : number,ManualID : number,Client : string,iMeet_Workspace_Title : string,Date_added_to_the_CLR : Date,Implementation_Type : string,CLR_Country : string,Pipeline_status : string,Pipeline_comments : string,Service_configuration : string,OBT_Reseller___Direct : string,Servicing_location : string,Assignment_date : any,ResourseRequestedDate : any,New_Business_volume__US__ : number,RevenueID : number,Implementation_Fee__PSD_ : number,EMEA_Country_to_charge : string,EMEA_Client : string,EMEA_OBT_standard_fee : number,EMEA_Included_for_accrual : string,EMEA_Accrual_date : Date,EMEA_Scope_description : string,EMEA_Billing_notes : string,Manual_Entry__Wave_2__Wave_3__etc_ : string,Project_Effort : number,Priority : number,Resource_Status : string,Global_Project_Manager_replacement : string,Regional_Project_Manager_replacement : string,Milestone__Assignee__Full_Name_replacement : string,Global_CIS_OBT_Lead_replacement : string,Global_CIS_HR_Feed_Specialist_replacement : string,Global_CIS_Portrait_Lead_replacement : string,Global_CIS_RoomIT_Integration_Lead_replacement : string,GoLiveDate :any,ProjectStatus : string,ProjectLevel : string,GlobalProjectManager : string,RegionalProjectManager : string,AssigneeFullName : string,RecordStatus : string,DataSourceType : string,ExpectedDecisionDate : any)
+  RowSelected(j,CLRID : number,ManualID : number,Client : string,iMeet_Workspace_Title : string,Date_added_to_the_CLR : Date,Implementation_Type : string,CLR_Country : string,Pipeline_status : string,Pipeline_comments : string,TXResourcing : string,Service_configuration : string,OBT_Reseller___Direct : string,Servicing_location : string,Assignment_date : any,ResourseRequestedDate : any,New_Business_volume__US__ : number,RevenueID : number,Implementation_Fee__PSD_ : number,EMEA_Country_to_charge : string,EMEA_Client : string,EMEA_OBT_standard_fee : number,EMEA_Included_for_accrual : string,EMEA_Accrual_date : Date,EMEA_Scope_description : string,EMEA_Billing_notes : string,Manual_Entry__Wave_2__Wave_3__etc_ : string,Project_Effort : number,Priority : string,Resource_Status : string,Global_Project_Manager_replacement : string,Regional_Project_Manager_replacement : string,Milestone__Assignee__Full_Name_replacement : string,Global_CIS_OBT_Lead_replacement : string,Global_CIS_HR_Feed_Specialist_replacement : string,Global_CIS_Portrait_Lead_replacement : string,Global_CIS_RoomIT_Integration_Lead_replacement : string,GoLiveDate :any,ProjectStatus : string,ProjectLevel : string,GlobalProjectManager : string,RegionalProjectManager : string,AssigneeFullName : string,RecordStatus : string,DataSourceType : string,ExpectedDecisionDate : any)
   {
     if(localStorage.getItem('AutomatedFilters') == null){
       localStorage.setItem('AutomatedFilters',JSON.stringify(this.filteredValues));
@@ -2830,9 +3061,11 @@ export class AutomatedCLRComponent implements OnInit {
         ManualID : ManualID,
         Client : Client,
         CLRID : CLRID+"",
+        Priority : Priority,
         Implementation_Type : Implementation_Type,
         Pipeline_status : Pipeline_status,
         Pipeline_comments : Pipeline_comments,
+        TXResourcing : TXResourcing,
         ExpectedDecisionDate : ExpectedDecisionDate == "---" ? null : ExpectedDecisionDate,
         Assignment_date : Assignment_date == "---" ? null : Assignment_date,
         ResourseRequestedDate : ResourseRequestedDate == "---" ? null : ResourseRequestedDate,
@@ -2869,6 +3102,14 @@ export class AutomatedCLRComponent implements OnInit {
               if(result[0].Pipeline_comments == null || result[0].Pipeline_comments == undefined){
               }else{
                 this.dataSource.data[i].Pipeline_comments = result[0].Pipeline_comments;
+              }
+              if(result[0].Priority == null || result[0].Priority == undefined){
+              }else{
+                this.dataSource.data[i].Priority = result[0].Priority;
+              }
+              if(result[0].TXResourcing == null || result[0].TXResourcing == undefined){
+              }else{
+                this.dataSource.data[i].TXResourcing = result[0].TXResourcing;
               }
               // if(result[0].OBT_Reseller___Direct == null || result[0].OBT_Reseller___Direct == undefined){
               // }else{
@@ -2915,6 +3156,14 @@ export class AutomatedCLRComponent implements OnInit {
               if(result[0].Pipeline_comments == null || result[0].Pipeline_comments == undefined){
               }else{
                 this.dataSource.data[i].Pipeline_comments = result[0].Pipeline_comments;
+              }
+              if(result[0].Priority == null || result[0].Priority == undefined){
+              }else{
+                this.dataSource.data[i].Priority = result[0].Priority;
+              }
+              if(result[0].TXResourcing == null || result[0].TXResourcing == undefined){
+              }else{
+                this.dataSource.data[i].TXResourcing = result[0].TXResourcing;
               }
               if(result[0].OBT_Reseller___Direct == null || result[0].OBT_Reseller___Direct == undefined){
               }else{
@@ -3000,12 +3249,10 @@ export class AutomatedCLRComponent implements OnInit {
     });
   }
   GenerateTracker(){
-    // this.dashboard.ShowSpinnerHandler(true);
     this.service.GenerateTracker().subscribe(data=>{
-      // this.dashboard.ShowSpinnerHandler(false);
     })
   }
-  RowSelectedDigitalTeam(j,CLRID:string,DTID : string,RevenueID : number,ProjectStatus : string,GlobalCISDQSLead : string,GlobalCISOBTLead : string,RegionalCISOBTLead : string,LocalDigitalOBTLead : string,GlobalCISPortraitLead : string,RegionalCISPortraitLead : string,GlobalCISHRFeedSpecialist : string,GDS : string,ActivityType : string,ComplexityScore : number,Client : string,Country : string,Region : string,GoLiveDate : Date,ProjectStart_ForCycleTime : Date,Pipeline_comments : string,RecordStatus : string){
+  RowSelectedDigitalTeam(j,CLRID:string,DTID : string,RevenueID : number,ProjectStatus : string,GlobalCISDQSLead : string,GlobalCISOBTLead : string,RegionalCISOBTLead : string,LocalDigitalOBTLead : string,GlobalCISPortraitLead : string,RegionalCISPortraitLead : string,GlobalCISHRFeedSpecialist : string,GDS : string,ActivityType : string,ComplexityScore : number,Client : string,Country : string,Region : string,GoLiveDate : Date,ProjectStart_ForCycleTime : Date,ELT_comments : string,RecordStatus : string,Priority : string,Pipeline_comments : string){
     if(localStorage.getItem('AutomatedFilters') == null){
       localStorage.setItem('AutomatedFilters',JSON.stringify(this.filteredValues));
     }else{
@@ -3022,7 +3269,7 @@ export class AutomatedCLRComponent implements OnInit {
         GoLiveDate : GoLiveDate,
         Country : Country,
         Region : Region,
-        Comments : Pipeline_comments,
+        Comments : ELT_comments,
         ProjectStatus : ProjectStatus,
         GlobalDQSLead : GlobalCISDQSLead,
         GlobalCISOBTLead : GlobalCISOBTLead,
@@ -3035,6 +3282,8 @@ export class AutomatedCLRComponent implements OnInit {
         ComplexityScore : ComplexityScore+"",
         ActivityType : ActivityType,
         Status : RecordStatus,
+        Priority : Priority,
+        Pipeline_comments : Pipeline_comments,
       }
       this.NgIfAutomatedCLR = false;
       this.NgIfAdhocDisplay = true;
@@ -3130,13 +3379,13 @@ export class AutomatedCLRComponent implements OnInit {
   }
   checkUncheckDataQuality(){
     if(this.masterDataQuality == true){
-      this.CheckCommentsFilter.setValue(this.DatQualityIssueList);
+      this.DataQualityFilter.setValue(this.DatQualityIssueList);
     }else{
-      this.CheckCommentsFilter.setValue("");
+      this.DataQualityFilter.setValue("");
     }
   }
   onDataQualitychange(){
-    if(this.DatQualityIssueList.length == this.CheckCommentsFilter.value.length){
+    if(this.DatQualityIssueList.length == this.DataQualityFilter.value.length){
       this.masterDataQuality = true;
     }else{
       this.masterDataQuality = false;
@@ -3210,6 +3459,20 @@ export class AutomatedCLRComponent implements OnInit {
       this.RegionFilter.setValue(this.RegionList);
     }else{
       this.RegionFilter.setValue("");
+    }
+  }
+  onPrioritychange(){
+    if(this.PriorityList.length == this.PriorityFilter.value.length){
+      this.masterPriority = true;
+    }else{
+      this.masterPriority = false;
+    }
+  }
+  checkUncheckPriority(){
+    if(this.masterPriority == true){
+      this.PriorityFilter.setValue(this.PriorityList);
+    }else{
+      this.PriorityFilter.setValue("");
     }
   }
   checkUncheckGoLiveYear(){
@@ -3556,6 +3819,8 @@ export class ReplicateDailog {
   Implementation_Type : string;
   Pipeline_status : string;
   Pipeline_comments : string;
+  TXResourcing : Date;
+  Priority : string;
   // Service_configuration : string;
   // OBT_Reseller___Direct = new FormControl();
   dateAssignment : Date;
@@ -3589,7 +3854,7 @@ export class ReplicateDailog {
   GManagerList : FilterGlobalProjectManager[];
   RManagerList : FilterGlobalProjectManager[];
   LManagerList : FilterGlobalProjectManager[];
-  ImpTypechecked : boolean;PStatuschecked : boolean;PCommentschecked : boolean;
+  ImpTypechecked : boolean;PStatuschecked : boolean;PCommentschecked : boolean;TXResourcingchecked : boolean;Prioritychecked : boolean;
   OBTResellerchecked : boolean;ExpectedDecisionDatechecked : boolean;
   AssignmentDatechecked : boolean;ResourceRequestedDatechecked : boolean;ProjectEffortchecked : boolean;Statuschecked : boolean;
   AssignePersonchecked : boolean;RegionalManagerchecked : boolean;GlobalManagerchecked : boolean;GoLiveDatechecked : boolean;
@@ -3936,6 +4201,7 @@ export class ReplicateDailog {
     this.Selectallchecked = false;
     this.SelectallcheckedDigital = false;
     this.ImpTypechecked = false;
+    this.Prioritychecked = false;
     this.PStatuschecked = false;
     this.GoLiveDatechecked = false;
     this.GlobalManagerchecked = false;
@@ -3974,6 +4240,8 @@ export class ReplicateDailog {
       this.OBTResellerchecked = true;
       this.ExpectedDecisionDatechecked = true;
       this.AssignmentDatechecked = true;
+      this.Prioritychecked = true;
+      this.TXResourcingchecked = true;
       this.ResourceRequestedDatechecked = true;
       this.ProjectEffortchecked = true;
       this.Statuschecked = true;
@@ -3991,6 +4259,8 @@ export class ReplicateDailog {
       this.OBTResellerchecked = false;
       this.ExpectedDecisionDatechecked = false;
       this.AssignmentDatechecked = false;
+      this.Prioritychecked = false;
+      this.TXResourcingchecked = false;
       this.ResourceRequestedDatechecked = false;
       this.ProjectEffortchecked = false;
       this.Statuschecked = false;
@@ -4081,6 +4351,14 @@ export class ReplicateDailog {
       this.ErrorMessage +="Please Uncheck the Pipeline Comments or Enter a value in Text Box" + '\n';
       this.Errors = this.Errors + 1;
     }
+    // if(this.TXResourcingchecked == true && this.TXResourcing == null){
+    //   this.ErrorMessage +="Please Uncheck the TXResourcing or Select a value in Date Field" + '\n';
+    //   this.Errors = this.Errors + 1;
+    // }
+    if(this.Prioritychecked == true && this.Priority == null){
+      this.ErrorMessage +="Please Uncheck the Priority or Select a value from dropdown" + '\n';
+      this.Errors = this.Errors + 1;
+    }
     if(this.GlobalCISOBTLeadchecked == true && this.GlobalCISOBTLead.value == null){
       this.ErrorMessage +="Please Uncheck the Global CIS OBT Lead or Select a value from dropdown" + '\n';
       this.Errors = this.Errors + 1;
@@ -4124,7 +4402,7 @@ export class ReplicateDailog {
       alert(this.ErrorMessage);
     }
   }
-  DateGo_Live_R;Date;R_R_Date;E_D_Date;
+  DateGo_Live_R;Date;R_R_Date;E_D_Date;TX_Resourcing;
   OnSaveClick(){
     this.Errors = 0;
     this.ErrorChecks();
@@ -4153,6 +4431,10 @@ export class ReplicateDailog {
         }else{
           this.Date = this.datepipe.transform(this.dateAssignment, "MM-dd-yyyy")+"";
         }
+        if(this.TXResourcing == null){
+        }else{
+        this.TX_Resourcing = this.datepipe.transform(this.TXResourcing,"MM-yyyy")+"";
+        }
         if(this.dateResourceRequested == null){
           this.R_R_Date = null;
         }else{
@@ -4162,6 +4444,12 @@ export class ReplicateDailog {
           this.E_D_Date = null;
         }else{
           this.E_D_Date = this.datepipe.transform(this.dateExpectedDecision, "MM-dd-yyyy")+"";
+        }
+        var TX_Resourcing
+        if(this.TXResourcing == null || this.TXResourcing == undefined){
+          TX_Resourcing = "---";
+        }else{
+          TX_Resourcing = "OK for TX "+this.datepipe.transform(this.TXResourcing, "MM-yyyy")+"";
         }
         for(let i = 0;i<this.Data_CLR.length;i++){
           if(revids.includes(this.Data_CLR[i].Revenue_ID)){
@@ -4174,6 +4462,7 @@ export class ReplicateDailog {
             if(this.PCommentschecked){
               this.Data_CLR[i].Pipeline_comments = this.Pipeline_comments;
             }
+            
             // if(result[0].OBT_Reseller___Direct == null || result[0].OBT_Reseller___Direct == undefined){
             // }else{
             //   this.Data_CLR[i].OBT_Reseller___Direct = result[0].OBT_Reseller___Direct;
@@ -4209,6 +4498,12 @@ export class ReplicateDailog {
             if(this.AssignmentDatechecked){
               this.Data_CLR[i].Assignment_date_c = this.Date;
             }
+            if(this.Prioritychecked){
+              this.Data_CLR[i].Priority = this.Priority;
+            }
+            if(this.TXResourcingchecked){
+              this.Data_CLR[i].TXResourcing = TX_Resourcing;
+            }
             if(this.ResourceRequestedDatechecked){
               this.Data_CLR[i].ResourseRequestedDate_c = this.R_R_Date;
             }
@@ -4240,9 +4535,11 @@ export class ReplicateDailog {
         }
         this.service.ReplicatingManualData(RevID,
         "",
+        this.Priority,
         this.Implementation_Type,
         this.Pipeline_status,
         this.Pipeline_comments,
+        TX_Resourcing,
         // this.Service_configuration,
         // this.OBT_Reseller___Direct.value,
         this.E_D_Date,
@@ -4255,9 +4552,11 @@ export class ReplicateDailog {
         this.GlobalManager_R.value,
         this.RegionalManager_R.value,
         this.AssignePerson_R.value,
+        this.Prioritychecked,
         this.ImpTypechecked,
         this.PStatuschecked,
         this.PCommentschecked,
+        this.TXResourcingchecked,
         // this.ServiceConfigchecked,
         // this.OBTResellerchecked,
         this.ExpectedDecisionDatechecked,
@@ -4299,28 +4598,38 @@ export class ReplicateDailog {
   Data_CLR : DataCLR[];
   DataCLR : DataCLR[];
   OnApplyClick(){
-      this.DataCLR = this.DataCLR.filter(x => x.RevenueID == this.ManualRevenueID+"");
-      this.Implementation_Type = this.DataCLR[0].Implementation_Type;
-      this.Pipeline_status = this.DataCLR[0].Pipeline_status;
-      this.Pipeline_comments = this.DataCLR[0].Pipeline_comments;
-      this.dateExpectedDecision = this.DataCLR[0].ExpectedDecisionDate_c == "---" ? null : new Date(this.DataCLR[0].ExpectedDecisionDate_c);
-      this.dateAssignment = this.DataCLR[0].Assignment_date_c == "---" ? null : new Date(this.DataCLR[0].Assignment_date_c);
-      this.dateResourceRequested = this.DataCLR[0].ResourseRequestedDate_c == "---" ? null : new Date(this.DataCLR[0].ResourseRequestedDate_c);
-      this.DateGolive_R = this.DataCLR[0].GoLiveDate;
-      this.Project_Effort = this.DataCLR[0].Project_Effort;
-      this.ProjectLevel = this.DataCLR[0].ProjectLevel;
-      this.Record_Status = this.DataCLR[0].RecordStatus;
-      this.GlobalManager_R.setValue(this.DataCLR[0].GlobalProjectManager);
-      this.RegionalManager_R.setValue(this.DataCLR[0].RegionalProjectManager);
-      this.AssignePerson_R.setValue(this.DataCLR[0].AssigneeFullName);
-      this.GlobalCISOBTLead.setValue(this.DataCLR[0].GlobalCISOBTLead);
-      this.RegionalCISOBTLead.setValue(this.DataCLR[0].RegionalCISOBTLead);
-      this.LocalDigitalOBTLead.setValue(this.DataCLR[0].LocalDigitalOBTLead);
-      this.GlobalCISPortraitLead.setValue(this.DataCLR[0].GlobalCISPortraitLead);
-      this.RegionalCISPortraitLead.setValue(this.DataCLR[0].RegionalCISPortraitLead);
-      this.GlobalCISHRFeedSpecialist.setValue(this.DataCLR[0].GlobalCISHRFeedSpecialist);
-      this.ActivityType.setValue(this.DataCLR[0].ActivityType);
-      this.ComplexityScore = this.DataCLR[0].ComplexityScore;
+    this.DataCLR = this.DataCLR.filter(x => x.RevenueID == this.ManualRevenueID+"");
+    this.Priority = this.DataCLR[0].Priority;
+    this.Implementation_Type = this.DataCLR[0].Implementation_Type;
+    this.Pipeline_status = this.DataCLR[0].Pipeline_status;
+    this.Pipeline_comments = this.DataCLR[0].Pipeline_comments;
+    // this.TXResourcing = this.DataCLR[0].TXResourcing;
+    this.dateExpectedDecision = this.DataCLR[0].ExpectedDecisionDate_c == "---" ? null : new Date(this.DataCLR[0].ExpectedDecisionDate_c);
+    this.dateAssignment = this.DataCLR[0].Assignment_date_c == "---" ? null : new Date(this.DataCLR[0].Assignment_date_c);
+    this.dateResourceRequested = this.DataCLR[0].ResourseRequestedDate_c == "---" ? null : new Date(this.DataCLR[0].ResourseRequestedDate_c);
+    this.DateGolive_R = this.DataCLR[0].GoLiveDate;
+    this.Project_Effort = this.DataCLR[0].Project_Effort;
+    this.ProjectLevel = this.DataCLR[0].ProjectLevel;
+    this.Record_Status = this.DataCLR[0].RecordStatus;
+    this.GlobalManager_R.setValue(this.DataCLR[0].GlobalProjectManager);
+    this.RegionalManager_R.setValue(this.DataCLR[0].RegionalProjectManager);
+    this.AssignePerson_R.setValue(this.DataCLR[0].AssigneeFullName);
+    this.GlobalCISOBTLead.setValue(this.DataCLR[0].GlobalCISOBTLead);
+    this.RegionalCISOBTLead.setValue(this.DataCLR[0].RegionalCISOBTLead);
+    this.LocalDigitalOBTLead.setValue(this.DataCLR[0].LocalDigitalOBTLead);
+    this.GlobalCISPortraitLead.setValue(this.DataCLR[0].GlobalCISPortraitLead);
+    this.RegionalCISPortraitLead.setValue(this.DataCLR[0].RegionalCISPortraitLead);
+    this.GlobalCISHRFeedSpecialist.setValue(this.DataCLR[0].GlobalCISHRFeedSpecialist);
+    this.ActivityType.setValue(this.DataCLR[0].ActivityType);
+    this.ComplexityScore = this.DataCLR[0].ComplexityScore;
+    if(this.DataCLR[0].TXResourcing == "---" || this.DataCLR[0].TXResourcing == null || this.DataCLR[0].TXResourcing == "OK for TX"){
+      console.log(this.DataCLR[0].TXResourcing);
+    }else{
+      var date_txresourcing = this.DataCLR[0].TXResourcing.split(" ");
+      console.log(date_txresourcing[3]);
+      this.TXResourcing = new Date(date_txresourcing[3].split("-")[0]+"-01-"+date_txresourcing[3].split("-")[1]);
+      console.log(this.TXResourcing);
+    }
   }
 }
 @Component({
@@ -4637,11 +4946,12 @@ export class DigitalTeamdailog {
     });
   }
 }
+
 @Component({
   selector: 'app-projectteam',
   templateUrl: './projectteam.component.html',
   styleUrls: ['./projectteam.component.css'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class ProjectTeamDailog {
   constructor(
@@ -4654,8 +4964,16 @@ export class ProjectTeamDailog {
       this.ManualId = data.ManualID;
       this.RevenueID = data.RevenueID;
       this.Implementation_Type = data.Implementation_Type;
+      this.Priority = data.Priority;
       this.Pipeline_status = data.Pipeline_status;
       this.Pipeline_comments = data.Pipeline_comments;
+      
+      // this.TXResourcing.setValue("03-2025");
+      if(data.TXResourcing == "---" || data.TXResourcing == null || data.TXResourcing == "OK for TX"){
+      }else{
+        var date_txresourcing = data.TXResourcing.split(" ");
+        this.TXResourcing = new Date(date_txresourcing[3].split("-")[0]+"-01-"+date_txresourcing[3].split("-")[1]);
+      }
       // this.Service_configuration = data.Service_configuration;
       // this.OBT_Reseller___Direct.setValue(data.OBT_Reseller___Direct);
       this.Record_Status = data.RecordStatus;
@@ -4704,6 +5022,7 @@ export class ProjectTeamDailog {
   ManualId : number;
   RevenueID : number;
   Implementation_Type : string;
+  Priority : string;
   Pipeline_status : string;
   // Service_configuration : string;
   // OBT_Reseller___Direct = new FormControl();
@@ -4712,6 +5031,7 @@ export class ProjectTeamDailog {
   AssigneeFullName = new FormControl();
   dateExpectedDecision : Date;
   dateAssignment : Date;
+  TXResourcing : Date;
   dateResourceRequested : Date;
   todayDate : Date = new Date();
   Project_Effort : number;
@@ -4885,11 +5205,19 @@ export class ProjectTeamDailog {
       }else{
         DateGo_Live = this.datepipe.transform(this.DateGolive, "MM-dd-yyyy")+"";
       }
+      var TX_Resourcing
+      if(this.TXResourcing == null || this.TXResourcing == undefined){
+        TX_Resourcing = "---";
+      }else{
+        TX_Resourcing = "OK for TX "+this.datepipe.transform(this.TXResourcing, "MM-yyyy")+"";
+      }
       if(this.ProjectStatus == "P-Pipeline" || this.ProjectStatus == "HP-High Potential" || this.ProjectStatus == "EP-Early Potential"){
         this.service.UpdateManualPipelineColumns(this.ManualId,this.RevenueID,
+          this.Priority,
           this.Implementation_Type,
           this.Pipeline_status,
           this.Pipeline_comments,
+          TX_Resourcing,
           // this.Service_configuration,
           // this.OBT_Reseller___Direct.value,
           DateExpectedDecision,
@@ -4903,8 +5231,8 @@ export class ProjectTeamDailog {
           this.AssigneeFullName.value,this.Record_Status,this.LoginUID).subscribe(data =>{
             if(data.code == 200){
               // alert(data.message);
-              this.dialogRef.close([{SelectionType : 'Update_p',RevenueID : this.RevenueID,Implementation_Type : this.Implementation_Type,
-              Pipeline_status : this.Pipeline_status,Pipeline_comments : this.Pipeline_comments,
+              this.dialogRef.close([{SelectionType : 'Update_p',RevenueID : this.RevenueID,Priority : this.Priority,Implementation_Type : this.Implementation_Type,
+              Pipeline_status : this.Pipeline_status,Pipeline_comments : this.Pipeline_comments,TXResourcing : TX_Resourcing,
               // OBT_Reseller___Direct : this.OBT_Reseller___Direct.value,Service_configuration : this.Service_configuration
               Project_Effort : this.Project_Effort,Record_Status : this.Record_Status,ProjectLevel : this.ProjectLevel,
               GlobalProjectManager : this.GlobalProjectManager.value,AssignmentDate : Date,ResourceRequestedDate : date_Resource_Requested,Golivedate : DateGo_Live,
@@ -4918,9 +5246,11 @@ export class ProjectTeamDailog {
         })
       }else{
         this.service.UpdateManualColumns(this.ManualId,this.RevenueID,
+          this.Priority,
           this.Implementation_Type,
           this.Pipeline_status,
           this.Pipeline_comments,
+          TX_Resourcing,
           // this.Service_configuration,
           // this.OBT_Reseller___Direct.value,
           DateExpectedDecision,
@@ -4931,8 +5261,8 @@ export class ProjectTeamDailog {
           ).subscribe(data =>{
             if(data.code == 200){
               // alert(data.message);
-              this.dialogRef.close([{SelectionType : 'Update',RevenueID : this.RevenueID,Implementation_Type : this.Implementation_Type,
-              Pipeline_comments : this.Pipeline_comments,
+              this.dialogRef.close([{SelectionType : 'Update',RevenueID : this.RevenueID,Priority : this.Priority,Implementation_Type : this.Implementation_Type,
+              Pipeline_comments : this.Pipeline_comments,TXResourcing : TX_Resourcing,
               // OBT_Reseller___Direct : this.OBT_Reseller___Direct.value,Service_configuration : this.Service_configuration
               Project_Effort : this.Project_Effort,Record_Status : this.Record_Status,AssignmentDate : Date,ResourceRequestedDate : date_Resource_Requested,
               Pipeline_status : this.Pipeline_status,ExpectedDecisionDate : DateExpectedDecision}]);
@@ -5110,9 +5440,12 @@ export class RecordLevelHistorydailog {
     this.dialogRef.close();
   }
   dataSource;
+  SalesStagedataSource;
   displayedColumns : string[] = ['RevenueID', 'EPDate','HPDate','PDate','ResourceRequested','ExpectedDecision','Assignment','ProjectStart','GoLive','CycleTime'];
+  SalesStagedisplayedColumns : string[] = ['RevenueID','Withdrawn','NoGo','ClosedLost','PresentationStage','VerbalAward','Negotiations','Shortlisted','Sold','ProposalSubmitted','NeedsAreIdentified','ContractSigned']
   searchbar : string;
-  Data : Data[];
+  ProjectStatusActivityData : ProjectStatusActivityData[];
+  SalesStageNameActivityData : SalesStageNameActivityData[];
   private saveAsExcelFile(buffer: any, fileName: string): void {
     const data: Blob = new Blob([buffer], {
       type: 'text/csv'
@@ -5121,52 +5454,111 @@ export class RecordLevelHistorydailog {
   }
   ngOnInit(){
     this.service.RecordHistoryData(this.RevenueID).subscribe(data =>{
-      this.Data = data.Data;
+      this.ProjectStatusActivityData = data.ProjectStatusActivityData;
+      this.SalesStageNameActivityData = data.SalesStageNameActivityData;
+      console.log(this.SalesStageNameActivityData);
       var PipelineDate = new Date("01/01/2048");
-      for(let i = 0;i<data.Data.length;i++){
-        if(this.Data[i].EPDate_c == null){
-          this.Data[i].EPDate = "---";
+      for(let i = 0;i<data.ProjectStatusActivityData.length;i++){
+        if(this.ProjectStatusActivityData[i].EPDate_c == null){
+          this.ProjectStatusActivityData[i].EPDate = "---";
         }else{
-          this.Data[i].EPDate = this.datepipe.transform(this.Data[i].EPDate_c, "yyyy-MM-dd");
+          this.ProjectStatusActivityData[i].EPDate = this.datepipe.transform(this.ProjectStatusActivityData[i].EPDate_c, "yyyy-MM-dd")+"";
         }
-        if(this.Data[i].HPDate_c == null){
-          this.Data[i].HPDate = "---";
+        if(this.ProjectStatusActivityData[i].HPDate_c == null){
+          this.ProjectStatusActivityData[i].HPDate = "---";
         }else{
-          this.Data[i].HPDate = this.datepipe.transform(this.Data[i].HPDate_c, "yyyy-MM-dd");
+          this.ProjectStatusActivityData[i].HPDate = this.datepipe.transform(this.ProjectStatusActivityData[i].HPDate_c, "yyyy-MM-dd")+"";
         }
-        if(this.Data[i].PDate_c == null){
-          this.Data[i].PDate = "---";
+        if(this.ProjectStatusActivityData[i].PDate_c == null){
+          this.ProjectStatusActivityData[i].PDate = "---";
         }else{
-          this.Data[i].PDate = this.datepipe.transform(this.Data[i].PDate_c, "yyyy-MM-dd");
+          this.ProjectStatusActivityData[i].PDate = this.datepipe.transform(this.ProjectStatusActivityData[i].PDate_c, "yyyy-MM-dd")+"";
         }
-        if(this.Data[i].ExpectedDecision_c == null){
-          this.Data[i].ExpectedDecision = "---";
+        if(this.ProjectStatusActivityData[i].ExpectedDecision_c == null){
+          this.ProjectStatusActivityData[i].ExpectedDecision = "---";
         }else{
-          this.Data[i].ExpectedDecision = this.datepipe.transform(this.Data[i].ExpectedDecision_c, "yyyy-MM-dd");
+          this.ProjectStatusActivityData[i].ExpectedDecision = this.datepipe.transform(this.ProjectStatusActivityData[i].ExpectedDecision_c, "yyyy-MM-dd")+"";
         }
-        if(this.Data[i].Assignment_c == null){
-          this.Data[i].Assignment = "---";
+        if(this.ProjectStatusActivityData[i].Assignment_c == null){
+          this.ProjectStatusActivityData[i].Assignment = "---";
         }else{
-          this.Data[i].Assignment = this.datepipe.transform(this.Data[i].Assignment_c, "yyyy-MM-dd");
+          this.ProjectStatusActivityData[i].Assignment = this.datepipe.transform(this.ProjectStatusActivityData[i].Assignment_c, "yyyy-MM-dd")+"";
         }
-        if(this.Data[i].ResourceRequested_c == null){
-          this.Data[i].ResourceRequested = "---";
+        if(this.ProjectStatusActivityData[i].ResourceRequested_c == null){
+          this.ProjectStatusActivityData[i].ResourceRequested = "---";
         }else{
-          this.Data[i].ResourceRequested = this.datepipe.transform(this.Data[i].ResourceRequested_c, "yyyy-MM-dd");
+          this.ProjectStatusActivityData[i].ResourceRequested = this.datepipe.transform(this.ProjectStatusActivityData[i].ResourceRequested_c, "yyyy-MM-dd")+"";
         }
-        if(this.Data[i].ProjectStart_c == null){
-          this.Data[i].ProjectStart = "---";
+        if(this.ProjectStatusActivityData[i].ProjectStart_c == null){
+          this.ProjectStatusActivityData[i].ProjectStart = "---";
         }else{
-          this.Data[i].ProjectStart = this.datepipe.transform(this.Data[i].ProjectStart_c, "yyyy-MM-dd");
+          this.ProjectStatusActivityData[i].ProjectStart = this.datepipe.transform(this.ProjectStatusActivityData[i].ProjectStart_c, "yyyy-MM-dd")+"";
         }
-        if(this.Data[i].GoLive_c == null){
-          this.Data[i].GoLive = "---";
+        if(this.ProjectStatusActivityData[i].GoLive_c == null){
+          this.ProjectStatusActivityData[i].GoLive = "---";
         }else{
-          if(this.datepipe.transform(this.Data[i].GoLive_c, "yyyy-MM-dd") == "2050-01-01"){
-            this.Data[i].GoLive = "---";
+          if(this.datepipe.transform(this.ProjectStatusActivityData[i].GoLive_c, "yyyy-MM-dd") == "2050-01-01"){
+            this.ProjectStatusActivityData[i].GoLive = "---";
           }else{
-            this.Data[i].GoLive = this.datepipe.transform(this.Data[i].GoLive_c, "yyyy-MM-dd");
+            this.ProjectStatusActivityData[i].GoLive = this.datepipe.transform(this.ProjectStatusActivityData[i].GoLive_c, "yyyy-MM-dd")+"";
           }
+        }
+      }
+      for(let i = 0;i<data.SalesStageNameActivityData.length;i++){
+        if(this.SalesStageNameActivityData[i].Withdrawn_c == null){
+          this.SalesStageNameActivityData[i].Withdrawn = "---";
+        }else{
+          this.SalesStageNameActivityData[i].Withdrawn = this.datepipe.transform(this.SalesStageNameActivityData[i].Withdrawn_c, "yyyy-MM-dd")+"";
+        }
+        if(this.SalesStageNameActivityData[i].NoGo_c == null){
+          this.SalesStageNameActivityData[i].NoGo = "---";
+        }else{
+          this.SalesStageNameActivityData[i].NoGo = this.datepipe.transform(this.SalesStageNameActivityData[i].NoGo_c, "yyyy-MM-dd")+"";
+        }
+        if(this.SalesStageNameActivityData[i].ClosedLost_c == null){
+          this.SalesStageNameActivityData[i].ClosedLost = "---";
+        }else{
+          this.SalesStageNameActivityData[i].ClosedLost = this.datepipe.transform(this.SalesStageNameActivityData[i].ClosedLost_c, "yyyy-MM-dd")+"";
+        }
+        if(this.SalesStageNameActivityData[i].PresentationStage_c == null){
+          this.SalesStageNameActivityData[i].PresentationStage = "---";
+        }else{
+          this.SalesStageNameActivityData[i].PresentationStage = this.datepipe.transform(this.SalesStageNameActivityData[i].PresentationStage_c, "yyyy-MM-dd")+"";
+        }
+        if(this.SalesStageNameActivityData[i].VerbalAward_c == null){
+          this.SalesStageNameActivityData[i].VerbalAward = "---";
+        }else{
+          this.SalesStageNameActivityData[i].VerbalAward = this.datepipe.transform(this.SalesStageNameActivityData[i].VerbalAward_c, "yyyy-MM-dd")+"";
+        }
+        if(this.SalesStageNameActivityData[i].Negotiations_c == null){
+          this.SalesStageNameActivityData[i].Negotiations = "---";
+        }else{
+          this.SalesStageNameActivityData[i].Negotiations = this.datepipe.transform(this.SalesStageNameActivityData[i].Negotiations_c, "yyyy-MM-dd")+"";
+        }
+        if(this.SalesStageNameActivityData[i].Shortlisted_c == null){
+          this.SalesStageNameActivityData[i].Shortlisted = "---";
+        }else{
+          this.SalesStageNameActivityData[i].Shortlisted = this.datepipe.transform(this.SalesStageNameActivityData[i].Shortlisted_c, "yyyy-MM-dd")+"";
+        }
+        if(this.SalesStageNameActivityData[i].Sold_c == null){
+          this.SalesStageNameActivityData[i].Sold = "---";
+        }else{
+          this.SalesStageNameActivityData[i].Sold = this.datepipe.transform(this.SalesStageNameActivityData[i].Sold_c, "yyyy-MM-dd")+"";
+        }
+        if(this.SalesStageNameActivityData[i].ProposalSubmitted_c == null){
+          this.SalesStageNameActivityData[i].ProposalSubmitted = "---";
+        }else{
+          this.SalesStageNameActivityData[i].ProposalSubmitted = this.datepipe.transform(this.SalesStageNameActivityData[i].ProposalSubmitted_c, "yyyy-MM-dd")+"";
+        }
+        if(this.SalesStageNameActivityData[i].NeedsAreIdentified_c == null){
+          this.SalesStageNameActivityData[i].NeedsAreIdentified = "---";
+        }else{
+          this.SalesStageNameActivityData[i].NeedsAreIdentified = this.datepipe.transform(this.SalesStageNameActivityData[i].NeedsAreIdentified_c, "yyyy-MM-dd")+"";
+        }
+        if(this.SalesStageNameActivityData[i].ContractSigned_c == null){
+          this.SalesStageNameActivityData[i].ContractSigned = "---";
+        }else{
+          this.SalesStageNameActivityData[i].ContractSigned = this.datepipe.transform(this.SalesStageNameActivityData[i].ContractSigned_c, "yyyy-MM-dd")+"";
         }
       }
       // const CustomizedData = this.Data.map(o => {
@@ -5188,15 +5580,11 @@ export class RecordLevelHistorydailog {
       // const workbook: XLSX.WorkBook = { Sheets: { 'RecordHistory': worksheet}, SheetNames: ['RecordHistory'] };
       // const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array', compression : true });
       // this.saveAsExcelFile(excelBuffer, 'RecordHistory');
-      this.dataSource = new MatTableDataSource(this.Data);
+      this.dataSource = new MatTableDataSource(this.ProjectStatusActivityData);
+      this.SalesStagedataSource = new MatTableDataSource(this.SalesStageNameActivityData);
     })
   }
-  exportData(){
-    this.service.RecordHistoryData(this.RevenueID).subscribe(data =>{
-      console.log(this.Data)
-    })
-  }
-
+  
   // applyFilter(event: Event) {
   //   const filterValue = (event.target as HTMLInputElement).value;
   //   this.dataSource.filter = filterValue.trim().toLowerCase();

@@ -91,6 +91,9 @@ export interface NPSViewData{
     UpdatedOn  : string;
     Updated_On : string;
     RecipientId : string;
+    GlobalDigitalPM : string;
+    RegionalDigitalPM : string;
+    LocalDigitalPM : string;
 }
 export interface ExistingRegionWiseNPSScore{
     Region : string;

@@ -39,4 +39,5 @@ export interface IMPSData {
     Task_Title : string,
     Task__Task_Record_ID_Key :string,
     Group_Name : string,
+    Region : string
 }

@@ -94,79 +94,30 @@
     </mat-drawer>
     <mat-drawer-content>
         <div class="row col-12" style="margin-bottom: 25px">
-            <div class="col-md-12" style="text-align: right;margin: 30px 25px 10px 0px;">
-                <button mat-raised-button style="background-color: #F16950;color: white;" (click)="ExportData()">Export Raw Data<mat-icon style="color: white;font-size: 20px;margin-top: 4px;">save_alt</mat-icon></button>
-            </div>
-            <div class="col-md-6">
-                <div class="nps_graph_wrap col-md-12" style="margin-left: 15px;padding: 0px;">
-                    <p class="nps_graph_header">GDS By Region</p>
-                    <canvas id="regionGDS" style="width: 100%;height: 350px;">
-                    </canvas>
+            <div class="row col-12" style="margin: 30px 25px 10px 0px;">
+                <div class="col-md-6">
+                    <mat-form-field class="mat-form-wrap" appearance="outline">
+                        <mat-label>OBT Type</mat-label>
+                        <mat-select [formControl]="OBTResellerFilter" multiple (selectionChange)="onOBTResellerchange()">
+                            <mat-select-trigger>
+                                {{OBTResellerFilter.value ? OBTResellerFilter.value[0] : ''}}
+                                <span *ngIf="OBTResellerFilter.value?.length > 1" class="example-additional-selection">
+                                    (+{{OBTResellerFilter.value.length - 1}} {{OBTResellerFilter.value?.length === 2 ? 'OBT Type' : 'OBT Types'}})
+                                </span>
+                            </mat-select-trigger>
+                            <div style="padding-top: 15px">
+                                <mat-checkbox style="margin-left: 15px;margin-top: 25px;" class="example-margin" [(ngModel)]="masterOBTReseller" name="masterOBTReseller" (change)="checkUncheckOBTReseller()" color="primary">Select all</mat-checkbox>
+                            </div>
+                            <mat-divider style="margin-left: 5px;margin-right: 5px"></mat-divider>
+                            <mat-option *ngFor="let OBTReseller_data of OBTResellerList" [value]="OBTReseller_data">{{OBTReseller_data}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div class="nps_graph_wrap col-md-12" style="margin-left: 15px;padding: 0px;">
-                    <p class="nps_graph_header">Country Status By Region</p>
-                    <canvas id="regionCountrystatus" style="width: 100%;height: 350px;">
-                    </canvas>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="nps_graph_wrap col-md-12" style="margin-left: 15px;padding: 0px;">
-                    <p class="nps_graph_header">Activity Type By Region</p>
-                    <canvas id="regionActivityType" style="width: 100%;height: 350px;padding-left: 50px;padding-right: 50px;">
-                    </canvas>
-                    <table mat-table [dataSource]="a_type_datasource" style="width: 100%;border : 1px solid black">
-                        <ng-container [matColumnDef]="a_type_column" *ngFor="let a_type_column of a_type_displayColumns">
-                          <th mat-header-cell *matHeaderCellDef style="min-width: 50px;max-width: 80px;padding-left: 5px;padding-right: 5px;border-bottom: 1px solid black;background-color: #34495E;color: white;"><!--*ngIf="a_type_column !== '1'"--> <p  style="font-weight: bold;font-size: 11px;width: 100%;word-wrap: break-word;color: white;">{{a_type_column}}</p></th>
-                          <!-- <th mat-header-cell *matHeaderCellDef *ngIf="column !== '1'"> {{ column }} </th> -->
-                          <td mat-cell *matCellDef="let element"  style="min-width: 50px;max-width: 80px;font-size: 12px;padding-left: 5px;padding-right: 5px;" [ngClass]="{'highlight': a_type_column == 'Total'}">{{ element[a_type_column] }} </td>
-                        </ng-container>
-                        <tr mat-header-row *matHeaderRowDef="a_type_displayColumns"></tr>
-                        <tr mat-row *matRowDef="let row; columns: a_type_displayColumns;"  [ngClass]="{'highlight': row.Region == 'GrandTotal'}" style="height: 20px;max-height: 20px;"></tr>
-                    </table>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="nps_graph_wrap col-md-12" style="margin-left: 15px;padding: 0px;">
-                    <p class="nps_graph_header">Go Live Year By Region</p>
-                    <canvas id="regionYear" style="width: 100%;height: 350px;">
-                    </canvas>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="nps_graph_wrap col-md-12" style="margin-left: 15px;padding: 0px;">
-                    <p class="nps_graph_header">Implementation Type By Region</p>
-                    <canvas id="regionimpyType" style="width: 100%;height: 350px;padding-left: 50px;padding-right: 50px;">
-                    </canvas>
-                    <table mat-table [dataSource]="imp_datasource" style="width: 100%;border : 1px solid black">
-                        <ng-container [matColumnDef]="column" *ngFor="let column of imp_displayColumns">
-                          <th mat-header-cell *matHeaderCellDef style="min-width: 30px;max-width: 80px;padding-left: 5px;padding-right: 5px;border-bottom: 1px solid black;background-color: #34495E;color: white;"> <!--*ngIf="column !== '1'"--> <p style="font-weight: bold;font-size: 11px;width: 100%;word-wrap: break-word;color: white;">{{column}}</p></th>
-                          <!-- <th mat-header-cell *matHeaderCellDef *ngIf="column !== '1'"> {{ column }} </th> -->
-                          <td mat-cell *matCellDef="let element;" style="min-width: 50px;max-width: 80px;font-size: 12px;padding-left: 5px;padding-right: 5px;" [ngClass]="{'highlight': column == 'Total'}">{{element[column]}}</td>
-                        </ng-container>
-                        <tr mat-header-row *matHeaderRowDef="imp_displayColumns"></tr>
-                        <tr mat-row *matRowDef="let row; columns: imp_displayColumns;" [ngClass]="{'highlight': row.Region == 'GrandTotal'}" style="height: 20px;max-height: 20px;"></tr>
-                    </table>
+                <div class="col-md-6" style="text-align: right;">
+                    <button mat-raised-button style="background-color: #F16950;color: white;" (click)="ExportData()">Export Raw Data<mat-icon style="color: white;font-size: 20px;margin-top: 4px;">save_alt</mat-icon></button>
                 </div>
             </div>
             <div class="col-md-12">
-                <mat-form-field class="mat-form-wrap" appearance="outline">
-                    <mat-label>OBT Type</mat-label>
-                    <mat-select [formControl]="OBTResellerFilter" multiple (selectionChange)="onOBTResellerchange()">
-                        <mat-select-trigger>
-                            {{OBTResellerFilter.value ? OBTResellerFilter.value[0] : ''}}
-                            <span *ngIf="OBTResellerFilter.value?.length > 1" class="example-additional-selection">
-                                (+{{OBTResellerFilter.value.length - 1}} {{OBTResellerFilter.value?.length === 2 ? 'OBT Type' : 'OBT Types'}})
-                            </span>
-                        </mat-select-trigger>
-                        <div style="padding-top: 15px">
-                            <mat-checkbox style="margin-left: 15px;margin-top: 25px;" class="example-margin" [(ngModel)]="masterOBTReseller" name="masterOBTReseller" (change)="checkUncheckOBTReseller()" color="primary">Select all</mat-checkbox>
-                        </div>
-                        <mat-divider style="margin-left: 5px;margin-right: 5px"></mat-divider>
-                        <mat-option *ngFor="let OBTReseller_data of OBTResellerList" [value]="OBTReseller_data">{{OBTReseller_data}}</mat-option>
-                    </mat-select>
-                </mat-form-field>
                 <div class="example-container" [ngStyle]="{'max-height' : (screenHeight-185)+'px'}" style="min-height: 500px;margin-left: 15px;border: 2px solid black;">
                     <table mat-table [dataSource]="dataSource" #DROBT_R_Sort="matSort" matSort>
                         <ng-container matColumnDef="OBTReseller">
@@ -257,6 +208,60 @@
                     </table>
                 </div>
             </div>
+            <div class="col-md-6">
+                <div class="nps_graph_wrap col-md-12" style="margin-left: 15px;padding: 0px;">
+                    <p class="nps_graph_header">GDS By Region</p>
+                    <canvas id="regionGDS" style="width: 100%;height: 350px;">
+                    </canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="nps_graph_wrap col-md-12" style="margin-left: 15px;padding: 0px;">
+                    <p class="nps_graph_header">Country Status By Region</p>
+                    <canvas id="regionCountrystatus" style="width: 100%;height: 350px;">
+                    </canvas>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="nps_graph_wrap col-md-12" style="margin-left: 15px;padding: 0px;">
+                    <p class="nps_graph_header">Activity Type By Region</p>
+                    <canvas id="regionActivityType" style="width: 100%;height: 350px;padding-left: 50px;padding-right: 50px;">
+                    </canvas>
+                    <table mat-table [dataSource]="a_type_datasource" style="width: 100%;border : 1px solid black">
+                        <ng-container [matColumnDef]="a_type_column" *ngFor="let a_type_column of a_type_displayColumns">
+                          <th mat-header-cell *matHeaderCellDef style="min-width: 50px;max-width: 80px;padding-left: 5px;padding-right: 5px;border-bottom: 1px solid black;background-color: #34495E;color: white;"><!--*ngIf="a_type_column !== '1'"--> <p  style="font-weight: bold;font-size: 11px;width: 100%;word-wrap: break-word;color: white;">{{a_type_column}}</p></th>
+                          <!-- <th mat-header-cell *matHeaderCellDef *ngIf="column !== '1'"> {{ column }} </th> -->
+                          <td mat-cell *matCellDef="let element"  style="min-width: 50px;max-width: 80px;font-size: 12px;padding-left: 5px;padding-right: 5px;" [ngClass]="{'highlight': a_type_column == 'Total'}">{{ element[a_type_column] }} </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="a_type_displayColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: a_type_displayColumns;"  [ngClass]="{'highlight': row.Region == 'GrandTotal'}" style="height: 20px;max-height: 20px;"></tr>
+                    </table>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="nps_graph_wrap col-md-12" style="margin-left: 15px;padding: 0px;">
+                    <p class="nps_graph_header">Go Live Year By Region</p>
+                    <canvas id="regionYear" style="width: 100%;height: 350px;">
+                    </canvas>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="nps_graph_wrap col-md-12" style="margin-left: 15px;padding: 0px;">
+                    <p class="nps_graph_header">Implementation Type By Region</p>
+                    <canvas id="regionimpyType" style="width: 100%;height: 350px;padding-left: 50px;padding-right: 50px;">
+                    </canvas>
+                    <table mat-table [dataSource]="imp_datasource" style="width: 100%;border : 1px solid black">
+                        <ng-container [matColumnDef]="column" *ngFor="let column of imp_displayColumns">
+                          <th mat-header-cell *matHeaderCellDef style="min-width: 30px;max-width: 80px;padding-left: 5px;padding-right: 5px;border-bottom: 1px solid black;background-color: #34495E;color: white;"> <!--*ngIf="column !== '1'"--> <p style="font-weight: bold;font-size: 11px;width: 100%;word-wrap: break-word;color: white;">{{column}}</p></th>
+                          <!-- <th mat-header-cell *matHeaderCellDef *ngIf="column !== '1'"> {{ column }} </th> -->
+                          <td mat-cell *matCellDef="let element;" style="min-width: 50px;max-width: 80px;font-size: 12px;padding-left: 5px;padding-right: 5px;" [ngClass]="{'highlight': column == 'Total'}">{{element[column]}}</td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="imp_displayColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: imp_displayColumns;" [ngClass]="{'highlight': row.Region == 'GrandTotal'}" style="height: 20px;max-height: 20px;"></tr>
+                    </table>
+                </div>
+            </div>
+            
             <!-- <div class="col-md-12">
                 <div class="example-container" [ngStyle]="{'max-height' : (screenHeight-185)+'px'}" style="margin-left: 15px;border: 1px solid rgb(196, 196, 196);">
                     <table mat-table [dataSource]="dataSource_data" #DRSort="matSort" matSort>
